@@ -12,8 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8edbd0fa5e59a9344a83df1b3177d250, type: 3}
   m_Name: EditorSettings
   m_EditorClassIdentifier: BovineLabs.Core.Editor::BovineLabs.Core.Editor.Settings.EditorSettings
-  scriptingDefineSymbols: []
-  paths: []
+  scriptingDefineSymbols:
+  - BL_CORE_EXTENSIONS
+  paths:
+  - Key: bl.settings
+    Path: Assets/Settings/Settings
+  - Key: bl.ar.anchornamedaction
+    Path: Assets/Settings/UI/Actions
+  - Key: bl.ar.anchornavanimation
+    Path: Assets/Settings/UI/Animations
+  - Key: bl.ar.subsceneset
+    Path: Assets/Settings/Scenes
+  - Key: bl.ar.subsceneeditorset
+    Path: Assets/Settings/Scenes/Editor
+  - Key: bl.ar.assetset
+    Path: Assets/Settings/Scenes/Assets
+  - Key: bl.ar.objectdefinition
+    Path: Assets/Settings/ObjectDefinitions
+  - Key: bl.ar.objectgroup
+    Path: Assets/Settings/ObjectGroups
+  prebakeScenes: []
+  startupScene: {fileID: 0}
   defaultSettingsAuthoring: {fileID: 0}
   settingAuthoring:
   - World: service

@@ -2,6 +2,7 @@
   "dependencies": {
     "com.bovinelabs.anchor": "https://gitlab.com/tertle/com.bovinelabs.anchor.git#2.0.0",
     "com.bovinelabs.core": "https://gitlab.com/tertle/com.bovinelabs.core.git#1.6.0",
+    "com.bovinelabs.timeline": "https://gitlab.com/tertle/com.bovinelabs.timeline.git#1.0.0",
     "com.coplaydev.unity-mcp": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity",
     "com.github-glitchenzo.nugetforunity": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
     "com.greenbamboogames.playablegraphmonitor": "2.6.3",
@@ -13,7 +14,6 @@
     "com.unity.entities": "6.5.0",
     "com.unity.entities.graphics": "6.5.0",
     "com.unity.ide.rider": "3.0.39",
-    "com.unity.ide.visualstudio": "2.0.26",
     "com.unity.inputsystem": "1.17.0",
     "com.unity.localization": "1.5.9",
     "com.unity.multiplayer.center": "1.0.1",

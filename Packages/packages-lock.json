@@ -19,6 +19,16 @@
       },
       "hash": "8536bfc698a620966ab6e8137e5ca04d1d6a4d8b"
     },
+    "com.bovinelabs.timeline": {
+      "version": "https://gitlab.com/tertle/com.bovinelabs.timeline.git#1.0.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.bovinelabs.core": "1.5.1",
+        "com.unity.timeline": "1.8.10"
+      },
+      "hash": "5b0f1c9c93dbc6aa3bd398ae8cb297b5423a279c"
+    },
     "com.coplaydev.unity-mcp": {
       "version": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity",
       "depth": 0,
@@ -177,15 +187,6 @@
       "source": "registry",
       "dependencies": {
         "com.unity.ext.nunit": "1.0.6"
-      },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.ide.visualstudio": {
-      "version": "2.0.26",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.test-framework": "1.1.33"
       },
       "url": "https://packages.unity.com"
     },
