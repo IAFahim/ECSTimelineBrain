@@ -17,6 +17,12 @@ MonoBehaviour:
   paths:
   - Key: bl.settings
     Path: Assets/Settings/Settings
+  - Key: bl.ar.statschemaobject
+    Path: Assets/Settings/Schemas/Stats
+  - Key: bl.ar.intrinsicschemaobject
+    Path: Assets/Settings/Schemas/Intrinsics/
+  - Key: bl.ar.conditioneventobject
+    Path: Assets/Settings/Schemas/Events/
   prebakeScenes: []
   startupScene: {fileID: 0}
   defaultSettingsAuthoring: {fileID: 0}

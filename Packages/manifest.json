@@ -1,11 +1,12 @@
 {
   "dependencies": {
     "com.bovinelabs.core": "https://gitlab.com/tertle/com.bovinelabs.core.git#1.6.0",
+    "com.bovinelabs.essence": "https://gitlab.com/tertle/com.bovinelabs.essence.git",
+    "com.bovinelabs.reaction": "https://gitlab.com/tertle/com.bovinelabs.reaction.git#2.0",
     "com.bovinelabs.timeline": "https://gitlab.com/tertle/com.bovinelabs.timeline.git#1.0.0",
     "com.unity.ai.navigation": "2.0.9",
     "com.unity.collab-proxy": "2.11.2",
-    "com.unity.entities": "6.5.0",
-    "com.unity.entities.graphics": "6.5.0",
+    "com.unity.entities": "https://github.com/tertle/com.unity.entities.git",
     "com.unity.ide.rider": "3.0.38",
     "com.unity.ide.visualstudio": "2.0.25",
     "com.unity.inputsystem": "1.17.0",
