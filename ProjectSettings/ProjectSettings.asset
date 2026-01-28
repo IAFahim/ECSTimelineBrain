@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: cfca017c10ffc716e934c37286a6ce7d
+  productGUID: 30acf9ae1a787d9dd95d32a3363254c2
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -927,10 +927,10 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: 2951e3f8-41e7-4b04-a80c-9c36fde70feb
+  cloudProjectId: 0a729aa1-53d4-4c89-8067-2d57685afd99
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: ECSTimelineBrain
+  projectName: TestECS
   organizationId: fahimmanowarj5
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
