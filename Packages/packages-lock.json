@@ -1,5 +1,15 @@
 {
   "dependencies": {
+    "com.bovinelabs.anchor": {
+      "version": "https://gitlab.com/tertle/com.bovinelabs.anchor.git#2.0.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.bovinelabs.core": "1.5.1",
+        "com.unity.dt.app-ui": "2.2.0-pre.4"
+      },
+      "hash": "ce918b794cf94f39c4a88ea06453db64e627f527"
+    },
     "com.bovinelabs.core": {
       "version": "https://gitlab.com/tertle/com.bovinelabs.core.git#1.6.0",
       "depth": 0,
@@ -9,12 +19,73 @@
       },
       "hash": "8536bfc698a620966ab6e8137e5ca04d1d6a4d8b"
     },
+    "com.coplaydev.unity-mcp": {
+      "version": "https://github.com/CoplayDev/unity-mcp.git?path=/MCPForUnity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.0.2"
+      },
+      "hash": "17c6a36c8dcdda49017001abcce158e75b3d7d05"
+    },
+    "com.github-glitchenzo.nugetforunity": {
+      "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "c2af83c9d4f8cdaada9d4a0e94de2f195d8e1d01"
+    },
+    "com.greenbamboogames.playablegraphmonitor": {
+      "version": "2.6.3",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
+    "com.seaeees.simple-folder-icon": {
+      "version": "https://github.com/IAFahim/SimpleFolderIcon.git?path=Packages/com.seaeees.simple-folder-icon",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "62c522ad6276b585d6dae9ec0eeeedcccd78c636"
+    },
+    "com.unity.2d.sprite": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
+    },
+    "com.unity.addressables": {
+      "version": "2.7.4",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.profiling.core": "1.0.2",
+        "com.unity.test-framework": "1.4.5",
+        "com.unity.modules.assetbundle": "1.0.0",
+        "com.unity.modules.jsonserialize": "1.0.0",
+        "com.unity.modules.imageconversion": "1.0.0",
+        "com.unity.modules.unitywebrequest": "1.0.0",
+        "com.unity.scriptablebuildpipeline": "2.4.3",
+        "com.unity.modules.unitywebrequestassetbundle": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.ai.navigation": {
-      "version": "2.0.9",
+      "version": "2.0.10",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.modules.ai": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.bindings.openimageio": {
+      "version": "1.0.2",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.collections": "1.2.4"
       },
       "url": "https://packages.unity.com"
     },
@@ -28,9 +99,19 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.cinemachine": {
+      "version": "3.1.5",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.splines": "2.0.0",
+        "com.unity.modules.imgui": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.collections": {
       "version": "6.5.0",
-      "depth": 1,
+      "depth": 0,
       "source": "builtin",
       "dependencies": {
         "com.unity.burst": "1.8.25",
@@ -40,31 +121,43 @@
         "com.unity.test-framework.performance": "3.0.3"
       }
     },
-    "com.unity.entities": {
-      "version": "https://github.com/tertle/com.unity.entities.git",
-      "depth": 0,
-      "source": "git",
+    "com.unity.dt.app-ui": {
+      "version": "2.2.0-pre.4",
+      "depth": 1,
+      "source": "registry",
       "dependencies": {
-        "com.unity.burst": "1.8.23",
-        "com.unity.collections": "2.6.2",
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.modules.androidjni": "1.0.0",
+        "com.unity.modules.uielements": "1.0.0",
+        "com.unity.modules.screencapture": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.entities": {
+      "version": "6.5.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.burst": "1.8.25",
+        "com.unity.collections": "6.5.0",
         "com.unity.mathematics": "1.3.2",
-        "com.unity.nuget.mono-cecil": "1.11.5",
-        "com.unity.profiling.core": "1.0.2",
-        "com.unity.scriptablebuildpipeline": "1.21.25",
-        "com.unity.serialization": "3.1.2",
+        "com.unity.nuget.mono-cecil": "1.11.6",
+        "com.unity.profiling.core": "1.0.3",
+        "com.unity.scriptablebuildpipeline": "1.23.1",
+        "com.unity.serialization": "3.1.3",
         "com.unity.test-framework.performance": "3.0.3",
         "com.unity.modules.assetbundle": "1.0.0",
         "com.unity.modules.audio": "1.0.0",
         "com.unity.modules.physics": "1.0.0",
         "com.unity.modules.uielements": "1.0.0",
         "com.unity.modules.unityanalytics": "1.0.0",
-        "com.unity.modules.unitywebrequest": "1.0.0"
-      },
-      "hash": "636dbf98b521e863308406dd6ebb94746bfd48ab"
+        "com.unity.modules.unitywebrequest": "1.0.0",
+        "com.unity.modules.hierarchy": "1.0.0"
+      }
     },
     "com.unity.entities.graphics": {
       "version": "6.5.0",
-      "depth": 1,
+      "depth": 0,
       "source": "builtin",
       "dependencies": {
         "com.unity.entities": "6.5.0",
@@ -78,18 +171,8 @@
       "source": "builtin",
       "dependencies": {}
     },
-    "com.unity.feature.ecs": {
-      "version": "1.0.0",
-      "depth": 0,
-      "source": "builtin",
-      "dependencies": {
-        "com.unity.entities": "6.5.0",
-        "com.unity.entities.graphics": "6.5.0",
-        "com.unity.physics": "1.4.2"
-      }
-    },
     "com.unity.ide.rider": {
-      "version": "3.0.38",
+      "version": "3.0.39",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -98,11 +181,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.25",
+      "version": "2.0.26",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.test-framework": "1.1.31"
+        "com.unity.test-framework": "1.1.33"
       },
       "url": "https://packages.unity.com"
     },
@@ -112,6 +195,16 @@
       "source": "registry",
       "dependencies": {
         "com.unity.modules.uielements": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.localization": {
+      "version": "1.5.9",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.addressables": "1.25.0",
+        "com.unity.nuget.newtonsoft-json": "3.0.2"
       },
       "url": "https://packages.unity.com"
     },
@@ -136,26 +229,38 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-    "com.unity.physics": {
-      "version": "https://github.com/tertle/com.unity.physics.git",
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.2",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.platformtoolkit": {
+      "version": "1.0.0",
       "depth": 0,
-      "source": "git",
+      "source": "registry",
       "dependencies": {
-        "com.unity.burst": "1.8.26",
-        "com.unity.collections": "6.5.0",
-        "com.unity.mathematics": "1.3.2",
-        "com.unity.entities": "6.5.0",
-        "com.unity.test-framework": "1.6.0",
-        "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
       },
-      "hash": "b3fe8f268865f9f451ae93bbed0d48d18e73d2ae"
+      "url": "https://packages.unity.com"
     },
     "com.unity.profiling.core": {
       "version": "1.0.3",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.recorder": {
+      "version": "5.1.4",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.timeline": "1.8.7",
+        "com.unity.collections": "1.2.4",
+        "com.unity.bindings.openimageio": "1.0.2"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.core": {
@@ -200,7 +305,7 @@
     },
     "com.unity.searcher": {
       "version": "4.9.4",
-      "depth": 2,
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -215,14 +320,54 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.services.analytics": {
+      "version": "6.2.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0",
+        "com.unity.services.core": "1.12.4",
+        "com.unity.modules.jsonserialize": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.services.core": {
+      "version": "1.16.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.androidjni": "1.0.0",
+        "com.unity.nuget.newtonsoft-json": "3.2.1",
+        "com.unity.modules.unitywebrequest": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.settings-manager": {
+      "version": "2.1.1",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.shadergraph": {
       "version": "17.5.0",
-      "depth": 1,
+      "depth": 0,
       "source": "builtin",
       "dependencies": {
         "com.unity.render-pipelines.core": "17.5.0",
         "com.unity.searcher": "4.9.3"
       }
+    },
+    "com.unity.splines": {
+      "version": "2.8.2",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.mathematics": "1.2.1",
+        "com.unity.modules.imgui": "1.0.0",
+        "com.unity.settings-manager": "1.0.3"
+      },
+      "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
       "version": "1.7.0",
@@ -245,7 +390,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.8.9",
+      "version": "1.8.10",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -328,6 +473,16 @@
         "com.unity.modules.animation": "1.0.0"
       }
     },
+    "com.unity.modules.hierarchy": {
+      "version": "1.0.0",
+      "depth": 1,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.modules.hierarchycore": "1.0.0",
+        "com.unity.modules.uielements": "1.0.0",
+        "com.unity.modules.imgui": "1.0.0"
+      }
+    },
     "com.unity.modules.hierarchycore": {
       "version": "1.0.0",
       "depth": 1,
@@ -360,7 +515,7 @@
     },
     "com.unity.modules.physics": {
       "version": "1.0.0",
-      "depth": 0,
+      "depth": 1,
       "source": "builtin",
       "dependencies": {}
     },
@@ -411,7 +566,7 @@
     },
     "com.unity.modules.ui": {
       "version": "1.0.0",
-      "depth": 1,
+      "depth": 0,
       "source": "builtin",
       "dependencies": {}
     },
@@ -435,7 +590,7 @@
     },
     "com.unity.modules.unityanalytics": {
       "version": "1.0.0",
-      "depth": 1,
+      "depth": 0,
       "source": "builtin",
       "dependencies": {
         "com.unity.modules.unitywebrequest": "1.0.0",
@@ -498,6 +653,14 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "com.unity.modules.vehicles": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.modules.physics": "1.0.0"
+      }
+    },
     "com.unity.modules.video": {
       "version": "1.0.0",
       "depth": 0,
@@ -507,6 +670,12 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.unitywebrequest": "1.0.0"
       }
+    },
+    "com.unity.modules.wind": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
     }
   }
 }
