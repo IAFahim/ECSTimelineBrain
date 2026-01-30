@@ -19,25 +19,6 @@
       },
       "hash": "5a76f8f678f3d0b63c2172bec2fcd0a432d07b22"
     },
-    "com.bovinelabs.essence": {
-      "version": "https://gitlab.com/tertle/com.bovinelabs.essence.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.bovinelabs.core": "1.4.4",
-        "com.bovinelabs.reaction": "0.5.0"
-      },
-      "hash": "dd72b05e8f6e3659516f3f229b44e87958e79ca7"
-    },
-    "com.bovinelabs.reaction": {
-      "version": "https://gitlab.com/tertle/com.bovinelabs.reaction.git#2.0",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.bovinelabs.core": "1.4.6"
-      },
-      "hash": "1592e7e6b6fa1ff9998580c31920f17b29621d5c"
-    },
     "com.bovinelabs.timeline": {
       "version": "file:com.bovinelabs.timeline",
       "depth": 0,
@@ -46,6 +27,13 @@
         "com.bovinelabs.core": "1.5.1",
         "com.unity.timeline": "1.8.10"
       }
+    },
+    "com.github-glitchenzo.nugetforunity": {
+      "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "c2af83c9d4f8cdaada9d4a0e94de2f195d8e1d01"
     },
     "com.greenbamboogames.playablegraphmonitor": {
       "version": "2.6.3",

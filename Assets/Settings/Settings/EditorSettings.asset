@@ -23,6 +23,16 @@ MonoBehaviour:
     Path: Assets/Settings/Schemas/Intrinsics/
   - Key: bl.ar.conditioneventobject
     Path: Assets/Settings/Schemas/Events/
+  - Key: bl.ar.subsceneset
+    Path: Assets/Settings/Scenes
+  - Key: bl.ar.subsceneeditorset
+    Path: Assets/Settings/Scenes/Editor
+  - Key: bl.ar.assetset
+    Path: Assets/Settings/Scenes/Assets
+  - Key: bl.ar.objectdefinition
+    Path: Assets/Settings/ObjectDefinitions
+  - Key: bl.ar.objectgroup
+    Path: Assets/Settings/ObjectGroups
   prebakeScenes: []
   startupScene: {fileID: 0}
   defaultSettingsAuthoring: {fileID: 0}
