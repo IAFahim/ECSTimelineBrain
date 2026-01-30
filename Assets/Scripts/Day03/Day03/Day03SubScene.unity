@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 1788751898}
   - component: {fileID: 1788751897}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: SignBrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -148,9 +148,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c26a74b32cf078246bb90459a1214ec5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: AV.Day03.Authoring::AV.Day03.Authoring.SineAuthoring
-  PrefabToSpawn: {fileID: 5976830800421173999, guid: 42a02c75ef32a92439bce61a9338f9d0, type: 3}
-  Speed: 2
-  Amplitude: 2
+  prefabToSpawn: {fileID: 5976830800421173999, guid: 42a02c75ef32a92439bce61a9338f9d0, type: 3}
+  speed: 2
+  amplitude: 2
 --- !u!4 &1788751898
 Transform:
   m_ObjectHideFlags: 0

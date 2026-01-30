@@ -7,9 +7,9 @@ namespace AV.Day03.Authoring
 {
     public class SineAuthoring : MonoBehaviour
     {
-        public GameObject PrefabToSpawn;
-        public float Speed = 2.0f;
-        public float Amplitude = 2.0f;
+        public GameObject prefabToSpawn;
+        public float speed = 2.0f;
+        public float amplitude = 2.0f;
 
         class Baker : Baker<SineAuthoring>
         {
@@ -19,14 +19,16 @@ namespace AV.Day03.Authoring
 
                 AddComponent(entity, new SineMovement
                 {
-                    Speed = authoring.Speed,
-                    Amplitude = authoring.Amplitude,
-                    OriginalPosition = float3.zero
+                    speed = authoring.speed,
+                    amplitude = authoring.amplitude,
+                    originalPosition = float3.zero,
+                    elapsedTime = 0,
                 });
+                SetComponentEnabled<SineMovement>(entity,false);
 
                 AddComponent(entity, new SineSpawner
                 {
-                    Prefab = authoring.PrefabToSpawn
+                    Prefab = authoring.prefabToSpawn
                 });
             }
         }
