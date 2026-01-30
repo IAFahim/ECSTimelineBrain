@@ -2,7 +2,7 @@ using System;
 using GameVariable.Intent;
 using Unity.Entities;
 
-namespace IAFahim.Intent.ECS.Data
+namespace Intents.Intent.Data
 {
     [Serializable]
     public struct IntentComponent : IComponentData
