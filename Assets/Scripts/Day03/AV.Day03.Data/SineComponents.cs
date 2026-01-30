@@ -14,11 +14,6 @@ namespace AV.Day03.Data
         public float elapsedTime;
     }
 
-    public struct SineSpawner : IComponentData
-    {
-        public UnityObjectRef<GameObject> Prefab;
-    }
-
     public struct SineObjectRef : IComponentData
     {
         public UnityObjectRef<GameObject> Value;

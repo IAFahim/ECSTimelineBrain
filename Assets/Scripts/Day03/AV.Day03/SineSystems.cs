@@ -5,26 +5,6 @@ using UnityEngine;
 
 namespace AV.Day03
 {
-    public partial struct SineSpawnerSystem : ISystem
-    {
-        public void OnUpdate(ref SystemState state)
-        {
-            var ecb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>()
-                .CreateCommandBuffer(state.WorldUnmanaged);
-
-            foreach (var (spawner, entity) in SystemAPI.Query<RefRO<SineSpawner>>().WithNone<SineObjectRef>()
-                         .WithEntityAccess())
-            {
-                if (spawner.ValueRO.Prefab.Value == null) continue;
-                var instance = Object.Instantiate(spawner.ValueRO.Prefab.Value);
-                ecb.AddComponent(entity, new SineObjectRef
-                {
-                    Value = instance
-                });
-                SystemAPI.SetComponentEnabled<SineMovement>(entity, true);
-            }
-        }
-    }
 
     [WithAny(typeof(SineObjectRef))]
     public partial struct SineMoveSystem : ISystem

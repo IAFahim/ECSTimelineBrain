@@ -7,7 +7,7 @@ namespace AV.Day03.Authoring
 {
     public class SineAuthoring : MonoBehaviour
     {
-        public GameObject prefabToSpawn;
+        public GameObject target;
         public float speed = 2.0f;
         public float amplitude = 2.0f;
 
@@ -24,11 +24,10 @@ namespace AV.Day03.Authoring
                     originalPosition = float3.zero,
                     elapsedTime = 0,
                 });
-                SetComponentEnabled<SineMovement>(entity,false);
-
-                AddComponent(entity, new SineSpawner
+                
+                AddComponent(entity, new SineObjectRef
                 {
-                    Prefab = authoring.prefabToSpawn
+                    Value = authoring.target
                 });
             }
         }
