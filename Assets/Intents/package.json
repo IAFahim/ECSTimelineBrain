@@ -1,0 +1,56 @@
+{
+    "name": "com.iafahim.intents",
+    "version": "1.0.0",
+    "displayName": "IAFahim Intents System",
+    "description": "A high-performance Intent-based architecture system for Unity using Data-Oriented Design principles with full ECS support",
+    "unity": "2022.3",
+    "unityRelease": "0f1",
+    "dependencies": {
+        "com.unity.entities": "1.0.0",
+        "com.unity.collections": "2.1.0",
+        "com.unity.burst": "1.8.0"
+    },
+    "keywords": [
+        "intent",
+        "architecture",
+        "ecs",
+        "dod",
+        "data-oriented-design",
+        "gameplay",
+        "systems",
+        "performance"
+    ],
+    "author": {
+        "name": "IAFahim",
+        "email": "contact@iafahim.dev",
+        "url": "https://github.com/IAFahim"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/IAFahim/com.iafahim.intents.git",
+        "revision": ""
+    },
+    "samples": [
+        {
+            "displayName": "Basic Intents",
+            "description": "Fundamental intent system examples demonstrating MonoBehaviour integration with the 4-layer architecture pattern",
+            "path": "Samples~/Basic"
+        },
+        {
+            "displayName": "Advanced Intents",
+            "description": "Complex patterns including intent chaining, composition, priority queues, and state machine integration",
+            "path": "Samples~/Advanced"
+        },
+        {
+            "displayName": "ECS Intents",
+            "description": "High-performance Data-Oriented Design implementation using Unity Entities with Job System and Burst compiler support",
+            "path": "Samples~/ECS"
+        }
+    ],
+    "documentationUrl": "https://github.com/IAFahim/com.iafahim.intents/blob/main/README.md",
+    "changelogUrl": "https://github.com/IAFahim/com.iafahim.intents/blob/main/CHANGELOG.md",
+    "licensesUrl": "https://github.com/IAFahim/com.iafahim.intents/blob/main/LICENSE.md",
+    "relatedPackages": {
+        "com.iafahim.intents.tests": "1.0.0"
+    }
+}

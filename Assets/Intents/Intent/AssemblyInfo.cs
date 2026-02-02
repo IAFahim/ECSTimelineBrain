@@ -4,6 +4,6 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("intent.Debug")]
-[assembly: InternalsVisibleTo("intent.Editor")]
-[assembly: InternalsVisibleTo("intent.Tests")]
+[assembly: InternalsVisibleTo("Intent.Debug")]
+[assembly: InternalsVisibleTo("Intent.Editor")]
+[assembly: InternalsVisibleTo("Intent.Tests")]

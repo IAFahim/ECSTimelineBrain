@@ -1,15 +1,14 @@
 {
-    "name": "intent.Debug",
+    "name": "Intent.Editor",
     "rootNamespace": "",
     "references": [
-        "BovineLabs.Anchor",
         "BovineLabs.Core",
+        "BovineLabs.Core.Editor",
         "BovineLabs.Core.Extensions",
-        "intent",
-        "intent.Data",
-        "Unity.AppUI",
-        "Unity.AppUI.MVVM",
-        "Unity.AppUI.Navigation",
+        "BovineLabs.Core.Extensions.Editor",
+        "Intent",
+        "Intent.Authoring",
+        "Intent.Data",
         "Unity.Burst",
         "Unity.Collections",
         "Unity.Entities",
@@ -22,15 +21,15 @@
         "Unity.Transforms"
     ],
     "optionalUnityReferences": [],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
-    "defineConstraints": [
-        "UNITY_EDITOR || BL_DEBUG"
-    ],
+    "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false
 }
