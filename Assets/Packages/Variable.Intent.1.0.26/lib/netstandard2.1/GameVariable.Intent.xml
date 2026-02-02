@@ -117,5 +117,8 @@
                  ]]></code>
              </example>
         </member>
+        <member name="T:GameVariable.Intent.IntentState">
+            <inheritdoc />
+        </member>
     </members>
 </doc>
