@@ -1,0 +1,395 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Variable.Timer</name>
+    </assembly>
+    <members>
+        <member name="T:Variable.Timer.Cooldown">
+            <summary>
+                A countdown cooldown timer that tracks remaining time until ready.
+                Useful for ability cooldowns, attack intervals, and rate limiting.
+            </summary>
+            <remarks>
+                <para>The cooldown starts at 0 (ready) or Duration (on cooldown) and counts down to 0.</para>
+                <para>
+                    Use <see cref="M:Variable.Timer.TimerExtensions.TickAndCheckReady(Variable.Timer.Cooldown@,System.Single)" /> to reduce time and check readiness
+                    in one call.
+                </para>
+                <para>Use <see cref="M:Variable.Timer.TimerExtensions.Reset(Variable.Timer.Cooldown@)" /> to start the cooldown after using an ability.</para>
+            </remarks>
+            <example>
+                <code>
+            var dashCd = new Cooldown(3f);
+            
+            void Update(float dt) {
+                // TickAndCheckReady reduces time and returns true if ready
+                if (dashCd.TickAndCheckReady(dt) &amp;&amp; Input.Dash) {
+                    Dash();
+                    dashCd.Reset();
+                }
+            }
+            </code>
+            </example>
+        </member>
+        <member name="F:Variable.Timer.Cooldown.Current">
+            <summary>The current remaining cooldown time.</summary>
+        </member>
+        <member name="F:Variable.Timer.Cooldown.Duration">
+            <summary>The total cooldown duration.</summary>
+        </member>
+        <member name="M:Variable.Timer.Cooldown.#ctor(System.Single,System.Single)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Variable.Timer.Cooldown" /> struct.
+            </summary>
+            <param name="duration">The total cooldown duration in seconds.</param>
+            <param name="current">The initial remaining time. Defaults to 0 (ready). Clamped between 0 and duration.</param>
+        </member>
+        <member name="P:Variable.Timer.Cooldown.Variable#Core#IBoundedInfo#Min">
+            <inheritdoc />
+        </member>
+        <member name="P:Variable.Timer.Cooldown.Variable#Core#IBoundedInfo#Current">
+            <inheritdoc />
+        </member>
+        <member name="P:Variable.Timer.Cooldown.Variable#Core#IBoundedInfo#Max">
+            <inheritdoc />
+        </member>
+        <member name="P:Variable.Timer.Cooldown.Variable#Core#ICompletable#IsComplete">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Cooldown.ToString">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Cooldown.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Cooldown.Equals(Variable.Timer.Cooldown)">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Cooldown.CompareTo(Variable.Timer.Cooldown)">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Cooldown.CompareTo(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Cooldown.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Cooldown.op_Equality(Variable.Timer.Cooldown,Variable.Timer.Cooldown)">
+            <summary>Determines whether two cooldowns are equal.</summary>
+            <param name="left">The first cooldown.</param>
+            <param name="right">The second cooldown.</param>
+            <returns>True if equal.</returns>
+        </member>
+        <member name="M:Variable.Timer.Cooldown.op_Inequality(Variable.Timer.Cooldown,Variable.Timer.Cooldown)">
+            <summary>Determines whether two cooldowns are not equal.</summary>
+            <param name="left">The first cooldown.</param>
+            <param name="right">The second cooldown.</param>
+            <returns>True if not equal.</returns>
+        </member>
+        <member name="T:Variable.Timer.Timer">
+            <summary>
+                A countdown timer that tracks elapsed time from 0 up to a target duration.
+                Useful for casting times, loading bars, buffs, and count-up timers.
+            </summary>
+            <remarks>
+                <para>The timer starts at 0 and counts up to <see cref="F:Variable.Timer.Timer.Duration" />.</para>
+                <para>
+                    Use <see cref="M:Variable.Timer.TimerExtensions.TickAndCheckComplete(Variable.Timer.Timer@,System.Single)" /> to advance and check completion in
+                    one call.
+                </para>
+                <para>Check <see cref="M:Variable.Timer.TimerExtensions.IsFull(Variable.Timer.Timer)" /> to determine if the timer has reached the duration.</para>
+            </remarks>
+            <example>
+                <code>
+            var castTime = new Timer(2.0f);
+            
+            void Update(float dt) {
+                // TickAndCheckComplete returns true when Current >= Duration
+                if (castTime.TickAndCheckComplete(dt)) {
+                    FinishCast();
+                    castTime.Reset();
+                }
+            }
+            </code>
+            </example>
+        </member>
+        <member name="F:Variable.Timer.Timer.Current">
+            <summary>The current elapsed time.</summary>
+        </member>
+        <member name="F:Variable.Timer.Timer.Duration">
+            <summary>The target duration.</summary>
+        </member>
+        <member name="M:Variable.Timer.Timer.#ctor(System.Single,System.Single)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Variable.Timer.Timer" /> struct.
+            </summary>
+            <param name="duration">The target duration in seconds.</param>
+            <param name="current">The initial elapsed time. Defaults to 0. Clamped between 0 and duration.</param>
+        </member>
+        <member name="P:Variable.Timer.Timer.Variable#Core#IBoundedInfo#Min">
+            <inheritdoc />
+        </member>
+        <member name="P:Variable.Timer.Timer.Variable#Core#IBoundedInfo#Current">
+            <inheritdoc />
+        </member>
+        <member name="P:Variable.Timer.Timer.Variable#Core#IBoundedInfo#Max">
+            <inheritdoc />
+        </member>
+        <member name="P:Variable.Timer.Timer.Variable#Core#ICompletable#IsComplete">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Timer.ToString">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Timer.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Timer.Equals(Variable.Timer.Timer)">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Timer.CompareTo(Variable.Timer.Timer)">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Timer.CompareTo(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Timer.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:Variable.Timer.Timer.op_Equality(Variable.Timer.Timer,Variable.Timer.Timer)">
+            <summary>Determines whether two timers are equal.</summary>
+            <param name="left">The first timer.</param>
+            <param name="right">The second timer.</param>
+            <returns>True if equal.</returns>
+        </member>
+        <member name="M:Variable.Timer.Timer.op_Inequality(Variable.Timer.Timer,Variable.Timer.Timer)">
+            <summary>Determines whether two timers are not equal.</summary>
+            <param name="left">The first timer.</param>
+            <param name="right">The second timer.</param>
+            <returns>True if not equal.</returns>
+        </member>
+        <member name="T:Variable.Timer.TimerExtensions">
+            <summary>
+                Extension methods for <see cref="T:Variable.Timer.Timer" /> and <see cref="T:Variable.Timer.Cooldown" />.
+                These methods bridge from structs to primitive-only logic.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.TickAndCheckComplete(Variable.Timer.Timer@,System.Single)">
+            <summary>
+                Advances the timer by delta time and checks if it completed.
+            </summary>
+            <param name="self">The timer to advance.</param>
+            <param name="deltaTime">The time elapsed since the last tick.</param>
+            <returns>True if the timer COMPLETED (Current &gt;= Duration); false if still running.</returns>
+            <remarks>Use this when you need to detect completion, e.g., for spell casts or loading bars.</remarks>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.Tick(Variable.Timer.Timer@,System.Single)">
+            <summary>
+                Advances the timer by delta time without returning completion status.
+            </summary>
+            <param name="self">The timer to advance.</param>
+            <param name="deltaTime">The time elapsed since the last tick.</param>
+            <remarks>Use this for "fire and forget" patterns where you don't need to check completion.</remarks>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.TickAndCheckComplete(Variable.Timer.Timer@,System.Single,System.Single@)">
+            <summary>
+                Advances the timer and captures overflow time beyond the duration.
+            </summary>
+            <param name="self">The timer to advance.</param>
+            <param name="deltaTime">The time elapsed since the last tick.</param>
+            <param name="overflow">The amount of time that exceeded the duration (useful for chaining timers).</param>
+            <returns>True if the timer COMPLETED (Current &gt;= Duration); false if still running.</returns>
+            <remarks>Use overflow to start the next timer with remaining time for seamless chaining.</remarks>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.Reset(Variable.Timer.Timer@)">
+            <summary>
+                Resets the timer elapsed time to 0.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.Reset(Variable.Timer.Timer@,System.Single)">
+            <summary>
+                Resets the timer and applies an overflow offset.
+            </summary>
+            <param name="self">The timer to reset.</param>
+            <param name="overflow">The amount of time to start the timer with (clamped to duration).</param>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.Finish(Variable.Timer.Timer@)">
+            <summary>
+                Completes the timer immediately by setting current to duration.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.IsFull(Variable.Timer.Timer)">
+            <summary>
+                Returns true when the timer has reached or exceeded its duration.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.IsEmpty(Variable.Timer.Timer)">
+            <summary>
+                Returns true when the timer is at zero (not yet started).
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.GetRatio(Variable.Timer.Timer)">
+            <summary>
+                Gets the progress of the timer as a ratio from 0 (not started) to 1 (complete).
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.TickAndCheckReady(Variable.Timer.Cooldown@,System.Single)">
+            <summary>
+                Advances the cooldown by delta time and checks if it's ready.
+            </summary>
+            <param name="self">The cooldown to advance.</param>
+            <param name="deltaTime">The time elapsed since the last tick.</param>
+            <returns>True if the cooldown is READY (Current &lt;= 0); false if still cooling down.</returns>
+            <remarks>Use this to check if an ability can be used again.</remarks>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.Tick(Variable.Timer.Cooldown@,System.Single)">
+            <summary>
+                Advances the cooldown by delta time without returning ready status.
+            </summary>
+            <param name="self">The cooldown to advance.</param>
+            <param name="deltaTime">The time elapsed since the last tick.</param>
+            <remarks>Use this for "fire and forget" patterns where you don't need to check if ready.</remarks>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.TickAndCheckReady(Variable.Timer.Cooldown@,System.Single,System.Single@)">
+            <summary>
+                Advances the cooldown and captures overflow time beyond zero.
+            </summary>
+            <param name="self">The cooldown to advance.</param>
+            <param name="deltaTime">The time elapsed since the last tick.</param>
+            <param name="overflow">The amount of time that exceeded zero (useful for ability chains).</param>
+            <returns>True if the cooldown is READY (Current &lt;= 0); false if still cooling down.</returns>
+            <remarks>Use overflow to reduce the next cooldown start time for fluid ability rotations.</remarks>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.Reset(Variable.Timer.Cooldown@)">
+            <summary>
+                Starts the cooldown by setting Current to Duration.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.Reset(Variable.Timer.Cooldown@,System.Single)">
+            <summary>
+                Starts the cooldown, reducing the start time by the provided overflow.
+            </summary>
+            <param name="self">The cooldown to reset.</param>
+            <param name="overflow">Excess time to subtract from the new duration.</param>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.Finish(Variable.Timer.Cooldown@)">
+            <summary>
+                Finishes the cooldown immediately by setting Current to 0.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.IsReady(Variable.Timer.Cooldown)">
+            <summary>
+                Returns true when the cooldown is ready (Current &lt;= 0).
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.IsFull(Variable.Timer.Cooldown)">
+            <summary>
+                Returns true when the cooldown is ready. Alias for IsReady.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.IsEmpty(Variable.Timer.Cooldown)">
+            <summary>
+                Returns true when the cooldown is at its maximum duration (just started).
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.IsOnCooldown(Variable.Timer.Cooldown)">
+            <summary>
+                Returns true when the cooldown is active (not yet ready).
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.GetRatio(Variable.Timer.Cooldown)">
+            <summary>
+                Gets the ratio of remaining time.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerExtensions.GetProgress(Variable.Timer.Cooldown)">
+            <summary>
+                Gets the progress of the cooldown as a ratio from 0 (just started) to 1 (ready).
+            </summary>
+        </member>
+        <member name="T:Variable.Timer.TimerLogic">
+            <summary>
+                Pure logic for timer operations.
+                All methods operate on primitives only - NO STRUCTS.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerLogic.Clamp(System.Single@,System.Single@,System.Single@,System.Single@)">
+            <summary>
+                Clamps a value between min and max.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerLogic.IsFull(System.Single@,System.Single@)">
+            <summary>
+                Checks if a value is close enough to max to be considered full.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerLogic.IsEmpty(System.Single@)">
+            <summary>
+                Checks if a value is close enough to min (0) to be considered empty.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerLogic.GetRatio(System.Single@,System.Single@,System.Double@)">
+            <summary>
+                Calculates the ratio of current vs duration.
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerLogic.GetInverseRatio(System.Single@,System.Single@,System.Single@)">
+            <summary>
+                Calculates the inverse ratio (1 - ratio).
+            </summary>
+        </member>
+        <member name="M:Variable.Timer.TimerLogic.TickAndCheckComplete(System.Single@,System.Single@,System.Single@)">
+            <summary>
+                Advances a timer by delta time.
+            </summary>
+            <param name="current">The current elapsed time.</param>
+            <param name="duration">The target duration.</param>
+            <param name="deltaTime">The time to advance.</param>
+            <returns>True if the timer COMPLETED (reached or exceeded duration); false if still running.</returns>
+        </member>
+        <member name="M:Variable.Timer.TimerLogic.TickAndCheckComplete(System.Single@,System.Single@,System.Single@,System.Single@)">
+            <summary>
+                Advances a timer and outputs overflow time.
+            </summary>
+            <param name="current">The current elapsed time.</param>
+            <param name="duration">The target duration.</param>
+            <param name="deltaTime">The time to advance.</param>
+            <param name="overflow">The amount of time that exceeded the duration.</param>
+            <returns>True if the timer COMPLETED (reached or exceeded duration); false if still running.</returns>
+        </member>
+        <member name="M:Variable.Timer.TimerLogic.TickAndCheckReady(System.Single@,System.Single@)">
+            <summary>
+                Advances a cooldown by delta time (counts down).
+            </summary>
+            <param name="current">The current remaining time.</param>
+            <param name="deltaTime">The time to advance.</param>
+            <returns>True if the cooldown is READY (reached or passed zero); false if still cooling down.</returns>
+        </member>
+        <member name="M:Variable.Timer.TimerLogic.TickAndCheckReady(System.Single@,System.Single@,System.Single@)">
+            <summary>
+                Advances a cooldown and outputs overflow time.
+            </summary>
+            <param name="current">The current remaining time.</param>
+            <param name="deltaTime">The time to advance.</param>
+            <param name="overflow">The amount of time that exceeded zero.</param>
+            <returns>True if the cooldown is READY (reached or passed zero); false if still cooling down.</returns>
+        </member>
+        <member name="M:Variable.Timer.TimerLogic.Reset(System.Single@,System.Single@)">
+            <summary>
+                Resets a value to a target.
+            </summary>
+            <param name="current">The current value to reset.</param>
+            <param name="targetValue">The target value.</param>
+        </member>
+        <member name="M:Variable.Timer.TimerLogic.ResetWithOverflow(System.Single@,System.Single@,System.Single@,System.Single@,System.Single@)">
+            <summary>
+                Resets a value with overflow adjustment.
+            </summary>
+            <param name="current">The current value to reset.</param>
+            <param name="targetValue">The target value.</param>
+            <param name="overflow">The overflow to apply.</param>
+            <param name="clampMin">Minimum clamp value.</param>
+            <param name="clampMax">Maximum clamp value.</param>
+        </member>
+    </members>
+</doc>

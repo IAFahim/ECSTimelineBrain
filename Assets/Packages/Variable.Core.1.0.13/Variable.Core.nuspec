@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Variable.Core</id>
+    <version>1.0.13</version>
+    <authors>Md Ishtiaq Ahamed Fahim</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/iafahim/GameVariable</projectUrl>
+    <description>Core interfaces and types for the GameVariable ecosystem.</description>
+    <tags>game variable core gamedev unity</tags>
+    <repository type="git" url="https://github.com/iafahim/GameVariable" commit="3c0b503a3fc49dfd67aad9e0dfe8ce666b69c9a6" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.1" />
+    </dependencies>
+  </metadata>
+</package>

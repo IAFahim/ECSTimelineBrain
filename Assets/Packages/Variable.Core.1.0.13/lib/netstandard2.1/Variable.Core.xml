@@ -1,0 +1,240 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Variable.Core</name>
+    </assembly>
+    <members>
+        <member name="T:Variable.Core.BoundedInfoExtensions">
+            <summary>
+                Extension methods for <see cref="T:Variable.Core.IBoundedInfo" /> providing common logic operations.
+            </summary>
+        </member>
+        <member name="M:Variable.Core.BoundedInfoExtensions.IsFull``1(``0,System.Single)">
+            <summary>
+                Determines whether the current value has reached its maximum bound.
+            </summary>
+            <param name="bounded">The bounded value to check.</param>
+            <param name="tolerance">
+                Tolerance for floating point comparison. Defaults to
+                <see cref="F:Variable.Core.MathConstants.DefaultTolerance" />.
+            </param>
+            <returns>
+                <c>true</c> if the current value is equal to Max; otherwise, <c>false</c>.
+            </returns>
+            <remarks>
+                This method is generic to avoid boxing when called on value types.
+            </remarks>
+        </member>
+        <member name="M:Variable.Core.BoundedInfoExtensions.IsEmpty``1(``0,System.Single)">
+            <summary>
+                Determines whether the current value has reached its minimum bound.
+            </summary>
+            <param name="bounded">The bounded value to check.</param>
+            <param name="tolerance">
+                Tolerance for floating point comparison. Defaults to
+                <see cref="F:Variable.Core.MathConstants.DefaultTolerance" />.
+            </param>
+            <returns>
+                <c>true</c> if the current value is equal to Min; otherwise, <c>false</c>.
+            </returns>
+            <remarks>
+                This method is generic to avoid boxing when called on value types.
+            </remarks>
+        </member>
+        <member name="M:Variable.Core.BoundedInfoExtensions.GetRatio``1(``0)">
+            <summary>
+                Gets the normalized ratio of the current value within the bounded range.
+            </summary>
+            <param name="bounded">The bounded value to query.</param>
+            <returns>
+                A value between 0.0 and 1.0 representing how full the range is, where:
+                <list type="bullet">
+                    <item>
+                        <description>0.0 indicates the minimum bound</description>
+                    </item>
+                    <item>
+                        <description>1.0 indicates the maximum bound</description>
+                    </item>
+                </list>
+                Returns 0.0 if Max equals Min to avoid division by zero.
+            </returns>
+            <remarks>
+                This method is generic to avoid boxing when called on value types.
+            </remarks>
+        </member>
+        <member name="T:Variable.Core.CoreMath">
+            <summary>
+                Core mathematical operations shared across all Variable packages.
+                Provides Burst-compatible primitive-only methods to eliminate code duplication.
+            </summary>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Clamp(System.Single,System.Single,System.Single,System.Single@)">
+            <summary>Clamps a float value between min and max.</summary>
+            <param name="value">The value to clamp.</param>
+            <param name="min">The minimum value.</param>
+            <param name="max">The maximum value.</param>
+            <param name="result">The clamped value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Clamp(System.Int32,System.Int32,System.Int32,System.Int32@)">
+            <summary>Clamps an int value between min and max.</summary>
+            <param name="value">The value to clamp.</param>
+            <param name="min">The minimum value.</param>
+            <param name="max">The maximum value.</param>
+            <param name="result">The clamped value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Clamp(System.Int64,System.Int64,System.Int64,System.Int64@)">
+            <summary>Clamps a long value between min and max.</summary>
+            <param name="value">The value to clamp.</param>
+            <param name="min">The minimum value.</param>
+            <param name="max">The maximum value.</param>
+            <param name="result">The clamped value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Clamp(System.Byte,System.Byte,System.Byte@)">
+            <summary>Clamps a byte value to a maximum.</summary>
+            <param name="value">The value to clamp.</param>
+            <param name="max">The maximum value.</param>
+            <param name="result">The clamped value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Clamp(System.Int32,System.Byte,System.Byte@)">
+            <summary>Clamps an int value to a byte range [0, max].</summary>
+            <param name="value">The value to clamp.</param>
+            <param name="max">The maximum value.</param>
+            <param name="result">The clamped byte value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Clamp(System.Double,System.Double,System.Double,System.Double@)">
+            <summary>Clamps a double value between min and max.</summary>
+            <param name="value">The value to clamp.</param>
+            <param name="min">The minimum value.</param>
+            <param name="max">The maximum value.</param>
+            <param name="result">The clamped value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Min(System.Single,System.Single,System.Single@)">
+            <summary>Returns the smaller of two float values.</summary>
+            <param name="a">First value.</param>
+            <param name="b">Second value.</param>
+            <param name="result">The smaller value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Min(System.Int32,System.Int32,System.Int32@)">
+            <summary>Returns the smaller of two int values.</summary>
+            <param name="a">First value.</param>
+            <param name="b">Second value.</param>
+            <param name="result">The smaller value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Min(System.Int64,System.Int64,System.Int64@)">
+            <summary>Returns the smaller of two long values.</summary>
+            <param name="a">First value.</param>
+            <param name="b">Second value.</param>
+            <param name="result">The smaller value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Max(System.Single,System.Single,System.Single@)">
+            <summary>Returns the larger of two float values.</summary>
+            <param name="a">First value.</param>
+            <param name="b">Second value.</param>
+            <param name="result">The larger value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Max(System.Int32,System.Int32,System.Int32@)">
+            <summary>Returns the larger of two int values.</summary>
+            <param name="a">First value.</param>
+            <param name="b">Second value.</param>
+            <param name="result">The larger value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Max(System.Int64,System.Int64,System.Int64@)">
+            <summary>Returns the larger of two long values.</summary>
+            <param name="a">First value.</param>
+            <param name="b">Second value.</param>
+            <param name="result">The larger value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Abs(System.Single,System.Single@)">
+            <summary>Returns the absolute value of a float.</summary>
+            <param name="value">The value.</param>
+            <param name="result">The absolute value.</param>
+        </member>
+        <member name="M:Variable.Core.CoreMath.Abs(System.Int32,System.Int32@)">
+            <summary>Returns the absolute value of an int.</summary>
+            <param name="value">The value.</param>
+            <param name="result">The absolute value.</param>
+        </member>
+        <member name="T:Variable.Core.IBoundedInfo">
+            <summary>
+                Represents a bounded numeric value constrained by a minimum and maximum range.
+                This interface is intended primarily for editor tooling and UI visualization.
+            </summary>
+            <remarks>
+                This interface is implemented by all bounded types in the GameVariable ecosystem,
+                including <c>BoundedFloat</c>, <c>BoundedInt</c>, <c>Timer</c>, <c>Cooldown</c>, and similar constructs.
+                <para />
+                Implementations are expected to guarantee that the current value always lies within
+                the inclusive range defined by <see cref="P:Variable.Core.IBoundedInfo.Min" /> and <see cref="P:Variable.Core.IBoundedInfo.Max" />.
+                <para />
+                For logic operations like IsFull(), IsEmpty(), and GetRatio(), use the extension methods
+                in <see cref="T:Variable.Core.BoundedInfoExtensions" />.
+            </remarks>
+        </member>
+        <member name="P:Variable.Core.IBoundedInfo.Min">
+            <summary>
+                Gets the minimum bound of the range.
+            </summary>
+        </member>
+        <member name="P:Variable.Core.IBoundedInfo.Current">
+            <summary>
+                Gets the current value within the bounded range.
+            </summary>
+        </member>
+        <member name="P:Variable.Core.IBoundedInfo.Max">
+            <summary>
+                Gets the maximum bound of the range.
+            </summary>
+        </member>
+        <member name="T:Variable.Core.ICompletable">
+            <summary>
+                Represents a time-based value that can be ticked and checked for completion.
+                This interface unifies Timer (count-up) and Cooldown (count-down) behaviors.
+            </summary>
+            <remarks>
+                <para>
+                    Implementations of this interface represent temporal states that progress over time
+                    and eventually reach a completion state (Timer reaches Duration, Cooldown reaches 0).
+                </para>
+                <para>
+                    For Timer: IsComplete returns true when Current >= Duration (counting UP).
+                </para>
+                <para>
+                    For Cooldown: IsComplete returns true when Current &lt;= 0 (counting DOWN).
+                </para>
+            </remarks>
+        </member>
+        <member name="P:Variable.Core.ICompletable.IsComplete">
+            <summary>
+                Gets whether the temporal state has reached completion.
+            </summary>
+            <returns>
+                <c>true</c> if the timer has completed or the cooldown is ready; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="T:Variable.Core.MathConstants">
+            <summary>
+                Shared constants for mathematical operations and logic across the library.
+            </summary>
+        </member>
+        <member name="F:Variable.Core.MathConstants.DefaultTolerance">
+            <summary>
+                The default tolerance constant (immutable).
+                Use this when you need a compile-time constant.
+            </summary>
+        </member>
+        <member name="F:Variable.Core.MathConstants.Tolerance">
+            <summary>
+                The default tolerance for floating-point comparisons to handle precision errors.
+                Used to snap values to min/max and determine equality.
+                This value is used across all packages for consistency.
+            </summary>
+            <remarks>
+                For most game scenarios, 0.001f (1/1000th) is sufficient.
+                Override this value at runtime if your application requires different precision:
+                - Higher precision: Use 0.0001f or smaller
+                - Lower precision/performance: Use 0.01f
+                - Large-scale values: Consider scaling tolerance proportionally
+            </remarks>
+        </member>
+    </members>
+</doc>

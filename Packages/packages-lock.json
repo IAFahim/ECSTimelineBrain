@@ -10,6 +10,15 @@
       },
       "hash": "c7e219e83dc386307116e24cc494c4eb6a8ab3f4"
     },
+    "com.av.eases": {
+      "version": "https://github.com/IAFahim/AV.Eases.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.mathematics": "1.2.6"
+      },
+      "hash": "70c36b1851c728076d88b3ccc26ccefe8dade2a3"
+    },
     "com.bovinelabs.core": {
       "version": "https://gitlab.com/tertle/com.bovinelabs.core.git#1.6.0",
       "depth": 0,
