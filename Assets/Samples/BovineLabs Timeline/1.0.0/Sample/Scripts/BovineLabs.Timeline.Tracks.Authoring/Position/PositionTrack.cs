@@ -2,8 +2,6 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
-using BovineLabs.Timeline.Data;
-
 namespace BovineLabs.Timeline.Authoring
 {
     using System;

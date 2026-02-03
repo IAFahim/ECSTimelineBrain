@@ -1,8 +1,11 @@
-﻿using BovineLabs.Core.Jobs;
+﻿// <copyright file="PositionTrackSystem.cs" company="BovineLabs">
+//     Copyright (c) BovineLabs. All rights reserved.
+// </copyright>
 
 namespace BovineLabs.Timeline.Tracks
 {
     using BovineLabs.Core.Collections;
+    using BovineLabs.Core.Jobs;
     using BovineLabs.Timeline;
     using BovineLabs.Timeline.Data;
     using BovineLabs.Timeline.Tracks.Data;
@@ -17,66 +20,55 @@ namespace BovineLabs.Timeline.Tracks
     {
         private TrackBlendImpl<float3, PositionAnimated> impl;
 
+        /// <inheritdoc/>
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
             this.impl.OnCreate(ref state);
         }
 
+        /// <inheritdoc/>
         [BurstCompile]
         public void OnDestroy(ref SystemState state)
         {
             this.impl.OnDestroy(ref state);
         }
 
+        /// <inheritdoc/>
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var localTransforms = SystemAPI.GetComponentLookup<LocalTransform>(false); // ReadWrite for Reset/Write
-            var readOnlyTransforms = SystemAPI.GetComponentLookup<LocalTransform>(true); // ReadOnly for Snapshotting
+            var localTransforms = SystemAPI.GetComponentLookup<LocalTransform>();
 
-            // 1. Handle Track Reset (Restore position when timeline stops)
-            new ActivateResetJob { LocalTransforms = readOnlyTransforms }.ScheduleParallel();
+            // TODO all these could be run in parallel
+            new ActivateResetJob { LocalTransforms = localTransforms }.ScheduleParallel();
             new DeactivateResetJob { LocalTransforms = localTransforms }.Schedule();
+            new PositionOffsetJob { LocalTransforms = localTransforms }.ScheduleParallel();
+            new PositionTargetJob { LocalTransforms = localTransforms }.ScheduleParallel();
+            new MoveToStartingPositionClipJob { LocalTransforms = localTransforms }.ScheduleParallel();
 
-            // 2. Snapshot positions when clips start
-            // This fixes the "flying away" bug by grabbing the base position only once per clip activation
-            new CaptureSnapshotJob
-            {
-                LocalTransforms = readOnlyTransforms
-            }.ScheduleParallel();
-
-            // 3. Update 'PositionAnimated' values based on logic
-            new CalculatePositionOffsetJob().ScheduleParallel();
-            new CalculatePositionTargetJob { LocalTransforms = readOnlyTransforms }.ScheduleParallel();
-            new CalculateMoveToStartJob().ScheduleParallel();
-
-            // 4. Blend all the clips together
             var blendData = this.impl.Update(ref state);
 
-            // 5. Write final result to the entity
-            state.Dependency = new WritePositionJob 
-            { 
-                BlendData = blendData, 
-                LocalTransforms = localTransforms 
-            }.ScheduleParallel(blendData, 64, state.Dependency);
+            state.Dependency = new WritePositionJob { BlendData = blendData, LocalTransforms = localTransforms }
+                .ScheduleParallel(blendData, 64, state.Dependency);
         }
-
-        // --- JOBS ---
 
         [BurstCompile]
         [WithAll(typeof(TimelineActive))]
         [WithNone(typeof(TimelineActivePrevious))]
         private partial struct ActivateResetJob : IJobEntity
         {
-            [ReadOnly] public ComponentLookup<LocalTransform> LocalTransforms;
+            [ReadOnly]
+            public ComponentLookup<LocalTransform> LocalTransforms;
 
             private void Execute(ref PositionResetOnDeactivate positionResetOnDeactivate, in TrackBinding trackBinding)
             {
-                if (this.LocalTransforms.TryGetComponent(trackBinding.Value, out var bindingTransform))
+                if (!this.LocalTransforms.TryGetComponent(trackBinding.Value, out var bindingTransform))
                 {
-                    positionResetOnDeactivate.Value = bindingTransform.Position;
+                    return;
                 }
+
+                positionResetOnDeactivate.Value = bindingTransform.Position;
             }
         }
 
@@ -90,53 +82,47 @@ namespace BovineLabs.Timeline.Tracks
             private void Execute(in PositionResetOnDeactivate positionResetOnDeactivate, in TrackBinding trackBinding)
             {
                 var localTransform = this.LocalTransforms.GetRefRWOptional(trackBinding.Value);
-                if (localTransform.IsValid)
+                if (!localTransform.IsValid)
                 {
-                    localTransform.ValueRW.Position = positionResetOnDeactivate.Value;
+                    return;
                 }
+
+                localTransform.ValueRW.Position = positionResetOnDeactivate.Value;
             }
         }
 
-        // Runs when a clip becomes active. Captures the current position of the bound object.
         [BurstCompile]
-        [WithAll(typeof(ClipActive))]
-        [WithNone(typeof(ClipActivePrevious))] 
-        private partial struct CaptureSnapshotJob : IJobEntity
+        [WithAll(typeof(TimelineActive))]
+        [WithNone(typeof(TimelineActivePrevious))] // we only update this once and cache it
+        private partial struct PositionOffsetJob : IJobEntity
         {
-            [ReadOnly] public ComponentLookup<LocalTransform> LocalTransforms;
+            [ReadOnly]
+            public ComponentLookup<LocalTransform> LocalTransforms;
 
-            private void Execute(ref PositionClipSnapshot snapshot, in TrackBinding trackBinding)
+            private void Execute(ref PositionAnimated positionAnimated, in PositionOffset positionOffset, in TrackBinding trackBinding)
             {
-                if (this.LocalTransforms.TryGetComponent(trackBinding.Value, out var bindingTransform))
+                if (!this.LocalTransforms.TryGetComponent(trackBinding.Value, out var bindingTransform))
                 {
-                    snapshot.Value = bindingTransform.Position;
-                    snapshot.IsCaptured = true;
+                    return;
                 }
+
+                var offset = positionOffset.Type switch
+                {
+                    OffsetType.World => positionOffset.Offset,
+                    OffsetType.Local => bindingTransform.TransformPoint(positionOffset.Offset),
+                    _ => float3.zero,
+                };
+
+                positionAnimated.Value = bindingTransform.Position + offset;
             }
         }
 
-        // Updates the Animated value based on the Snapshot + Offset
         [BurstCompile]
-        [WithAll(typeof(ClipActive))]
-        private partial struct CalculatePositionOffsetJob : IJobEntity
+        [WithAll(typeof(TimelineActive))]
+        private partial struct PositionTargetJob : IJobEntity
         {
-            private void Execute(ref PositionAnimated positionAnimated, in PositionOffset positionOffset, in PositionClipSnapshot snapshot)
-            {
-                if (!snapshot.IsCaptured) return;
-
-                // Simple additive offset. 
-                // Note: If you want Local offset (relative to rotation), you'd need to snapshot rotation too.
-                // Assuming World/Simple translation for this sample.
-                positionAnimated.Value = snapshot.Value + positionOffset.Offset;
-            }
-        }
-
-        // Updates the Animated value based on an external Target Entity
-        [BurstCompile]
-        [WithAll(typeof(ClipActive))]
-        private partial struct CalculatePositionTargetJob : IJobEntity
-        {
-            [ReadOnly] public ComponentLookup<LocalTransform> LocalTransforms;
+            [ReadOnly]
+            public ComponentLookup<LocalTransform> LocalTransforms;
 
             private void Execute(ref PositionAnimated positionAnimated, in PositionTarget positionTarget)
             {
@@ -145,40 +131,49 @@ namespace BovineLabs.Timeline.Tracks
                     return;
                 }
 
-                if (positionTarget.Type == OffsetType.Local)
+                var offset = positionTarget.Type switch
                 {
-                    positionAnimated.Value = targetTransform.TransformPoint(positionTarget.Offset);
-                }
-                else
-                {
-                    positionAnimated.Value = targetTransform.Position + positionTarget.Offset;
-                }
+                    OffsetType.World => positionTarget.Offset,
+                    OffsetType.Local => targetTransform.TransformPoint(positionTarget.Offset),
+                    _ => float3.zero,
+                };
+
+                positionAnimated.Value = targetTransform.Position + offset;
             }
         }
 
-        // For "Start Clip", just hold the value captured in the snapshot
         [BurstCompile]
-        [WithAll(typeof(ClipActive), typeof(PositionMoveToStart))]
-        private partial struct CalculateMoveToStartJob : IJobEntity
+        [WithAll(typeof(TimelineActive))]
+        [WithNone(typeof(TimelineActivePrevious))] // we only update this once and cache it
+        [WithAll(typeof(PositionMoveToStart))]
+        private partial struct MoveToStartingPositionClipJob : IJobEntity
         {
-            private void Execute(ref PositionAnimated positionAnimated, in PositionClipSnapshot snapshot)
+            [ReadOnly]
+            public ComponentLookup<LocalTransform> LocalTransforms;
+
+            private void Execute(ref PositionAnimated positionAnimated, in TrackBinding trackBinding)
             {
-                if (snapshot.IsCaptured)
+                if (!this.LocalTransforms.TryGetComponent(trackBinding.Value, out var bindingTransform))
                 {
-                    positionAnimated.Value = snapshot.Value;
+                    return;
                 }
+
+                positionAnimated.Value = bindingTransform.Position;
             }
         }
 
         [BurstCompile]
         private struct WritePositionJob : IJobParallelHashMapDefer
         {
-            [ReadOnly] public NativeParallelHashMap<Entity, MixData<float3>>.ReadOnly BlendData;
-            [NativeDisableParallelForRestriction] public ComponentLookup<LocalTransform> LocalTransforms;
+            [ReadOnly]
+            public NativeParallelHashMap<Entity, MixData<float3>>.ReadOnly BlendData;
+
+            [NativeDisableParallelForRestriction]
+            public ComponentLookup<LocalTransform> LocalTransforms;
 
             public void ExecuteNext(int entryIndex, int jobIndex)
             {
-                this.Read(this.BlendData, entryIndex, out var entity, out var mixData);
+                this.Read(this.BlendData, entryIndex, out var entity, out var target);
 
                 var lt = this.LocalTransforms.GetRefRWOptional(entity);
                 if (!lt.IsValid)
@@ -186,9 +181,7 @@ namespace BovineLabs.Timeline.Tracks
                     return;
                 }
 
-                // If weights sum < 1 (e.g. gap in timeline), blend towards current position (MixData default)
-                // or keep current position.
-                lt.ValueRW.Position = JobHelpers.Blend<float3, Float3Mixer>(ref mixData, lt.ValueRO.Position);
+                lt.ValueRW.Position = JobHelpers.Blend<float3, Float3Mixer>(ref target, lt.ValueRO.Position);
             }
         }
     }

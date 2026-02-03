@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: ReactionSettings
   m_EditorClassIdentifier: BovineLabs.Reaction.Authoring::BovineLabs.Reaction.Authoring.Core.ReactionSettings
   conditionEvents: []
-  enableables: []
+  enableables:
+  - {fileID: 11400000, guid: 8c93e79e6fc897c4f8e3d9f070172136, type: 2}

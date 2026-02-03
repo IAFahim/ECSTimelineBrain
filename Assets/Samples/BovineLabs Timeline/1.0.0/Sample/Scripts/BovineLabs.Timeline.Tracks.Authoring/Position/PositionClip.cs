@@ -1,4 +1,8 @@
-﻿namespace BovineLabs.Timeline.Authoring
+﻿// <copyright file="PositionClip.cs" company="BovineLabs">
+//     Copyright (c) BovineLabs. All rights reserved.
+// </copyright>
+
+namespace BovineLabs.Timeline.Authoring
 {
     using BovineLabs.Timeline.Tracks.Data;
     using Unity.Entities;
@@ -16,26 +20,20 @@
 
         public ClipCaps clipCaps => ClipCaps.Blending;
 
+        /// <inheritdoc/>
         public override void Bake(Entity clipEntity, BakingContext context)
         {
-            // The value we will animate TO
+            // This value is used for PositionType.World, everything else will override it before use
             context.Baker.AddComponent(clipEntity, new PositionAnimated { Value = this.Position });
-            
-            // Ensure the object being moved allows dynamic transform changes
             context.Baker.AddTransformUsageFlags(context.Binding!.Target, TransformUsageFlags.Dynamic);
 
             switch (this.Type)
             {
                 case PositionType.World:
-                    // Value is already set to 'this.Position' above.
                     break;
-                    
                 case PositionType.Offset:
                     context.Baker.AddComponent(clipEntity, new PositionOffset { Type = this.OffsetType, Offset = this.Offset });
-                    // We need to snapshot the position when the clip starts to apply the offset relative to that start
-                    context.Baker.AddComponent<PositionClipSnapshot>(clipEntity);
                     break;
-                    
                 case PositionType.Target:
                     var target = context.Baker.GetEntity(this.Target, TransformUsageFlags.Dynamic);
                     context.Baker.AddComponent(clipEntity, new PositionTarget { Target = target, Type = this.OffsetType, Offset = this.Offset });
