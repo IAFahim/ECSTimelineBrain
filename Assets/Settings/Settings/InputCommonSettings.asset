@@ -18,7 +18,7 @@ MonoBehaviour:
   - UI
   menuEnabled:
   - PlayerInput
-  cursorPosition: {fileID: 0}
+  cursorPosition: {fileID: -5630151704836100654, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   settings: []
   debugSettings:
   - rid: 4155066633111207936
@@ -29,5 +29,5 @@ MonoBehaviour:
       type: {class: InputDebug/Settings, ns: BovineLabs.Bridge.Input.Debug, asm: BovineLabs.Bridge.Input.Debug}
       data:
         Name: InputDebug
-        TimeScaleDouble: {fileID: 0}
-        TimeScaleHalve: {fileID: 0}
+        TimeScaleDouble: {fileID: 7476244043514120974, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+        TimeScaleHalve: {fileID: 2411907206095950430, guid: 052faaac586de48259a63d0c4782560b, type: 3}
