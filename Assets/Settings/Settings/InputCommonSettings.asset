@@ -16,7 +16,8 @@ MonoBehaviour:
   defaultEnabled:
   - Player
   - UI
-  menuEnabled: []
+  menuEnabled:
+  - PlayerInput
   cursorPosition: {fileID: 0}
   settings: []
   debugSettings:
