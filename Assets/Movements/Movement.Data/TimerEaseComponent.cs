@@ -4,9 +4,8 @@ using Unity.Entities;
 
 namespace Movements.Movement.Data
 {
-    
     [Serializable]
-    public struct MoveEase : IComponentData
+    public struct TimerEaseComponent : IComponentData
     {
         public EaseConfig value;
     }
