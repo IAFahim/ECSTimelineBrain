@@ -19,6 +19,13 @@
       },
       "hash": "70c36b1851c728076d88b3ccc26ccefe8dade2a3"
     },
+    "com.bovinelabs.bridge": {
+      "version": "https://gitlab.com/tertle/com.bovinelabs.bridge.git#1.1.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "98aeef921b0177d6572d4f2f87abc76dbc9c0ab5"
+    },
     "com.bovinelabs.core": {
       "version": "https://gitlab.com/tertle/com.bovinelabs.core.git#1.6.0",
       "depth": 0,

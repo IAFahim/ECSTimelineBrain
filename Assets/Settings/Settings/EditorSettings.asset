@@ -33,6 +33,8 @@ MonoBehaviour:
     Path: Assets/Settings/ObjectDefinitions
   - Key: bl.ar.objectgroup
     Path: Assets/Settings/ObjectGroups
+  - Key: bl.ar.musictrackdefinition
+    Path: Assets/Settings/Audio
   prebakeScenes: []
   startupScene: {fileID: 0}
   defaultSettingsAuthoring: {fileID: 0}
