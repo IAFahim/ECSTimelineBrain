@@ -1,0 +1,22 @@
+{
+    "name": "Movement.Systems",
+    "rootNamespace": "Movements.Movement.Systems",
+    "references": [
+        "Movement.Data",
+        "Movement.Logic",
+        "Unity.Burst",
+        "Unity.Entities",
+        "Unity.Transforms",
+        "Unity.Mathematics",
+        "Unity.Collections"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
