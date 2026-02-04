@@ -64,4 +64,15 @@ namespace Movements.Movement.Timeline.Data
         /// </summary>
         public bool ResetRotation;
     }
+
+    /// <summary>
+    /// Timeline-specific target Transform component using Entity reference.
+    /// Used instead of UnityObjectRef for Burst-compiled Timeline systems.
+    /// The Entity should reference a GameObject with LocalTransform.
+    /// </summary>
+    public struct TimelineTargetTransform : IComponentData
+    {
+        public Entity Target;
+        public bool IsValid;
+    }
 }

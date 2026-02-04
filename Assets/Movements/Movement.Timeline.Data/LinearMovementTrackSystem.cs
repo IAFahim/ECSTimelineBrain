@@ -13,6 +13,7 @@ namespace Movements.Movement.Timeline.Data
     /// <summary>
     /// System that processes Linear Movement timeline clips.
     /// Uses TrackBlendImpl to blend between overlapping clips.
+    /// Supports target Transform resolution for dynamic end positions.
     /// </summary>
     [UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
     [BurstCompile]
@@ -41,6 +42,9 @@ namespace Movements.Movement.Timeline.Data
         {
             var localTransforms = SystemAPI.GetComponentLookup<LocalTransform>();
 
+            // Phase 0: Resolve target Transform positions (must run before blend update)
+            new ResolveTargetPositionJob { }.ScheduleParallel();
+
             // Phase 1: Capture start position when timeline activates
             new CaptureStartJob { LocalTransforms = localTransforms }.ScheduleParallel();
 
@@ -61,6 +65,39 @@ namespace Movements.Movement.Timeline.Data
                 BlendData = rotationBlend,
                 LocalTransforms = localTransforms
             }.ScheduleParallel(rotationBlend, 64, state.Dependency);
+        }
+
+        /// <summary>
+        /// Job that resolves target Transform positions for clips with TimelineTargetTransform.
+        /// Updates LinearMovementAnimated.Value with the current target entity's position.
+        /// This must run before the blend update so Timeline blends the correct values.
+        /// </summary>
+        [BurstCompile]
+        [WithAll(typeof(TimelineActive))]
+        private partial struct ResolveTargetPositionJob : IJobEntity
+        {
+            [ReadOnly]
+            public ComponentLookup<LocalTransform> LocalTransforms;
+
+            private void Execute(
+                ref TimelineTargetTransform target,
+                ref LinearMovementAnimated animated)
+            {
+                if (!target.IsValid)
+                {
+                    return;
+                }
+
+                // Get the current position of the target entity's LocalTransform
+                if (this.LocalTransforms.TryGetComponent(target.Target, out var localTransform))
+                {
+                    animated.Value = localTransform.Position;
+                }
+                else
+                {
+                    target.IsValid = false;
+                }
+            }
         }
 
         /// <summary>

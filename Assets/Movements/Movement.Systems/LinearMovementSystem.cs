@@ -54,10 +54,11 @@ namespace Movements.Movement.Systems
     /// <summary>
     /// Job for entities WITH rotation components.
     /// Constructs LinearMovementWithRotationFacet.
+    /// Excludes entities with enabled TargetTransformComponent (they use a separate tracking job).
     /// </summary>
     [BurstCompile]
     [WithAll(typeof(LinearMovementTag))]
-    [WithNone(typeof(TargetEcsLocalTransformTag))]
+    [WithNone(typeof(TargetEcsLocalTransformTag), typeof(TargetTransformComponent))]
     public partial struct LinearMovementWithRotationJob : IJobEntity
     {
         public TimeData Time;
@@ -91,10 +92,11 @@ namespace Movements.Movement.Systems
     /// <summary>
     /// Job for entities WITHOUT rotation components.
     /// Constructs LinearMovementFacet (position only).
+    /// Excludes entities with enabled TargetTransformComponent (they use a separate tracking job).
     /// </summary>
     [BurstCompile]
     [WithAll(typeof(LinearMovementTag))]
-    [WithNone(typeof(TargetEcsLocalTransformTag))]
+    [WithNone(typeof(TargetEcsLocalTransformTag), typeof(TargetTransformComponent))]
     public partial struct LinearMovementJob : IJobEntity
     {
         public TimeData Time;

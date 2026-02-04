@@ -10,7 +10,8 @@
         "BovineLabs.Core",
         "BovineLabs.Core.Extensions",
         "BovineLabs.Timeline",
-        "BovineLabs.Timeline.Data"
+        "BovineLabs.Timeline.Data",
+        "Movements.Movement.Data"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

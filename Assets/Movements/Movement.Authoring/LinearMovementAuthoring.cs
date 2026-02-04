@@ -24,7 +24,11 @@ namespace Movements.Movement.Authoring
         [SerializeField]
         private float3 startPosition;
 
-        [Tooltip("End position in world space")]
+        [Tooltip("Use a target Transform for the end position")]
+        [SerializeField]
+        private bool useTargetTransform = false;
+
+        [Tooltip("End position in world space (only used if Target Transform is not set)")]
         [SerializeField]
         private float3 endPosition = new(5f, 0f, 0f);
 
@@ -65,7 +69,6 @@ namespace Movements.Movement.Authoring
         [SerializeField]
         private Color pathColor = Color.cyan;
 
-        // Public properties for Builder pattern access
         public float3 StartPosition => currentAsStartPosition ? transform.position : startPosition;
         public float3 EndPosition => endPosition;
         public float Speed => speed;
@@ -84,10 +87,8 @@ namespace Movements.Movement.Authoring
             {
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
 
-                // Create IEntityCommands wrapper for the Baker
                 var commands = new BakerCommands(this, entity);
 
-                // Create builder with authoring data
                 var builder = default(LinearMovementBuilder);
                 builder.WithPositions(authoring.StartPosition, authoring.EndPosition);
                 builder.WithSpeed(authoring.Speed);
@@ -98,8 +99,20 @@ namespace Movements.Movement.Authoring
                     builder.WithRotation(authoring.StartRotation, authoring.EndRotation);
                 }
 
-                // Apply to entity
                 builder.ApplyTo(ref commands);
+
+                if (authoring.useTargetTransform)
+                {
+                    AddComponent(entity, new TargetTransformComponent());
+                    SetComponentEnabled<TargetTransformComponent>(entity, false);
+
+                    AddComponent(entity, new UnAssignedPositionComponent());
+
+                    if (authoring.HasRotation)
+                    {
+                        AddComponent(entity, new UnAssignedQuaternionComponent());
+                    }
+                }
             }
         }
 
@@ -111,50 +124,43 @@ namespace Movements.Movement.Authoring
         {
             if (!showGizmos) return;
 
+            if (useTargetTransform) return;
+
             var start = (Vector3)StartPosition;
             var end = (Vector3)EndPosition;
 
-            // Draw movement path
             Gizmos.color = pathColor;
             Gizmos.DrawLine(start, end);
 
-            // Draw start point
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(start, 0.2f);
 
-            // Draw end point
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(end, 0.2f);
 
-            // Draw direction arrow
             Gizmos.color = pathColor * 0.7f;
             var direction = (end - start).normalized;
             var arrowPos = Vector3.Lerp(start, end, 0.5f);
             Gizmos.DrawRay(arrowPos, direction * 0.3f);
 
-            // Draw rotation indicators if enabled
             if (hasRotation)
             {
                 var startRot = (Quaternion)StartRotation;
                 var endRot = (Quaternion)EndRotation;
 
-                // Start rotation (green)
                 UnityEditor.Handles.color = new Color(0, 1, 0, 0.5f);
                 using (new UnityEditor.Handles.DrawingScope(Matrix4x4.TRS(start, startRot, Vector3.one)))
                 {
                     UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.forward, 0.3f);
                     UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.up, 0.3f);
-                    // Draw axis indicator
                     UnityEditor.Handles.ArrowHandleCap(0, Vector3.zero, Quaternion.LookRotation(Vector3.forward), 0.2f, EventType.Repaint);
                 }
 
-                // End rotation (red)
                 UnityEditor.Handles.color = new Color(1, 0, 0, 0.5f);
                 using (new UnityEditor.Handles.DrawingScope(Matrix4x4.TRS(end, endRot, Vector3.one)))
                 {
                     UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.forward, 0.3f);
                     UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.up, 0.3f);
-                    // Draw axis indicator
                     UnityEditor.Handles.ArrowHandleCap(0, Vector3.zero, Quaternion.LookRotation(Vector3.forward), 0.2f, EventType.Repaint);
                 }
             }
