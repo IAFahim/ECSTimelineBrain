@@ -14,7 +14,8 @@
         "Unity.Mathematics.Extensions",
         "Unity.Physics",
         "Unity.Transforms",
-        "AV.Eases.Runtime"
+        "AV.Eases.Runtime",
+        "Movement.Logic"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
