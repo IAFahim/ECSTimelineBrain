@@ -1,5 +1,7 @@
-using BovineLabs.Core;
-using Movements.Movement.Data;
+using Movements.Movement.Data.Advanced.Targets;
+using Movements.Movement.Data.Parameters.Motion;
+using Movements.Movement.Data.Tags.MovementTypes;
+using Movements.Movement.Data.Transforms.Unassigned;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -9,13 +11,11 @@ using Unity.Transforms;
 namespace Movements.Movement.Systems
 {
     /// <summary>
-    /// System that handles movement toward target Transforms.
-    ///
-    /// Architecture:
-    /// 1. SyncTargetTransformSystem (non-Burst): Reads enabled TargetTransformComponent and syncs to Updated components
-    /// 2. TargetTransformSystem (Burst): Reads Updated components and performs movement calculations using SpeedComponent
-    ///
-    /// Uses IEnableableComponent on TargetTransformComponent to indicate when the target is instantiated and valid.
+    ///     System that handles movement toward target Transforms.
+    ///     Architecture:
+    ///     1. SyncTargetTransformSystem (non-Burst): Reads enabled TargetTransformComponent and syncs to Updated components
+    ///     2. TargetTransformSystem (Burst): Reads Updated components and performs movement calculations using SpeedComponent
+    ///     Uses IEnableableComponent on TargetTransformComponent to indicate when the target is instantiated and valid.
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateBefore(typeof(LinearMovementSystem))]
@@ -50,10 +50,12 @@ namespace Movements.Movement.Systems
     }
 
     /// <summary>
-    /// Non-Burst system that syncs managed Transform data to ECS components.
-    /// Only processes entities where TargetTransformComponent is ENABLED (IEnableableComponent).
-    /// This reads UnityObjectRef<Transform> and writes to UpdatedPositionComponent/UpdatedQuaternionComponent.
-    /// IMPORTANT: This system must NOT be Burst-compiled because it accesses UnityObjectRef.Value.
+    ///     Non-Burst system that syncs managed Transform data to ECS components.
+    ///     Only processes entities where TargetTransformComponent is ENABLED (IEnableableComponent).
+    ///     This reads UnityObjectRef
+    ///     <Transform>
+    ///         and writes to UpdatedPositionComponent/UpdatedQuaternionComponent.
+    ///         IMPORTANT: This system must NOT be Burst-compiled because it accesses UnityObjectRef.Value.
     /// </summary>
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateBefore(typeof(TargetTransformSystem))]
@@ -86,7 +88,7 @@ namespace Movements.Movement.Systems
             var updatedPos = _queryWithRotation.ToComponentDataArray<UnAssignedPositionComponent>(Allocator.Temp);
             var updatedRot = _queryWithRotation.ToComponentDataArray<UnAssignedQuaternionComponent>(Allocator.Temp);
 
-            for (int i = 0; i < entities.Length; i++)
+            for (var i = 0; i < entities.Length; i++)
             {
                 // Check if TargetTransformComponent is enabled for this entity
                 if (!state.EntityManager.IsComponentEnabled<TargetTransformComponent>(entities[i]))
@@ -103,8 +105,8 @@ namespace Movements.Movement.Systems
                     continue;
                 }
 
-                updatedPos[i] = new UnAssignedPositionComponent { value = (float3)transform.position };
-                updatedRot[i] = new UnAssignedQuaternionComponent { value = (quaternion)transform.rotation };
+                updatedPos[i] = new UnAssignedPositionComponent { value = transform.position };
+                updatedRot[i] = new UnAssignedQuaternionComponent { value = transform.rotation };
             }
 
             _queryWithRotation.CopyFromComponentDataArray(updatedPos);
@@ -115,7 +117,7 @@ namespace Movements.Movement.Systems
             var targets2 = _queryWithoutRotation.ToComponentDataArray<TargetTransformComponent>(Allocator.Temp);
             var updatedPos2 = _queryWithoutRotation.ToComponentDataArray<UnAssignedPositionComponent>(Allocator.Temp);
 
-            for (int i = 0; i < entities2.Length; i++)
+            for (var i = 0; i < entities2.Length; i++)
             {
                 if (!state.EntityManager.IsComponentEnabled<TargetTransformComponent>(entities2[i]))
                     continue;
@@ -130,7 +132,7 @@ namespace Movements.Movement.Systems
                     continue;
                 }
 
-                updatedPos2[i] = new UnAssignedPositionComponent { value = (float3)transform.position };
+                updatedPos2[i] = new UnAssignedPositionComponent { value = transform.position };
             }
 
             _queryWithoutRotation.CopyFromComponentDataArray(updatedPos2);
@@ -138,10 +140,10 @@ namespace Movements.Movement.Systems
     }
 
     /// <summary>
-    /// Job for entities moving toward a managed Transform WITH rotation.
-    /// Only processes entities where TargetTransformComponent is ENABLED.
-    /// Reads from UpdatedPositionComponent/UpdatedQuaternionComponent that were synced from managed code.
-    /// Uses SpeedComponent for movement speed.
+    ///     Job for entities moving toward a managed Transform WITH rotation.
+    ///     Only processes entities where TargetTransformComponent is ENABLED.
+    ///     Reads from UpdatedPositionComponent/UpdatedQuaternionComponent that were synced from managed code.
+    ///     Uses SpeedComponent for movement speed.
     /// </summary>
     [BurstCompile]
     [WithAll(typeof(LinearMovementTag))]
@@ -159,10 +161,7 @@ namespace Movements.Movement.Systems
             var targetRot = updatedRot.ValueRO.value;
 
             // Check for invalid target (float.MaxValue sentinel value)
-            if (targetPos.x >= float.MaxValue || targetPos.y >= float.MaxValue || targetPos.z >= float.MaxValue)
-            {
-                return;
-            }
+            if (targetPos.x >= float.MaxValue || targetPos.y >= float.MaxValue || targetPos.z >= float.MaxValue) return;
 
             var direction = targetPos - transform.Position;
             var distance = math.length(direction);
@@ -182,10 +181,10 @@ namespace Movements.Movement.Systems
     }
 
     /// <summary>
-    /// Job for entities moving toward a managed Transform WITHOUT rotation.
-    /// Only processes entities where TargetTransformComponent is ENABLED.
-    /// Reads from UpdatedPositionComponent that was synced from managed code.
-    /// Uses SpeedComponent for movement speed.
+    ///     Job for entities moving toward a managed Transform WITHOUT rotation.
+    ///     Only processes entities where TargetTransformComponent is ENABLED.
+    ///     Reads from UpdatedPositionComponent that was synced from managed code.
+    ///     Uses SpeedComponent for movement speed.
     /// </summary>
     [BurstCompile]
     [WithAll(typeof(LinearMovementTag))]
@@ -201,10 +200,7 @@ namespace Movements.Movement.Systems
             var targetPos = updatedPos.ValueRO.value;
 
             // Check for invalid target (float.MaxValue sentinel value)
-            if (targetPos.x >= float.MaxValue || targetPos.y >= float.MaxValue || targetPos.z >= float.MaxValue)
-            {
-                return;
-            }
+            if (targetPos.x >= float.MaxValue || targetPos.y >= float.MaxValue || targetPos.z >= float.MaxValue) return;
 
             var direction = targetPos - transform.Position;
             var distance = math.length(direction);

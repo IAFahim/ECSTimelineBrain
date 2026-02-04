@@ -1,15 +1,20 @@
-using BovineLabs.Core;
+using Movements.Movement.Data.Advanced.Facets;
+using Movements.Movement.Data.Advanced.Targets;
+using Movements.Movement.Data.Parameters.Motion;
+using Movements.Movement.Data.Parameters.Timing;
+using Movements.Movement.Data.Tags.MovementTypes;
+using Movements.Movement.Data.Tags.Targets;
+using Movements.Movement.Data.Transforms.StartEnd;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
-using Movements.Movement.Data;
 
 namespace Movements.Movement.Systems
 {
     /// <summary>
-    /// System that processes linear movement using IFacet patterns.
-    /// Two separate jobs handle entities with and without rotation components.
+    ///     System that processes linear movement using IFacet patterns.
+    ///     Two separate jobs handle entities with and without rotation components.
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
@@ -52,9 +57,9 @@ namespace Movements.Movement.Systems
     }
 
     /// <summary>
-    /// Job for entities WITH rotation components.
-    /// Constructs LinearMovementWithRotationFacet.
-    /// Excludes entities with enabled TargetTransformComponent (they use a separate tracking job).
+    ///     Job for entities WITH rotation components.
+    ///     Constructs LinearMovementWithRotationFacet.
+    ///     Excludes entities with enabled TargetTransformComponent (they use a separate tracking job).
     /// </summary>
     [BurstCompile]
     [WithAll(typeof(LinearMovementTag))]
@@ -82,7 +87,7 @@ namespace Movements.Movement.Systems
                 speed,
                 startRot,
                 endRot,
-                this.Time
+                Time
             );
 
             facet.Execute();
@@ -90,9 +95,9 @@ namespace Movements.Movement.Systems
     }
 
     /// <summary>
-    /// Job for entities WITHOUT rotation components.
-    /// Constructs LinearMovementFacet (position only).
-    /// Excludes entities with enabled TargetTransformComponent (they use a separate tracking job).
+    ///     Job for entities WITHOUT rotation components.
+    ///     Constructs LinearMovementFacet (position only).
+    ///     Excludes entities with enabled TargetTransformComponent (they use a separate tracking job).
     /// </summary>
     [BurstCompile]
     [WithAll(typeof(LinearMovementTag))]
@@ -116,7 +121,7 @@ namespace Movements.Movement.Systems
                 startPos,
                 endPos,
                 speed,
-                this.Time
+                Time
             );
 
             facet.Execute();

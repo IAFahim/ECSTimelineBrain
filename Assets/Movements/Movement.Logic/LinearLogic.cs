@@ -19,16 +19,16 @@ namespace Movements.Movement.Logic
             out float newT,
             out float3 pos)
         {
-            float dist = math.distance(start, end);
-            
+            var dist = math.distance(start, end);
+
             // Calculate step. If dist is too small, snap to end (step = 1.0).
             // This avoids division by zero and handles "arrived" logic implicitly.
-            float tStep = math.select((speed * dt) / dist, 1.0f, dist < MinDist);
+            var tStep = math.select(speed * dt / dist, 1.0f, dist < MinDist);
 
             newT = math.saturate(currentT + tStep);
             pos = math.lerp(start, end, newT);
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SolveRotation(
             quaternion start,

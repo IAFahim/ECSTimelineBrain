@@ -1,6 +1,6 @@
 {
-    "name": "Movement.Systems",
-    "rootNamespace": "Movements.Movement.Systems",
+  "name": "Movement.Systems",
+  "rootNamespace": "Movements.Movement.Systems",
   "references": [
     "BovineLabs.Core",
     "BovineLabs.Core.Extensions",
@@ -18,13 +18,13 @@
     "Movement.Logic",
     "Movement.Data"
   ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": true,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": true,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

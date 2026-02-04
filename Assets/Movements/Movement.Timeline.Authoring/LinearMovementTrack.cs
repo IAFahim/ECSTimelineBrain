@@ -1,16 +1,14 @@
 using System.ComponentModel;
-using BovineLabs.Core.Authoring;
 using BovineLabs.Timeline.Authoring;
 using Movements.Movement.Timeline.Data;
-using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Timeline;
 
 namespace Movements.Movement.Timeline.Authoring
 {
     /// <summary>
-    /// Timeline track for linear movement clips.
-    /// Binds to Transform components and controls position/rotation via Timeline.
+    ///     Timeline track for linear movement clips.
+    ///     Binds to Transform components and controls position/rotation via Timeline.
     /// </summary>
     [TrackClipType(typeof(LinearMovementClip))]
     [TrackBindingType(typeof(Transform))]
@@ -18,16 +16,15 @@ namespace Movements.Movement.Timeline.Authoring
     [DisplayName("DOTS/Movements/Linear Movement")]
     public class LinearMovementTrack : DOTSTrack
     {
-        [Header("Timeline Settings")]
-        [Tooltip("Reset position to start when clip deactivates")]
-        public bool ResetPositionOnDeactivate = false;
+        [Header("Timeline Settings")] [Tooltip("Reset position to start when clip deactivates")]
+        public bool ResetPositionOnDeactivate;
 
         [Tooltip("Reset rotation to start when clip deactivates")]
-        public bool ResetRotationOnDeactivate = false;
+        public bool ResetRotationOnDeactivate;
 
         /// <summary>
-        /// Bake the track into ECS components.
-        /// Called once per track during Timeline baking.
+        ///     Bake the track into ECS components.
+        ///     Called once per track during Timeline baking.
         /// </summary>
         protected override void Bake(BakingContext context)
         {
@@ -36,13 +33,11 @@ namespace Movements.Movement.Timeline.Authoring
 
             // Add reset behavior if enabled
             if (ResetPositionOnDeactivate || ResetRotationOnDeactivate)
-            {
                 context.Baker.AddComponent(context.TrackEntity, new LinearMovementResetOnDeactivate
                 {
                     ResetPosition = ResetPositionOnDeactivate,
                     ResetRotation = ResetRotationOnDeactivate
                 });
-            }
         }
     }
 }

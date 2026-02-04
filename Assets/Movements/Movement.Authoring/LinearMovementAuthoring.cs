@@ -1,16 +1,16 @@
+using BovineLabs.Core.Authoring.EntityCommands;
+using Movements.Movement.Data.Advanced.Targets;
+using Movements.Movement.Data.Transforms.Unassigned;
+using Unity.Entities;
+using Unity.Mathematics;
+using UnityEditor;
+using UnityEngine;
+
 namespace Movements.Movement.Authoring
 {
-    using System;
-    using BovineLabs.Core.Authoring;
-    using BovineLabs.Core.Authoring.EntityCommands;
-    using Movements.Movement.Data;
-    using Unity.Entities;
-    using Unity.Mathematics;
-    using UnityEngine;
-
     /// <summary>
-    /// Authoring component for linear movement configuration in the Unity Editor.
-    /// Supports using current GameObject transform as start position/rotation.
+    ///     Authoring component for linear movement configuration in the Unity Editor.
+    ///     Supports using current GameObject transform as start position/rotation.
     /// </summary>
     [DisallowMultipleComponent]
     public class LinearMovementAuthoring : MonoBehaviour
@@ -20,53 +20,37 @@ namespace Movements.Movement.Authoring
         [SerializeField]
         private bool currentAsStartPosition = true;
 
-        [Tooltip("Start position in world space (only used if 'Current As Start Position' is false)")]
-        [SerializeField]
+        [Tooltip("Start position in world space (only used if 'Current As Start Position' is false)")] [SerializeField]
         private float3 startPosition;
 
-        [Tooltip("Use a target Transform for the end position")]
-        [SerializeField]
-        private bool useTargetTransform = false;
+        [Tooltip("Use a target Transform for the end position")] [SerializeField]
+        private bool useTargetTransform;
 
-        [Tooltip("End position in world space (only used if Target Transform is not set)")]
-        [SerializeField]
+        [Tooltip("End position in world space (only used if Target Transform is not set)")] [SerializeField]
         private float3 endPosition = new(5f, 0f, 0f);
 
-        [Header("Movement Settings")]
-        [Tooltip("Movement speed in units per second")]
-        [SerializeField]
-        [Min(0f)]
+        [Header("Movement Settings")] [Tooltip("Movement speed in units per second")] [SerializeField] [Min(0f)]
         private float speed = 2f;
 
-        [Tooltip("Initial progress (0-1)")]
-        [SerializeField]
-        [Range(0f, 1f)]
+        [Tooltip("Initial progress (0-1)")] [SerializeField] [Range(0f, 1f)]
         private float progress;
 
-        [Header("Rotation Settings")]
-        [Tooltip("Enable rotation interpolation")]
-        [SerializeField]
+        [Header("Rotation Settings")] [Tooltip("Enable rotation interpolation")] [SerializeField]
         private bool hasRotation;
 
-        [Tooltip("Use the current GameObject rotation as the start rotation")]
-        [SerializeField]
+        [Tooltip("Use the current GameObject rotation as the start rotation")] [SerializeField]
         private bool currentAsStartRotation = true;
 
-        [Tooltip("Start rotation Euler angles (only used if 'Current As Start Rotation' is false)")]
-        [SerializeField]
+        [Tooltip("Start rotation Euler angles (only used if 'Current As Start Rotation' is false)")] [SerializeField]
         private Vector3 startRotationEuler;
 
-        [Tooltip("End rotation Euler angles")]
-        [SerializeField]
-        private Vector3 endRotationEuler = new Vector3(0f, 180f, 0f);
+        [Tooltip("End rotation Euler angles")] [SerializeField]
+        private Vector3 endRotationEuler = new(0f, 180f, 0f);
 
-        [Header("Visualization")]
-        [Tooltip("Show movement path in Scene view")]
-        [SerializeField]
+        [Header("Visualization")] [Tooltip("Show movement path in Scene view")] [SerializeField]
         private bool showGizmos = true;
 
-        [Tooltip("Color of the path visualization")]
-        [SerializeField]
+        [Tooltip("Color of the path visualization")] [SerializeField]
         private Color pathColor = Color.cyan;
 
         public float3 StartPosition => currentAsStartPosition ? transform.position : startPosition;
@@ -74,12 +58,16 @@ namespace Movements.Movement.Authoring
         public float Speed => speed;
         public float Progress => progress;
         public bool HasRotation => hasRotation;
-        public quaternion StartRotation => currentAsStartRotation ? transform.rotation : quaternion.Euler(math.radians(startRotationEuler));
+
+        public quaternion StartRotation => currentAsStartRotation
+            ? transform.rotation
+            : quaternion.Euler(math.radians(startRotationEuler));
+
         public quaternion EndRotation => quaternion.Euler(math.radians(endRotationEuler));
 
         /// <summary>
-        /// Baker that converts authoring data to ECS components.
-        /// Uses BakerCommands to implement IEntityCommands pattern.
+        ///     Baker that converts authoring data to ECS components.
+        ///     Uses BakerCommands to implement IEntityCommands pattern.
         /// </summary>
         private class Baker : Baker<LinearMovementAuthoring>
         {
@@ -94,10 +82,7 @@ namespace Movements.Movement.Authoring
                 builder.WithSpeed(authoring.Speed);
                 builder.WithProgress(authoring.Progress);
 
-                if (authoring.HasRotation)
-                {
-                    builder.WithRotation(authoring.StartRotation, authoring.EndRotation);
-                }
+                if (authoring.HasRotation) builder.WithRotation(authoring.StartRotation, authoring.EndRotation);
 
                 builder.ApplyTo(ref commands);
 
@@ -108,17 +93,14 @@ namespace Movements.Movement.Authoring
 
                     AddComponent(entity, new UnAssignedPositionComponent());
 
-                    if (authoring.HasRotation)
-                    {
-                        AddComponent(entity, new UnAssignedQuaternionComponent());
-                    }
+                    if (authoring.HasRotation) AddComponent(entity, new UnAssignedQuaternionComponent());
                 }
             }
         }
 
 #if UNITY_EDITOR
         /// <summary>
-        /// Scene view gizmo visualization for the movement path.
+        ///     Scene view gizmo visualization for the movement path.
         /// </summary>
         private void OnDrawGizmos()
         {
@@ -148,26 +130,28 @@ namespace Movements.Movement.Authoring
                 var startRot = (Quaternion)StartRotation;
                 var endRot = (Quaternion)EndRotation;
 
-                UnityEditor.Handles.color = new Color(0, 1, 0, 0.5f);
-                using (new UnityEditor.Handles.DrawingScope(Matrix4x4.TRS(start, startRot, Vector3.one)))
+                Handles.color = new Color(0, 1, 0, 0.5f);
+                using (new Handles.DrawingScope(Matrix4x4.TRS(start, startRot, Vector3.one)))
                 {
-                    UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.forward, 0.3f);
-                    UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.up, 0.3f);
-                    UnityEditor.Handles.ArrowHandleCap(0, Vector3.zero, Quaternion.LookRotation(Vector3.forward), 0.2f, EventType.Repaint);
+                    Handles.DrawWireDisc(Vector3.zero, Vector3.forward, 0.3f);
+                    Handles.DrawWireDisc(Vector3.zero, Vector3.up, 0.3f);
+                    Handles.ArrowHandleCap(0, Vector3.zero, Quaternion.LookRotation(Vector3.forward), 0.2f,
+                        EventType.Repaint);
                 }
 
-                UnityEditor.Handles.color = new Color(1, 0, 0, 0.5f);
-                using (new UnityEditor.Handles.DrawingScope(Matrix4x4.TRS(end, endRot, Vector3.one)))
+                Handles.color = new Color(1, 0, 0, 0.5f);
+                using (new Handles.DrawingScope(Matrix4x4.TRS(end, endRot, Vector3.one)))
                 {
-                    UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.forward, 0.3f);
-                    UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.up, 0.3f);
-                    UnityEditor.Handles.ArrowHandleCap(0, Vector3.zero, Quaternion.LookRotation(Vector3.forward), 0.2f, EventType.Repaint);
+                    Handles.DrawWireDisc(Vector3.zero, Vector3.forward, 0.3f);
+                    Handles.DrawWireDisc(Vector3.zero, Vector3.up, 0.3f);
+                    Handles.ArrowHandleCap(0, Vector3.zero, Quaternion.LookRotation(Vector3.forward), 0.2f,
+                        EventType.Repaint);
                 }
             }
         }
 
         /// <summary>
-        /// Editor helper to initialize positions when component is added.
+        ///     Editor helper to initialize positions when component is added.
         /// </summary>
         private void Reset()
         {
