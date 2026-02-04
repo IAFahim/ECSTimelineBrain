@@ -221,6 +221,9 @@ GameObject:
   - component: {fileID: 208679448}
   - component: {fileID: 208679447}
   - component: {fileID: 208679446}
+  - component: {fileID: 208679452}
+  - component: {fileID: 208679451}
+  - component: {fileID: 208679450}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -246,7 +249,6 @@ MonoBehaviour:
     y: 1.6
     z: 0
   useTargetTransform: 0
-  targetTransform: {fileID: 2052591004}
   endPosition:
     x: 9.940001
     y: 1.6
@@ -331,6 +333,46 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &208679450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208679445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7eeccfca7a3f1e0f7b0e1d340f35ed71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Movement.Authoring::Movements.Movement.Authoring.MovementControlAuthoring
+  enableBoomerang: 0
+  enablePingPong: 0
+  enableLoop: 0
+--- !u!114 &208679451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208679445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85709ff2a4025a96598bc273f677f38a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Movement.Authoring::Movements.Movement.Authoring.TimerEaseAuthoring
+--- !u!114 &208679452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 208679445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c8752b26b9dc8a328e957f1d980f1ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Movement.Authoring::Movements.Movement.Authoring.MoveEaseAuthoring
+  ease: 0
 --- !u!1 &287637069
 GameObject:
   m_ObjectHideFlags: 0
