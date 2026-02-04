@@ -1,4 +1,4 @@
-Unity Intent
+Unity Movement
 Copyright (c) 2026 IAFahim
 
 Licensed under the Unity Companion License for Unity-dependent projects (the "License").
