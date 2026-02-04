@@ -48,13 +48,13 @@ namespace Movements.Movement.Authoring
         [SerializeField]
         private bool currentAsStartRotation = true;
 
-        [Tooltip("Start rotation (only used if 'Current As Start Rotation' is false)")]
+        [Tooltip("Start rotation Euler angles (only used if 'Current As Start Rotation' is false)")]
         [SerializeField]
-        private quaternion startRotation = quaternion.identity;
+        private Vector3 startRotationEuler;
 
-        [Tooltip("End rotation")]
+        [Tooltip("End rotation Euler angles")]
         [SerializeField]
-        private quaternion endRotation = quaternion.identity;
+        private Vector3 endRotationEuler = new Vector3(0f, 180f, 0f);
 
         [Header("Visualization")]
         [Tooltip("Show movement path in Scene view")]
@@ -71,8 +71,8 @@ namespace Movements.Movement.Authoring
         public float Speed => speed;
         public float Progress => progress;
         public bool HasRotation => hasRotation;
-        public quaternion StartRotation => currentAsStartRotation ? transform.rotation : startRotation;
-        public quaternion EndRotation => endRotation;
+        public quaternion StartRotation => currentAsStartRotation ? transform.rotation : quaternion.Euler(math.radians(startRotationEuler));
+        public quaternion EndRotation => quaternion.Euler(math.radians(endRotationEuler));
 
         /// <summary>
         /// Baker that converts authoring data to ECS components.
@@ -138,18 +138,24 @@ namespace Movements.Movement.Authoring
                 var startRot = (Quaternion)StartRotation;
                 var endRot = (Quaternion)EndRotation;
 
+                // Start rotation (green)
                 UnityEditor.Handles.color = new Color(0, 1, 0, 0.5f);
                 using (new UnityEditor.Handles.DrawingScope(Matrix4x4.TRS(start, startRot, Vector3.one)))
                 {
                     UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.forward, 0.3f);
                     UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.up, 0.3f);
+                    // Draw axis indicator
+                    UnityEditor.Handles.ArrowHandleCap(0, Vector3.zero, Quaternion.LookRotation(Vector3.forward), 0.2f, EventType.Repaint);
                 }
 
+                // End rotation (red)
                 UnityEditor.Handles.color = new Color(1, 0, 0, 0.5f);
                 using (new UnityEditor.Handles.DrawingScope(Matrix4x4.TRS(end, endRot, Vector3.one)))
                 {
                     UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.forward, 0.3f);
                     UnityEditor.Handles.DrawWireDisc(Vector3.zero, Vector3.up, 0.3f);
+                    // Draw axis indicator
+                    UnityEditor.Handles.ArrowHandleCap(0, Vector3.zero, Quaternion.LookRotation(Vector3.forward), 0.2f, EventType.Repaint);
                 }
             }
         }
@@ -160,7 +166,7 @@ namespace Movements.Movement.Authoring
         private void Reset()
         {
             startPosition = transform.position;
-            startRotation = transform.rotation;
+            startRotationEuler = transform.rotation.eulerAngles;
             endPosition = transform.position + new Vector3(5f, 0f, 0f);
         }
 #endif
