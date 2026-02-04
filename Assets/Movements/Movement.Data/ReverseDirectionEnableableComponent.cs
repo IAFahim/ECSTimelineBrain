@@ -4,7 +4,8 @@ using Unity.Entities;
 namespace Movements.Movement.Data
 {
     [Serializable]
-    public struct ReverseDirectionEnableableComponent : IComponentData, IEnableableComponent // for Boomerang and ping-pong
+    public struct ReverseDirectionEnableableComponent : IComponentData, IEnableableComponent // for Boomerang and ping-pong, -1.0 for reverse while calculating
     {
+        
     }
 }
