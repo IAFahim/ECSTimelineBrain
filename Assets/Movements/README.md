@@ -1,6 +1,6 @@
-# Intent
+# Movements
 
-A high-performance Intent-based architecture system for Unity using Data-Oriented Design (DOD) principles with full ECS support.
+A high-performance Movements system for Unity using Data-Oriented Design (DOD) principles with full ECS support.
 
 ## Limitations
 
@@ -27,9 +27,9 @@ This package follows strict architectural guidelines. All contributions must:
 
 ## Getting Help
 
-- **Documentation**: See `Documentation~/IAFahim.Intent.md`
-- **Issues**: [GitHub Issues](https://github.com/IAFahim/IAFahim.Intent/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/IAFahim/IAFahim.Intent/discussions)
+- **Documentation**: See `Documentation~/Movement.md`
+- **Issues**: [GitHub Issues](https://github.com/IAFahim/movements/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/IAFahim/movements/discussions)
 
 ## License
 
