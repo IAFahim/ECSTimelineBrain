@@ -29,6 +29,9 @@ namespace Movements.Movement.Authoring
         [Tooltip("End position in world space (only used if Target Transform is not set)")] [SerializeField]
         private float3 endPosition = new(5f, 0f, 0f);
 
+        [Tooltip("Scales the movement vector. 1 = reach end position, 0.5 = half way, 2 = overshoot.")] [SerializeField]
+        private float range = 1f;
+
         [Header("Movement Settings")] [Tooltip("Movement speed in units per second")] [SerializeField] [Min(0f)]
         private float speed = 2f;
 
@@ -57,6 +60,7 @@ namespace Movements.Movement.Authoring
         public float3 EndPosition => endPosition;
         public float Speed => speed;
         public float Progress => progress;
+        public float Range => range;
         public bool HasRotation => hasRotation;
 
         public quaternion StartRotation => currentAsStartRotation
@@ -81,6 +85,7 @@ namespace Movements.Movement.Authoring
                 builder.WithPositions(authoring.StartPosition, authoring.EndPosition);
                 builder.WithSpeed(authoring.Speed);
                 builder.WithProgress(authoring.Progress);
+                builder.WithRange(authoring.Range);
 
                 if (authoring.HasRotation) builder.WithRotation(authoring.StartRotation, authoring.EndRotation);
 
@@ -109,21 +114,37 @@ namespace Movements.Movement.Authoring
             if (useTargetTransform) return;
 
             var start = (Vector3)StartPosition;
-            var end = (Vector3)EndPosition;
+            var endRaw = (Vector3)EndPosition;
+
+            // Calculate Effective End based on Range
+            var dir = endRaw - start;
+            var effectiveEnd = start + (dir * range);
 
             Gizmos.color = pathColor;
-            Gizmos.DrawLine(start, end);
+            Gizmos.DrawLine(start, effectiveEnd); // Draw line to actual stopping point
+
+            // Visualize the "Projected" end point if range != 1, to show direction
+            if (Mathf.Abs(range - 1.0f) > 0.01f)
+            {
+                Gizmos.color = new Color(pathColor.r, pathColor.g, pathColor.b, 0.3f);
+                Gizmos.DrawLine(effectiveEnd, endRaw);
+                Gizmos.DrawWireSphere(endRaw, 0.1f);
+            }
 
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(start, 0.2f);
 
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(end, 0.2f);
+            Gizmos.DrawWireSphere(effectiveEnd, 0.2f); // Actual stopping point
 
             Gizmos.color = pathColor * 0.7f;
-            var direction = (end - start).normalized;
-            var arrowPos = Vector3.Lerp(start, end, 0.5f);
-            Gizmos.DrawRay(arrowPos, direction * 0.3f);
+            var arrowDirection = (effectiveEnd - start).normalized;
+            // Prevent nan if start == effectiveEnd
+            if (arrowDirection != Vector3.zero)
+            {
+                var arrowPos = Vector3.Lerp(start, effectiveEnd, 0.5f);
+                Gizmos.DrawRay(arrowPos, arrowDirection * 0.3f);
+            }
 
             if (hasRotation)
             {
@@ -140,7 +161,7 @@ namespace Movements.Movement.Authoring
                 }
 
                 Handles.color = new Color(1, 0, 0, 0.5f);
-                using (new Handles.DrawingScope(Matrix4x4.TRS(end, endRot, Vector3.one)))
+                using (new Handles.DrawingScope(Matrix4x4.TRS(effectiveEnd, endRot, Vector3.one))) // Draw rot at effective end
                 {
                     Handles.DrawWireDisc(Vector3.zero, Vector3.forward, 0.3f);
                     Handles.DrawWireDisc(Vector3.zero, Vector3.up, 0.3f);
@@ -158,6 +179,7 @@ namespace Movements.Movement.Authoring
             startPosition = transform.position;
             startRotationEuler = transform.rotation.eulerAngles;
             endPosition = transform.position + new Vector3(5f, 0f, 0f);
+            range = 1.0f;
         }
 #endif
     }

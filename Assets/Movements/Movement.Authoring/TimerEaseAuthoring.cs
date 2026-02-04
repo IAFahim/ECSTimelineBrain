@@ -13,10 +13,10 @@ namespace Movements.Movement.Authoring
     [DisallowMultipleComponent]
     public class TimerEaseAuthoring : MonoBehaviour
     {
-        [Header("Time Easing")] [Tooltip("Easing configuration for movement time progression")] [SerializeField]
+        [Tooltip("Easing configuration for movement time progression")] [SerializeField]
         private EEase ease;
 
-        public EaseConfig EaseConfig => new() { Value = (byte)ease };
+        private EaseConfig EaseConfig => new() { Value = (byte)ease };
         
         private class Baker : Baker<TimerEaseAuthoring>
         {

@@ -16,6 +16,7 @@ namespace Movements.Movement.Authoring
         private float3 endPosition;
         private float speed;
         private float progress;
+        private float range;
 
         private bool hasRotation;
         private quaternion startRotation;
@@ -61,6 +62,15 @@ namespace Movements.Movement.Authoring
         }
 
         /// <summary>
+        ///     Sets the range scaler for movement distance.
+        /// </summary>
+        /// <param name="value">The range scaler (1 = full distance, 0.5 = half, 2 = double).</param>
+        public void WithRange(float value)
+        {
+            range = value;
+        }
+
+        /// <summary>
         ///     Configures the rotation for the linear movement.
         /// </summary>
         /// <param name="start">The starting rotation.</param>
@@ -87,6 +97,7 @@ namespace Movements.Movement.Authoring
             builder.AddComponent(new EndPositionComponent { value = endPosition });
             builder.AddComponent(new SpeedComponent { value = speed });
             builder.AddComponent(new NormalizedProgress { value = progress });
+            builder.AddComponent(new RangeComponent { value = range });
 
             if (hasRotation)
             {

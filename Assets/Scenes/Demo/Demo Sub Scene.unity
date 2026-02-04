@@ -253,6 +253,7 @@ MonoBehaviour:
     x: 9.940001
     y: 1.6
     z: 0
+  range: 1.45
   speed: 2
   progress: 0
   hasRotation: 0
@@ -347,7 +348,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Movement.Authoring::Movements.Movement.Authoring.MovementControlAuthoring
   enableBoomerang: 0
   enablePingPong: 0
-  enableLoop: 0
+  enableLoop: 1
 --- !u!114 &208679451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,6 +361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85709ff2a4025a96598bc273f677f38a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Movement.Authoring::Movements.Movement.Authoring.TimerEaseAuthoring
+  ease: 1
 --- !u!114 &208679452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -372,7 +374,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c8752b26b9dc8a328e957f1d980f1ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Movement.Authoring::Movements.Movement.Authoring.MoveEaseAuthoring
-  ease: 0
+  ease: 1
 --- !u!1 &287637069
 GameObject:
   m_ObjectHideFlags: 0

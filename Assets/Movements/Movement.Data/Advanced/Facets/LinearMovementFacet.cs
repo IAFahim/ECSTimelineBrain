@@ -23,6 +23,7 @@ namespace Movements.Movement.Data.Advanced.Facets
         public readonly RefRO<StartPositionComponent> StartPos;
         public readonly RefRO<EndPositionComponent> EndPos;
         public readonly RefRO<SpeedComponent> Speed;
+        public readonly RefRO<RangeComponent> Range;
         [Singleton] public readonly TimeData Time;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -30,8 +31,13 @@ namespace Movements.Movement.Data.Advanced.Facets
         {
             Check.Assume(Speed.ValueRO.value >= 0, "Speed must be non-negative");
 
+            // Calculate Effective End Position based on Range
+            // EffectiveEnd = Start + (End - Start) * Range
+            var rawDir = EndPos.ValueRO.value - StartPos.ValueRO.value;
+            var effectiveEnd = StartPos.ValueRO.value + (rawDir * Range.ValueRO.value);
+
             var dt = Time.DeltaTime;
-            var dist = math.distance(StartPos.ValueRO.value, EndPos.ValueRO.value);
+            var dist = math.distance(StartPos.ValueRO.value, effectiveEnd);
 
             var tStep = math.select(
                 Speed.ValueRO.value * dt / dist,
@@ -42,9 +48,10 @@ namespace Movements.Movement.Data.Advanced.Facets
             var newProgress = math.saturate(Progress.ValueRO.value + tStep);
             Progress.ValueRW.value = newProgress;
 
+            // Interpolate to EffectiveEnd
             Transform.ValueRW.Position = math.lerp(
                 StartPos.ValueRO.value,
-                EndPos.ValueRO.value,
+                effectiveEnd,
                 newProgress
             );
         }
@@ -62,6 +69,7 @@ namespace Movements.Movement.Data.Advanced.Facets
         public readonly RefRO<StartPositionComponent> StartPos;
         public readonly RefRO<EndPositionComponent> EndPos;
         public readonly RefRO<SpeedComponent> Speed;
+        public readonly RefRO<RangeComponent> Range;
         public readonly RefRO<StartQuaternionComponent> StartRot;
         public readonly RefRO<EndQuaternionComponent> EndRot;
         [Singleton] public readonly TimeData Time;
@@ -71,8 +79,13 @@ namespace Movements.Movement.Data.Advanced.Facets
         {
             Check.Assume(Speed.ValueRO.value >= 0, "Speed must be non-negative");
 
+            // Calculate Effective End Position based on Range
+            // EffectiveEnd = Start + (End - Start) * Range
+            var rawDir = EndPos.ValueRO.value - StartPos.ValueRO.value;
+            var effectiveEnd = StartPos.ValueRO.value + (rawDir * Range.ValueRO.value);
+
             var dt = Time.DeltaTime;
-            var dist = math.distance(StartPos.ValueRO.value, EndPos.ValueRO.value);
+            var dist = math.distance(StartPos.ValueRO.value, effectiveEnd);
 
             var tStep = math.select(
                 Speed.ValueRO.value * dt / dist,
@@ -83,12 +96,14 @@ namespace Movements.Movement.Data.Advanced.Facets
             var newProgress = math.saturate(Progress.ValueRO.value + tStep);
             Progress.ValueRW.value = newProgress;
 
+            // Interpolate Position to EffectiveEnd
             Transform.ValueRW.Position = math.lerp(
                 StartPos.ValueRO.value,
-                EndPos.ValueRO.value,
+                effectiveEnd,
                 newProgress
             );
 
+            // Interpolate Rotation (Rotation completes exactly when object reaches effectiveEnd)
             Transform.ValueRW.Rotation = math.slerp(
                 StartRot.ValueRO.value,
                 EndRot.ValueRO.value,

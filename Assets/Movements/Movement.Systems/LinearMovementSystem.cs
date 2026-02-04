@@ -26,7 +26,7 @@ namespace Movements.Movement.Systems
             // Require at least one entity with linear movement
             var builder = new EntityQueryBuilder(Allocator.Temp)
                 .WithAll<LinearMovementTag, LocalTransform, NormalizedProgress>()
-                .WithAll<StartPositionComponent, EndPositionComponent, SpeedComponent>()
+                .WithAll<StartPositionComponent, EndPositionComponent, SpeedComponent, RangeComponent>()
                 .WithNone<TargetEcsLocalTransformTag>();
 
             state.RequireForUpdate(state.GetEntityQuery(builder));
@@ -75,6 +75,7 @@ namespace Movements.Movement.Systems
             RefRO<StartPositionComponent> startPos,
             RefRO<EndPositionComponent> endPos,
             RefRO<SpeedComponent> speed,
+            RefRO<RangeComponent> range,
             RefRO<StartQuaternionComponent> startRot,
             RefRO<EndQuaternionComponent> endRot)
         {
@@ -85,6 +86,7 @@ namespace Movements.Movement.Systems
                 startPos,
                 endPos,
                 speed,
+                range,
                 startRot,
                 endRot,
                 Time
@@ -112,7 +114,8 @@ namespace Movements.Movement.Systems
             RefRW<NormalizedProgress> progress,
             RefRO<StartPositionComponent> startPos,
             RefRO<EndPositionComponent> endPos,
-            RefRO<SpeedComponent> speed)
+            RefRO<SpeedComponent> speed,
+            RefRO<RangeComponent> range)
         {
             var facet = new LinearMovementFacet(
                 entity,
@@ -121,6 +124,7 @@ namespace Movements.Movement.Systems
                 startPos,
                 endPos,
                 speed,
+                range,
                 Time
             );
 
