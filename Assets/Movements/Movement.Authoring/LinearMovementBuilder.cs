@@ -1,7 +1,3 @@
-// <copyright file="LinearMovementBuilder.cs" company="BovineLabs">
-//     Copyright (c) BovineLabs. All rights reserved.
-// </copyright>
-
 namespace Movements.Movement.Authoring
 {
     using BovineLabs.Core.EntityCommands;
@@ -28,9 +24,19 @@ namespace Movements.Movement.Authoring
         /// </summary>
         /// <param name="start">The starting position.</param>
         /// <param name="end">The ending position.</param>
-        public void WithPosition(float3 start, float3 end)
+        public void WithPositions(float3 start, float3 end)
         {
             this.startPosition = start;
+            this.endPosition = end;
+        }
+        
+        public void WithStartPosition(float3 start)
+        {
+            this.startPosition = start;
+        }
+        
+        public void WithEndPosition(float3 end)
+        {
             this.endPosition = end;
         }
 
@@ -66,6 +72,7 @@ namespace Movements.Movement.Authoring
 
         /// <summary>
         /// Applies the configured linear movement settings to the specified entity builder.
+        /// With the IFacet pattern, rotation components are optional - no need for WithoutRotationTag.
         /// </summary>
         /// <typeparam name="T">The type of entity command builder.</typeparam>
         /// <param name="builder">The entity builder to apply movement settings to.</param>
@@ -83,10 +90,6 @@ namespace Movements.Movement.Authoring
             {
                 builder.AddComponent(new StartQuaternionComponent { value = this.startRotation });
                 builder.AddComponent(new EndQuaternionComponent { value = this.endRotation });
-            }
-            else
-            {
-                builder.AddComponent<WithoutRotationTag>();
             }
         }
     }

@@ -1,108 +1,123 @@
+using BovineLabs.Core;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
-using Unity.Mathematics;
 using Movements.Movement.Data;
-using Movements.Movement.Logic;
 
 namespace Movements.Movement.Systems
 {
+    /// <summary>
+    /// System that processes linear movement using IFacet patterns.
+    /// Two separate jobs handle entities with and without rotation components.
+    /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct LinearMovementSystem : ISystem
     {
         [BurstCompile]
+        public void OnCreate(ref SystemState state)
+        {
+            // Require at least one entity with linear movement
+            var builder = new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<LinearMovementTag, LocalTransform, NormalizedProgress>()
+                .WithAll<StartPositionComponent, EndPositionComponent, SpeedComponent>()
+                .WithNone<TargetEcsLocalTransformTag>();
+
+            state.RequireForUpdate(state.GetEntityQuery(builder));
+        }
+
+        [BurstCompile]
+        public void OnDestroy(ref SystemState state)
+        {
+        }
+
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            float dt = SystemAPI.Time.DeltaTime;
+            var timeData = new TimeData { DeltaTime = SystemAPI.Time.DeltaTime };
 
-            // Job 1: Move AND Rotate
-            // Runs on entities that have LinearMovementTag AND Rotation components (implicitly) 
-            // and do NOT have WithoutRotationTag.
-            new LinearMoveAndRotateJob 
-            { 
-                DeltaTime = dt 
+            // Job 1: Movement WITH rotation
+            new LinearMovementWithRotationJob
+            {
+                Time = timeData
             }.ScheduleParallel();
 
-            // Job 2: Move ONLY
-            // Runs on entities that have LinearMovementTag AND WithoutRotationTag.
-            new LinearMoveOnlyJob 
-            { 
-                DeltaTime = dt 
+            // Job 2: Movement WITHOUT rotation
+            new LinearMovementJob
+            {
+                Time = timeData
             }.ScheduleParallel();
         }
     }
 
+    /// <summary>
+    /// Job for entities WITH rotation components.
+    /// Constructs LinearMovementWithRotationFacet.
+    /// </summary>
     [BurstCompile]
     [WithAll(typeof(LinearMovementTag))]
-    [WithNone(typeof(WithoutRotationTag), typeof(TargetEcsLocalTransformTag))]
-    public partial struct LinearMoveAndRotateJob : IJobEntity
+    [WithNone(typeof(TargetEcsLocalTransformTag))]
+    public partial struct LinearMovementWithRotationJob : IJobEntity
     {
-        public float DeltaTime;
+        public TimeData Time;
 
         private void Execute(
-            ref LocalTransform transform,
-            ref NormalizedProgress progress,
-            RefRO<StartPositionComponent> start,
-            RefRO<EndPositionComponent> end,
+            Entity entity,
+            RefRW<LocalTransform> transform,
+            RefRW<NormalizedProgress> progress,
+            RefRO<StartPositionComponent> startPos,
+            RefRO<EndPositionComponent> endPos,
+            RefRO<SpeedComponent> speed,
             RefRO<StartQuaternionComponent> startRot,
-            RefRO<EndQuaternionComponent> endRot,
-            RefRO<SpeedComponent> speed)
+            RefRO<EndQuaternionComponent> endRot)
         {
-            // 1. Logic: Position & Time
-            LinearLogic.Solve(
-                start.ValueRO.value,
-                end.ValueRO.value,
-                progress.value,
-                speed.ValueRO.value,
-                DeltaTime,
-                out float newT,
-                out float3 newPos
+            var facet = new LinearMovementWithRotationFacet(
+                entity,
+                transform,
+                progress,
+                startPos,
+                endPos,
+                speed,
+                startRot,
+                endRot,
+                this.Time
             );
 
-            // 2. Logic: Rotation
-            LinearLogic.SolveRotation(
-                startRot.ValueRO.value,
-                endRot.ValueRO.value,
-                newT,
-                out quaternion newRot
-            );
-
-            // 3. Apply
-            progress.value = newT;
-            transform.Position = newPos;
-            transform.Rotation = newRot;
+            facet.Execute();
         }
     }
 
+    /// <summary>
+    /// Job for entities WITHOUT rotation components.
+    /// Constructs LinearMovementFacet (position only).
+    /// </summary>
     [BurstCompile]
-    [WithAll(typeof(LinearMovementTag), typeof(WithoutRotationTag))]
+    [WithAll(typeof(LinearMovementTag))]
     [WithNone(typeof(TargetEcsLocalTransformTag))]
-    public partial struct LinearMoveOnlyJob : IJobEntity
+    public partial struct LinearMovementJob : IJobEntity
     {
-        public float DeltaTime;
+        public TimeData Time;
 
         private void Execute(
-            ref LocalTransform transform,
-            ref NormalizedProgress progress,
-            RefRO<StartPositionComponent> start,
-            RefRO<EndPositionComponent> end,
+            Entity entity,
+            RefRW<LocalTransform> transform,
+            RefRW<NormalizedProgress> progress,
+            RefRO<StartPositionComponent> startPos,
+            RefRO<EndPositionComponent> endPos,
             RefRO<SpeedComponent> speed)
         {
-            // 1. Logic: Position & Time
-            LinearLogic.Solve(
-                start.ValueRO.value,
-                end.ValueRO.value,
-                progress.value,
-                speed.ValueRO.value,
-                DeltaTime,
-                out float newT,
-                out float3 newPos
+            var facet = new LinearMovementFacet(
+                entity,
+                transform,
+                progress,
+                startPos,
+                endPos,
+                speed,
+                this.Time
             );
 
-            // 2. Apply (No Rotation)
-            progress.value = newT;
-            transform.Position = newPos;
+            facet.Execute();
         }
     }
 }
