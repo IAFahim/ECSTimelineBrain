@@ -9,9 +9,7 @@ using Unity.Mathematics;
 
 namespace Movements.Movement.Data.Builders
 {
-    /// <summary>
-    ///     Builder for configuring linear movement settings, including position, speed, and optional rotation.
-    /// </summary>
+    
     public struct MovementBuilder
     {
         private float3 _startPosition;
@@ -26,11 +24,7 @@ namespace Movements.Movement.Data.Builders
         
         private bool _isLinner;
 
-        /// <summary>
-        ///     Sets the start and end positions for the linear movement.
-        /// </summary>
-        /// <param name="start">The starting position.</param>
-        /// <param name="end">The ending position.</param>
+        
         public void WithPositions(float3 start, float3 end)
         {
             _startPosition = start;
