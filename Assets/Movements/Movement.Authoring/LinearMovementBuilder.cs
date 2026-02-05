@@ -1,6 +1,7 @@
 using BovineLabs.Core.EntityCommands;
 using Movements.Movement.Data.Parameters.Motion;
 using Movements.Movement.Data.Parameters.Timing;
+using Movements.Movement.Data.Tags.Modifiers;
 using Movements.Movement.Data.Tags.MovementTypes;
 using Movements.Movement.Data.Transforms.StartEnd;
 using Unity.Mathematics;
@@ -84,7 +85,7 @@ namespace Movements.Movement.Authoring
 
         /// <summary>
         ///     Applies the configured linear movement settings to the specified entity builder.
-        ///     With the IFacet pattern, rotation components are optional - no need for WithoutRotationTag.
+        ///     With the IFacet pattern, rotation components are optional - no need for WithRotationTag.
         /// </summary>
         /// <typeparam name="T">The type of entity command builder.</typeparam>
         /// <param name="builder">The entity builder to apply movement settings to.</param>
@@ -101,6 +102,7 @@ namespace Movements.Movement.Authoring
 
             if (hasRotation)
             {
+                builder.AddComponent(new WithRotationTag());
                 builder.AddComponent(new StartQuaternionComponent { value = startRotation });
                 builder.AddComponent(new EndQuaternionComponent { value = endRotation });
             }

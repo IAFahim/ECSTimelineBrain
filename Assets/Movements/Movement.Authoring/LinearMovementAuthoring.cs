@@ -1,6 +1,4 @@
 using BovineLabs.Core.Authoring.EntityCommands;
-using Movements.Movement.Data.Advanced.Targets;
-using Movements.Movement.Data.Transforms.Unassigned;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEditor;
@@ -90,16 +88,6 @@ namespace Movements.Movement.Authoring
                 if (authoring.HasRotation) builder.WithRotation(authoring.StartRotation, authoring.EndRotation);
 
                 builder.ApplyTo(ref commands);
-
-                if (authoring.useTargetTransform)
-                {
-                    AddComponent(entity, new TargetTransformComponent());
-                    SetComponentEnabled<TargetTransformComponent>(entity, false);
-
-                    AddComponent(entity, new UnAssignedPositionComponent());
-
-                    if (authoring.HasRotation) AddComponent(entity, new UnAssignedQuaternionComponent());
-                }
             }
         }
 

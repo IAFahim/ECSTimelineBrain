@@ -15,7 +15,8 @@
     "Unity.Physics",
     "Unity.Transforms",
     "AV.Eases.Runtime",
-    "Movement.Logic"
+    "Movement.Logic",
+    "BovineLabs.Timeline.Data"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
