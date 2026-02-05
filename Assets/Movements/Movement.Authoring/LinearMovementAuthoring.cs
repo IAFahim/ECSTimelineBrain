@@ -1,7 +1,7 @@
 using BovineLabs.Core.Authoring.EntityCommands;
+using Movements.Movement.Data.Builders;
 using Unity.Entities;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
 
 namespace Movements.Movement.Authoring
@@ -21,21 +21,9 @@ namespace Movements.Movement.Authoring
         [Tooltip("Start position in world space (only used if 'Current As Start Position' is false)")] [SerializeField]
         private float3 startPosition;
 
-        [Tooltip("Use a target Transform for the end position")] [SerializeField]
-        private bool useTargetTransform;
-
         [Tooltip("End position in world space (only used if Target Transform is not set)")] [SerializeField]
         private float3 endPosition = new(5f, 0f, 0f);
-
-        [Tooltip("Scales the movement vector. 1 = reach end position, 0.5 = half way, 2 = overshoot.")] [SerializeField]
-        private float range = 1f;
-
-        [Header("Movement Settings")] [Tooltip("Movement speed in units per second")] [SerializeField] [Min(0f)]
-        private float speed = 2f;
-
-        [Tooltip("Initial progress (0-1)")] [SerializeField] [Range(0f, 1f)]
-        private float progress;
-
+        
         [Header("Rotation Settings")] [Tooltip("Enable rotation interpolation")] [SerializeField]
         private bool hasRotation;
 
@@ -48,29 +36,29 @@ namespace Movements.Movement.Authoring
         [Tooltip("End rotation Euler angles")] [SerializeField]
         private Vector3 endRotationEuler = new(0f, 180f, 0f);
 
-        [Header("Visualization")] [Tooltip("Show movement path in Scene view")] [SerializeField]
-        private bool showGizmos = true;
+        [Header("Movement Settings")] 
+        
+        [Tooltip("Movement speed in units per second")] [SerializeField] [Min(0f)]
+        private float speed = 2f;
+        
+        [Tooltip("Scales the movement vector. 1 = reach end position, 0.5 = half way, 2 = overshoot.")] [SerializeField]
+        private float range = 1f;
 
-        [Tooltip("Color of the path visualization")] [SerializeField]
-        private Color pathColor = Color.cyan;
+        [Tooltip("Initial progress (0-1)")] [SerializeField] [Range(0f, 1f)]
+        private float progress;
 
-        public float3 StartPosition => currentAsStartPosition ? transform.position : startPosition;
-        public float3 EndPosition => endPosition;
-        public float Speed => speed;
-        public float Progress => progress;
-        public float Range => range;
-        public bool HasRotation => hasRotation;
+        private float3 StartPosition => currentAsStartPosition ? transform.position : startPosition;
+        private float3 EndPosition => endPosition;
+        private float Speed => speed;
+        private float Progress => progress;
+        private float Range => range;
+        private bool HasRotation => hasRotation;
 
-        public quaternion StartRotation => currentAsStartRotation
-            ? transform.rotation
+        private quaternion StartRotation => currentAsStartRotation ? transform.rotation
             : quaternion.Euler(math.radians(startRotationEuler));
 
-        public quaternion EndRotation => quaternion.Euler(math.radians(endRotationEuler));
-
-        /// <summary>
-        ///     Baker that converts authoring data to ECS components.
-        ///     Uses BakerCommands to implement IEntityCommands pattern.
-        /// </summary>
+        private quaternion EndRotation => quaternion.Euler(math.radians(endRotationEuler));
+        
         private class Baker : Baker<LinearMovementAuthoring>
         {
             public override void Bake(LinearMovementAuthoring authoring)
@@ -79,7 +67,7 @@ namespace Movements.Movement.Authoring
 
                 var commands = new BakerCommands(this, entity);
 
-                var builder = default(LinearMovementBuilder);
+                var builder = default(MovementBuilder);
                 builder.WithPositions(authoring.StartPosition, authoring.EndPosition);
                 builder.WithSpeed(authoring.Speed);
                 builder.WithProgress(authoring.Progress);
@@ -90,85 +78,5 @@ namespace Movements.Movement.Authoring
                 builder.ApplyTo(ref commands);
             }
         }
-
-#if UNITY_EDITOR
-        /// <summary>
-        ///     Scene view gizmo visualization for the movement path.
-        /// </summary>
-        private void OnDrawGizmos()
-        {
-            if (!showGizmos) return;
-
-            if (useTargetTransform) return;
-
-            var start = (Vector3)StartPosition;
-            var endRaw = (Vector3)EndPosition;
-
-            // Calculate Effective End based on Range
-            var dir = endRaw - start;
-            var effectiveEnd = start + (dir * range);
-
-            Gizmos.color = pathColor;
-            Gizmos.DrawLine(start, effectiveEnd); // Draw line to actual stopping point
-
-            // Visualize the "Projected" end point if range != 1, to show direction
-            if (Mathf.Abs(range - 1.0f) > 0.01f)
-            {
-                Gizmos.color = new Color(pathColor.r, pathColor.g, pathColor.b, 0.3f);
-                Gizmos.DrawLine(effectiveEnd, endRaw);
-                Gizmos.DrawWireSphere(endRaw, 0.1f);
-            }
-
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(start, 0.2f);
-
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(effectiveEnd, 0.2f); // Actual stopping point
-
-            Gizmos.color = pathColor * 0.7f;
-            var arrowDirection = (effectiveEnd - start).normalized;
-            // Prevent nan if start == effectiveEnd
-            if (arrowDirection != Vector3.zero)
-            {
-                var arrowPos = Vector3.Lerp(start, effectiveEnd, 0.5f);
-                Gizmos.DrawRay(arrowPos, arrowDirection * 0.3f);
-            }
-
-            if (hasRotation)
-            {
-                var startRot = (Quaternion)StartRotation;
-                var endRot = (Quaternion)EndRotation;
-
-                Handles.color = new Color(0, 1, 0, 0.5f);
-                using (new Handles.DrawingScope(Matrix4x4.TRS(start, startRot, Vector3.one)))
-                {
-                    Handles.DrawWireDisc(Vector3.zero, Vector3.forward, 0.3f);
-                    Handles.DrawWireDisc(Vector3.zero, Vector3.up, 0.3f);
-                    Handles.ArrowHandleCap(0, Vector3.zero, Quaternion.LookRotation(Vector3.forward), 0.2f,
-                        EventType.Repaint);
-                }
-
-                Handles.color = new Color(1, 0, 0, 0.5f);
-                using (new Handles.DrawingScope(Matrix4x4.TRS(effectiveEnd, endRot, Vector3.one))) // Draw rot at effective end
-                {
-                    Handles.DrawWireDisc(Vector3.zero, Vector3.forward, 0.3f);
-                    Handles.DrawWireDisc(Vector3.zero, Vector3.up, 0.3f);
-                    Handles.ArrowHandleCap(0, Vector3.zero, Quaternion.LookRotation(Vector3.forward), 0.2f,
-                        EventType.Repaint);
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Editor helper to initialize positions when component is added.
-        /// </summary>
-        private void Reset()
-        {
-            startPosition = transform.position;
-            startRotationEuler = transform.rotation.eulerAngles;
-            endPosition = transform.position + new Vector3(5f, 0f, 0f);
-            range = 1.0f;
-        }
-#endif
     }
 }
