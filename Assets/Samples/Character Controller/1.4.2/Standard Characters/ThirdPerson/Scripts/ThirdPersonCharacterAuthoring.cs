@@ -38,7 +38,11 @@ public class ThirdPersonCharacterAuthoring : MonoBehaviour
                 JumpSpeed = authoring.JumpSpeed,
                 Gravity = authoring.Gravity,
                 PreventAirAccelerationAgainstUngroundedHits = authoring.PreventAirAccelerationAgainstUngroundedHits,
-                StepAndSlopeHandling = authoring.StepAndSlopeHandling,
+            });
+            
+            AddComponent(entity, new BasicStepAndSlopeHandlingParametersComponent()
+            {
+                Value= authoring.StepAndSlopeHandling
             });
             AddComponent(entity, new ThirdPersonCharacterControl());
         }

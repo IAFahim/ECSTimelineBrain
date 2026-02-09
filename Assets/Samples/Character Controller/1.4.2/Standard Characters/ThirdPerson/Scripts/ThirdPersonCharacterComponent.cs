@@ -16,7 +16,12 @@ public struct ThirdPersonCharacterComponent : IComponentData
     public float JumpSpeed;
     public float3 Gravity;
     public bool PreventAirAccelerationAgainstUngroundedHits;
-    public BasicStepAndSlopeHandlingParameters StepAndSlopeHandling;
+}
+
+[Serializable]
+public struct BasicStepAndSlopeHandlingParametersComponent : IComponentData
+{
+    public BasicStepAndSlopeHandlingParameters Value;
 }
 
 [Serializable]

@@ -17,7 +17,7 @@ public partial struct ThirdPersonCharacterPhysicsUpdateSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         m_CharacterQuery = KinematicCharacterUtilities.GetBaseCharacterQueryBuilder()
-            .WithAll<ThirdPersonCharacterComponent, ThirdPersonCharacterControl>()
+            .WithAll<ThirdPersonCharacterComponent, ThirdPersonCharacterControl, BasicStepAndSlopeHandlingParametersComponent>()
             .Build(ref state);
 
         m_Context = new ThirdPersonCharacterUpdateContext();
@@ -58,6 +58,7 @@ public partial struct ThirdPersonCharacterPhysicsUpdateSystem : ISystem
             RefRW<PhysicsCollider> physicsCollider,
             RefRW<ThirdPersonCharacterComponent> characterComponent,
             RefRW<ThirdPersonCharacterControl> characterControl,
+            RefRW<BasicStepAndSlopeHandlingParametersComponent> stepAndSlopeHandling,
             DynamicBuffer<KinematicCharacterHit> characterHitsBuffer,
             DynamicBuffer<StatefulKinematicCharacterHit> statefulHitsBuffer,
             DynamicBuffer<KinematicCharacterDeferredImpulse> deferredImpulsesBuffer,
@@ -78,7 +79,8 @@ public partial struct ThirdPersonCharacterPhysicsUpdateSystem : ISystem
                     velocityProjectionHits
                 ),
                 CharacterComponent = characterComponent,
-                CharacterControl = characterControl
+                CharacterControl = characterControl,
+                StepAndSlopeHandlingComponent = stepAndSlopeHandling
             };
 
             characterProcessor.PhysicsUpdate(ref Context, ref BaseContext);
@@ -112,7 +114,8 @@ public partial struct ThirdPersonCharacterVariableUpdateSystem : ISystem
         m_CharacterQuery = KinematicCharacterUtilities.GetBaseCharacterQueryBuilder()
             .WithAll<
                 ThirdPersonCharacterComponent,
-                ThirdPersonCharacterControl>()
+                ThirdPersonCharacterControl,
+                BasicStepAndSlopeHandlingParametersComponent>()
             .Build(ref state);
 
         m_Context = new ThirdPersonCharacterUpdateContext();
@@ -152,6 +155,7 @@ public partial struct ThirdPersonCharacterVariableUpdateSystem : ISystem
             RefRW<PhysicsCollider> physicsCollider,
             RefRW<ThirdPersonCharacterComponent> characterComponent,
             RefRW<ThirdPersonCharacterControl> characterControl,
+            RefRW<BasicStepAndSlopeHandlingParametersComponent> stepAndSlopeHandling,
             DynamicBuffer<KinematicCharacterHit> characterHitsBuffer,
             DynamicBuffer<StatefulKinematicCharacterHit> statefulHitsBuffer,
             DynamicBuffer<KinematicCharacterDeferredImpulse> deferredImpulsesBuffer,
@@ -172,7 +176,8 @@ public partial struct ThirdPersonCharacterVariableUpdateSystem : ISystem
                     velocityProjectionHits
                 ),
                 CharacterComponent = characterComponent,
-                CharacterControl = characterControl
+                CharacterControl = characterControl,
+                StepAndSlopeHandlingComponent = stepAndSlopeHandling
             };
 
             characterProcessor.VariableUpdate(ref Context, ref BaseContext);

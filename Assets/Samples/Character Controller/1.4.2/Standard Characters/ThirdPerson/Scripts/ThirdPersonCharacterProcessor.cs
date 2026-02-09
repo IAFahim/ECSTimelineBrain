@@ -26,6 +26,7 @@ public struct ThirdPersonCharacterProcessor : IKinematicCharacterProcessor<Third
     public KinematicCharacterDataAccess CharacterDataAccess;
     public RefRW<ThirdPersonCharacterComponent> CharacterComponent;
     public RefRW<ThirdPersonCharacterControl> CharacterControl;
+    public RefRW<BasicStepAndSlopeHandlingParametersComponent> StepAndSlopeHandlingComponent;
 
     public void PhysicsUpdate(ref ThirdPersonCharacterUpdateContext context, ref KinematicCharacterUpdateContext baseContext)
     {
@@ -81,7 +82,7 @@ public struct ThirdPersonCharacterProcessor : IKinematicCharacterProcessor<Third
             ref characterBody,
             CharacterDataAccess.CharacterProperties.ValueRO,
             CharacterDataAccess.PhysicsCollider.ValueRO,
-            in characterComponent.StepAndSlopeHandling);
+            in StepAndSlopeHandlingComponent.ValueRO.Value);
 
         KinematicCharacterUtilities.Update_GroundPushing(
             in this,
@@ -235,7 +236,7 @@ public struct ThirdPersonCharacterProcessor : IKinematicCharacterProcessor<Third
             CharacterDataAccess.CharacterBody.ValueRO,
             CharacterDataAccess.CharacterProperties.ValueRO,
             in hit,
-            in characterComponent.StepAndSlopeHandling,
+            in StepAndSlopeHandlingComponent.ValueRO.Value,
             groundingEvaluationType);
     }
 
@@ -268,9 +269,9 @@ public struct ThirdPersonCharacterProcessor : IKinematicCharacterProcessor<Third
             ref remainingMovementLength,
             originalVelocityDirection,
             hitDistance,
-            characterComponent.StepAndSlopeHandling.StepHandling,
-            characterComponent.StepAndSlopeHandling.MaxStepHeight,
-            characterComponent.StepAndSlopeHandling.CharacterWidthForStepGroundingCheck);
+            StepAndSlopeHandlingComponent.ValueRO.Value.StepHandling,
+            StepAndSlopeHandlingComponent.ValueRO.Value.MaxStepHeight,
+            StepAndSlopeHandlingComponent.ValueRO.Value.CharacterWidthForStepGroundingCheck);
     }
 
     public void OverrideDynamicHitMasses(
@@ -300,7 +301,7 @@ public struct ThirdPersonCharacterProcessor : IKinematicCharacterProcessor<Third
             ref characterGroundHit,
             in velocityProjectionHits,
             originalVelocityDirection,
-            characterComponent.StepAndSlopeHandling.ConstrainVelocityToGroundPlane,
+            StepAndSlopeHandlingComponent.ValueRO.Value.ConstrainVelocityToGroundPlane,
             in CharacterDataAccess.CharacterBody.ValueRO);
     }
 
