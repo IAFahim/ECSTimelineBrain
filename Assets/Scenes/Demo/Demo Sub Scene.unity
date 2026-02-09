@@ -1849,6 +1849,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ThirdPersonCharacter
       objectReference: {fileID: 0}
+    - target: {fileID: 6689285571920954877, guid: 5fbcc801dea8fd640a004697d22ed448, type: 3}
+      propertyPath: RotationSharpness
+      value: 180
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7542772330835976783, guid: 5fbcc801dea8fd640a004697d22ed448, type: 3}
     - {fileID: 8041698241194078798, guid: 5fbcc801dea8fd640a004697d22ed448, type: 3}
