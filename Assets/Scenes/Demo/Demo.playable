@@ -18,7 +18,7 @@ MonoBehaviour:
     z: 0
   HasRotation: 1
   EndRotationEuler: {x: 0, y: 180, z: 0}
---- !u!114 &-1056911891989252529
+--- !u!114 &-2021676746946802845
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -27,14 +27,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 508365d563164b6e97739fce170c8c06, type: 3}
-  m_Name: PositionClip(Clone)
-  m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring::BovineLabs.Timeline.Authoring.PositionClip
-  Type: 1
-  Position: {x: 0, y: 0, z: 10}
-  Target: {fileID: 0}
-  OffsetType: 1
-  Offset: {x: 0, y: 0, z: 10}
+  m_Script: {fileID: 11500000, guid: 882a79362fea49b7b8e0e7561bb047ae, type: 3}
+  m_Name: PhysicsVelocityClip
+  m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring::BovineLabs.Timeline.Authoring.PhysicsVelocityClip
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49,14 +44,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.TimelineAsset
   m_Version: 0
   m_Tracks:
-  - {fileID: 2300067603032492037}
+  - {fileID: 1222727484740852520}
   m_FixedDuration: 0
   m_EditorSettings:
     m_Framerate: 60
     m_ScenePreview: 1
   m_DurationMode: 0
   m_MarkerTrack: {fileID: 0}
---- !u!114 &770489208340901466
+--- !u!114 &1222727484740852520
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -65,21 +60,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f9f32c1004e49618ba26da29477ae92, type: 3}
-  m_Name: PositionStartClip
-  m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring::BovineLabs.Timeline.Authoring.PositionStartClip
---- !u!114 &2300067603032492037
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d1b1ce6bcb04ea5893b0901d33759dd, type: 3}
-  m_Name: Transform Position Track
-  m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring::BovineLabs.Timeline.Authoring.TransformPositionTrack
+  m_Script: {fileID: 0}
+  m_Name: Physics Velocity Track
+  m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring:BovineLabs.Timeline.Authoring:PhysicsVelocityTrack
   m_Version: 3
   m_AnimClip: {fileID: 0}
   m_Locked: 0
@@ -90,15 +73,15 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
-    m_Start: 0
+    m_Start: 0.5833333333333334
     m_ClipIn: 0
-    m_Asset: {fileID: -1056911891989252529}
+    m_Asset: {fileID: -2021676746946802845}
     m_Duration: 5
     m_TimeScale: 1
-    m_ParentTrack: {fileID: 2300067603032492037}
+    m_ParentTrack: {fileID: 1222727484740852520}
     m_EaseInDuration: 0
     m_EaseOutDuration: 0
-    m_BlendInDuration: 5
+    m_BlendInDuration: -1
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
@@ -157,80 +140,10 @@ MonoBehaviour:
     m_PreExtrapolationMode: 0
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
-    m_DisplayName: PositionClip
-  - m_Version: 1
-    m_Start: 0
-    m_ClipIn: 0
-    m_Asset: {fileID: 770489208340901466}
-    m_Duration: 5
-    m_TimeScale: 1
-    m_ParentTrack: {fileID: 2300067603032492037}
-    m_EaseInDuration: 0
-    m_EaseOutDuration: 0
-    m_BlendInDuration: -1
-    m_BlendOutDuration: 5
-    m_MixInCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_MixOutCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    m_BlendInCurveMode: 0
-    m_BlendOutCurveMode: 0
-    m_ExposedParameterNames: []
-    m_AnimationCurves: {fileID: 0}
-    m_Recordable: 0
-    m_PostExtrapolationMode: 0
-    m_PreExtrapolationMode: 0
-    m_PostExtrapolationTime: 0
-    m_PreExtrapolationTime: 0
-    m_DisplayName: PositionStartClip
+    m_DisplayName: PhysicsVelocityClip
   m_Markers:
     m_Objects: []
   resetOnDeactivate: 1
-  ResetPositionOnDeactivate: 0
 --- !u!114 &3238001863987143155
 MonoBehaviour:
   m_ObjectHideFlags: 1

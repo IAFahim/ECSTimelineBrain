@@ -19,7 +19,8 @@
         "Unity.Mathematics",
         "Unity.Physics",
         "Unity.Timeline",
-        "Unity.Transforms"
+        "Unity.Transforms",
+        "Unity.Physics.Custom"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
