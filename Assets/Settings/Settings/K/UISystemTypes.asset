@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92902a4b949046059c3f3c0d23e517ac, type: 3}
-  m_Name: Enableable
-  m_EditorClassIdentifier: BovineLabs.Core::BovineLabs.Core.EnableableComponentAsset
-  componentName: 
-  component: 117849992505697364
+  m_Script: {fileID: 11500000, guid: 5c9cc203d06d4fd0bc8d41c5d662ab8b, type: 3}
+  m_Name: UISystemTypes
+  m_EditorClassIdentifier: BovineLabs.Anchor::BovineLabs.Anchor.UISystemTypes
+  description: 
+  types: []

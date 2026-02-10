@@ -805,7 +805,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc355e2200c74152b7fb829f9150215e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Bridge.Authoring::BovineLabs.Bridge.Authoring.Camera.CameraMainAuthoring
-  projectionCenterOffset: {x: 0, y: 0}
 --- !u!1 &651639307
 GameObject:
   m_ObjectHideFlags: 0
@@ -837,8 +836,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: BovineLabs.Core.Authoring::BovineLabs.Core.Authoring.Settings.SettingsAuthoring
   settings:
   - {fileID: 11400000, guid: fcfce5bfd6cf23589b307617c97393be, type: 2}
-  - {fileID: 11400000, guid: 091c3400a1824e447a75a912e5f1552e, type: 2}
-  - {fileID: 11400000, guid: 6426fd5f8b2430c409ebbe91f5753f13, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!4 &651639309
 Transform:
   m_ObjectHideFlags: 0

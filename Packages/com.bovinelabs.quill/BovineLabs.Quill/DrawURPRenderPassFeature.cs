@@ -64,15 +64,15 @@ namespace BovineLabs.Quill
                 this.commandBuffer = null;
             }
 
-            [Obsolete]
-            public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
-            {
-                this.commandBuffer ??= new CommandBuffer();
-
-                this.commandBuffer.Clear();
-                this.System?.SubmitFrame(renderingData.cameraData.camera!, new CommandBufferWrapper(this.commandBuffer));
-                context.ExecuteCommandBuffer(this.commandBuffer);
-            }
+            // [Obsolete]
+            // public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+            // {
+            //     this.commandBuffer ??= new CommandBuffer();
+            //
+            //     this.commandBuffer.Clear();
+            //     this.System?.SubmitFrame(renderingData.cameraData.camera!, new CommandBufferWrapper(this.commandBuffer));
+            //     context.ExecuteCommandBuffer(this.commandBuffer);
+            // }
 
             public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
             {

@@ -209,7 +209,7 @@ namespace BovineLabs.Quill
                 }.ScheduleParallel(JobsUtility.ThreadIndexCount, 1, this.Dependency);
             }
 
-            this.drawers.ClearRewind();
+            this.drawers.ClearRewind(this.Dependency);
 
 #if UNITY_EDITOR
             // If we are already the owner, or there is no owner we take ownership

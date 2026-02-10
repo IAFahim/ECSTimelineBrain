@@ -106,7 +106,7 @@ The above example used the `CreateDrawer<TestSystem>()` generic variation. By us
 
 ![Toolbar](Documentation~/Images/Toolbar.png)
 
-If you don't use `BovineLabs Anchor` or the toolbar, or if you have some other custom tooling to control the drawer, you can use the non-generic version, `CreateDrawer()`. 
+If you don't use `BovineLabs Anchor` or the toolbar, or if you have some other custom tooling to control the drawer, you can use the non-generic version, `CreateDrawer()`.
 This means the `Drawer` won't be added to the filtering list and will always draw, as long as drawing is globally enabled.  
 For example, this is the approach used by the included physics drawer.
 
@@ -117,7 +117,7 @@ This is particularly useful for visualizing one-shot events, as it lets you paus
 
 ## GlobalDraw
 
-Quill also comes with a `GlobalDraw` option that requires no setup. 
+Quill also comes with a `GlobalDraw` option that requires no setup.
 It can be safely called from the main thread or any job worker thread, and it provides access to all the same draw commands available on `Drawer`.
 
 There are a few things to consider before using `GlobalDraw`:

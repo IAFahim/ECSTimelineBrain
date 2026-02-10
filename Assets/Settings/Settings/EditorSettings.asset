@@ -35,6 +35,10 @@ MonoBehaviour:
     Path: Assets/Settings/ObjectGroups
   - Key: bl.ar.musictrackdefinition
     Path: Assets/Settings/Audio
+  - Key: bl.ar.anchornamedaction
+    Path: Assets/Settings/UI/Actions
+  - Key: bl.ar.anchornavanimation
+    Path: Assets/Settings/UI/Animations
   prebakeScenes: []
   startupScene: {fileID: 0}
   defaultSettingsAuthoring: {fileID: 0}

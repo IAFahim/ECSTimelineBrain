@@ -19,12 +19,15 @@
       },
       "hash": "70c36b1851c728076d88b3ccc26ccefe8dade2a3"
     },
-    "com.bovinelabs.bridge": {
-      "version": "https://gitlab.com/tertle/com.bovinelabs.bridge.git#1.1.0",
+    "com.bovinelabs.anchor": {
+      "version": "https://gitlab.com/tertle/com.bovinelabs.anchor.git#2.0.0",
       "depth": 0,
       "source": "git",
-      "dependencies": {},
-      "hash": "98aeef921b0177d6572d4f2f87abc76dbc9c0ab5"
+      "dependencies": {
+        "com.bovinelabs.core": "1.5.1",
+        "com.unity.dt.app-ui": "2.2.0-pre.4"
+      },
+      "hash": "23639604fcc2966f4f46650d7ba75aa7e8458584"
     },
     "com.bovinelabs.core": {
       "version": "https://gitlab.com/tertle/com.bovinelabs.core.git#1.6.0",
@@ -34,6 +37,15 @@
         "com.unity.entities": "1.4.3"
       },
       "hash": "5a76f8f678f3d0b63c2172bec2fcd0a432d07b22"
+    },
+    "com.bovinelabs.quill": {
+      "version": "file:com.bovinelabs.quill",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.bovinelabs.core": "1.4.6",
+        "com.unity.entities.graphics": "1.4.13-pre.4"
+      }
     },
     "com.bovinelabs.reaction": {
       "version": "https://gitlab.com/tertle/com.bovinelabs.reaction.git#2.0",
@@ -116,6 +128,18 @@
         "com.unity.test-framework": "1.4.6",
         "com.unity.test-framework.performance": "3.0.3"
       }
+    },
+    "com.unity.dt.app-ui": {
+      "version": "2.2.0-pre.4",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.modules.androidjni": "1.0.0",
+        "com.unity.modules.uielements": "1.0.0",
+        "com.unity.modules.screencapture": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
     },
     "com.unity.entities": {
       "version": "6.5.0",

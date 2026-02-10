@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
+  companyName: IAFahim
   productName: ECSTimelineBrain
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -832,7 +832,7 @@ PlayerSettings:
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
     Server: BL_CORE_EXTENSIONS
-    Standalone: BL_CORE_EXTENSIONS;UNITY_BURST_EXPERIMENTAL_ATOMIC_INTRINSICS;BL_ENTITIES_CUSTOM;UNITY_PHYSICS_CUSTOM;UNITY_PHYSICS
+    Standalone: BL_CORE_EXTENSIONS;UNITY_BURST_EXPERIMENTAL_ATOMIC_INTRINSICS;BL_ENTITIES_CUSTOM;UNITY_PHYSICS_CUSTOM;UNITY_PHYSICS;BL_DRAW_ENABLED;BL_DEBUG
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

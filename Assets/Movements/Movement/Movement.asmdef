@@ -20,7 +20,6 @@
         "Unity.Physics",
         "Unity.Transforms"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
