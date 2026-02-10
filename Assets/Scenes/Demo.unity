@@ -259,7 +259,7 @@ GameObject:
   - component: {fileID: 958042613}
   - component: {fileID: 958042612}
   - component: {fileID: 958042611}
-  - component: {fileID: 958042610}
+  - component: {fileID: 958042614}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -267,18 +267,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &958042610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 958042609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad4388b304c84924b7f933aa4b1a94a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: BovineLabs.Bridge.Input::BovineLabs.Bridge.Input.OnApplicationFocusBehaviour
 --- !u!114 &958042611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,6 +328,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &958042614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958042609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c0f43ea2b5d4eefbad93bbc43a60cf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BovineLabs.Timeline.Tracks::StartUI
 --- !u!1 &1255173355
 GameObject:
   m_ObjectHideFlags: 0

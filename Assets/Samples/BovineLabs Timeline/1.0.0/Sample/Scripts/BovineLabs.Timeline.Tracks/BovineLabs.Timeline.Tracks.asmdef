@@ -17,7 +17,8 @@
         "Unity.Mathematics",
         "Unity.Physics",
         "Unity.Timeline",
-        "Unity.Transforms"
+        "Unity.Transforms",
+        "BovineLabs.Timeline.Sample"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
