@@ -45,13 +45,14 @@
       "hash": "1592e7e6b6fa1ff9998580c31920f17b29621d5c"
     },
     "com.bovinelabs.timeline": {
-      "version": "file:com.bovinelabs.timeline",
+      "version": "https://gitlab.com/tertle/com.bovinelabs.timeline.git#1.0.0",
       "depth": 0,
-      "source": "embedded",
+      "source": "git",
       "dependencies": {
         "com.bovinelabs.core": "1.5.1",
         "com.unity.timeline": "1.8.10"
-      }
+      },
+      "hash": "85dbf8781b8d4bdb607b53dc7a821c747b681236"
     },
     "com.github-glitchenzo.nugetforunity": {
       "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
