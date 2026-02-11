@@ -15,10 +15,6 @@ namespace BovineLabs.Timeline.Authoring
     {
         protected override void Bake(BakingContext context)
         {
-            context.Baker.AddComponent(
-                context.TrackEntity,
-                new PhysicsVelocityOffset()
-            );
         }
     }
 }

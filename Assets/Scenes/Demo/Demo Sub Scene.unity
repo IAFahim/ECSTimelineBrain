@@ -482,7 +482,7 @@ GameObject:
   - component: {fileID: 287637074}
   - component: {fileID: 287637075}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Timeline Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

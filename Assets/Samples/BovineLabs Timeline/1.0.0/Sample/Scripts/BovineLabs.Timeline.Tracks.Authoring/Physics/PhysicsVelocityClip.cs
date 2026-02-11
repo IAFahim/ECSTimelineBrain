@@ -25,7 +25,7 @@ namespace BovineLabs.Timeline.Authoring
         public float3 LinearVelocity => linearVelocity;
         public float3 AngularVelocity => angularVelocity;
 
-        public ClipCaps clipCaps => ClipCaps.Blending;
+        public ClipCaps clipCaps => ClipCaps.Looping;
 
         public override void Bake(Entity clipEntity, BakingContext context)
         {

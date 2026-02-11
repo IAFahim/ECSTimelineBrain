@@ -2,18 +2,17 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
-using UnityEngine;
+using BovineLabs.Core.Jobs;
 
 namespace BovineLabs.Timeline.Tracks
 {
-    using BovineLabs.Core.Collections;
-    using BovineLabs.Core.Jobs;
     using BovineLabs.Timeline;
     using BovineLabs.Timeline.Data;
     using BovineLabs.Timeline.Tracks.Data;
     using Unity.Burst;
     using Unity.Collections;
     using Unity.Entities;
+    using Unity.Mathematics;
     using Unity.Physics;
 
     [UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
@@ -39,14 +38,6 @@ namespace BovineLabs.Timeline.Tracks
         public void OnUpdate(ref SystemState state)
         {
             var velocityLookup = SystemAPI.GetComponentLookup<PhysicsVelocity>(false);
-
-            // TODO all these could be run in parallel
-            new ActivateResetJob { VelocityLookup = velocityLookup }.ScheduleParallel();
-            new DeactivateResetJob { VelocityLookup = velocityLookup }.Schedule();
-            new PhysicsVelocityOffsetJob { VelocityLookup = velocityLookup }.ScheduleParallel();
-            new PhysicsVelocityTargetJob { VelocityLookup = velocityLookup }.ScheduleParallel();
-            new MoveToStartingVelocityClipJob { VelocityLookup = velocityLookup }.ScheduleParallel();
-
             var blendData = this.impl.Update(ref state);
 
             state.Dependency = new WriteVelocityJob
@@ -54,107 +45,6 @@ namespace BovineLabs.Timeline.Tracks
                 BlendData = blendData,
                 VelocityLookup = velocityLookup
             }.ScheduleParallel(blendData, INNERLOOP_BATCH_COUNT, state.Dependency);
-        }
-
-        [BurstCompile]
-        [WithAll(typeof(TimelineActive))]
-        [WithNone(typeof(TimelineActivePrevious))]
-        private partial struct ActivateResetJob : IJobEntity
-        {
-            [ReadOnly]
-            public ComponentLookup<PhysicsVelocity> VelocityLookup;
-
-            private void Execute(ref PhysicsVelocityResetOnDeactivate velocityResetOnDeactivate, in TrackBinding trackBinding)
-            {
-                if (!this.VelocityLookup.TryGetComponent(trackBinding.Value, out var bindingVelocity))
-                {
-                    return;
-                }
-
-                velocityResetOnDeactivate.Value = bindingVelocity;
-            }
-        }
-
-        [BurstCompile]
-        [WithNone(typeof(TimelineActive))]
-        [WithAll(typeof(TimelineActivePrevious))]
-        private partial struct DeactivateResetJob : IJobEntity
-        {
-            public ComponentLookup<PhysicsVelocity> VelocityLookup;
-
-            private void Execute(in PhysicsVelocityResetOnDeactivate velocityResetOnDeactivate, in TrackBinding trackBinding)
-            {
-                var has = this.VelocityLookup.TryGetRefRW(trackBinding.Value, out var physicsVelocity);
-                if (!has) return;
-                
-                physicsVelocity.ValueRW.Linear = velocityResetOnDeactivate.Value.Linear;
-                physicsVelocity.ValueRW.Angular = velocityResetOnDeactivate.Value.Angular;
-            }
-        }
-
-        [BurstCompile]
-        [WithAll(typeof(TimelineActive))]
-        [WithNone(typeof(TimelineActivePrevious))] // we only update this once and cache it
-        private partial struct PhysicsVelocityOffsetJob : IJobEntity
-        {
-            [ReadOnly]
-            public ComponentLookup<PhysicsVelocity> VelocityLookup;
-
-            private void Execute(ref PhysicsVelocityAnimated physicsVelocityAnimated, in PhysicsVelocityOffset physicsVelocityOffset, in TrackBinding trackBinding)
-            {
-                if (!this.VelocityLookup.TryGetComponent(trackBinding.Value, out var bindingVelocity))
-                {
-                    return;
-                }
-
-                physicsVelocityAnimated.Value = new PhysicsVelocity
-                {
-                    Linear = bindingVelocity.Linear + physicsVelocityOffset.Value.Linear,
-                    Angular = bindingVelocity.Angular + physicsVelocityOffset.Value.Angular
-                };
-            }
-        }
-
-        [BurstCompile]
-        [WithAll(typeof(TimelineActive))]
-        private partial struct PhysicsVelocityTargetJob : IJobEntity
-        {
-            [ReadOnly]
-            public ComponentLookup<PhysicsVelocity> VelocityLookup;
-
-            private void Execute(ref PhysicsVelocityAnimated physicsVelocityAnimated, in PhysicsVelocityTarget physicsVelocityTarget)
-            {
-                if (!this.VelocityLookup.TryGetComponent(physicsVelocityTarget.Target, out var targetVelocity))
-                {
-                    return;
-                }
-
-                physicsVelocityAnimated.Value = new PhysicsVelocity
-                {
-                    Linear = targetVelocity.Linear + physicsVelocityTarget.LinearOffset,
-                    Angular = targetVelocity.Angular + physicsVelocityTarget.AngularOffset
-                };
-            }
-        }
-
-        [BurstCompile]
-        [WithAll(typeof(TimelineActive))]
-        [WithNone(typeof(TimelineActivePrevious))] // we only update this once and cache it
-        [WithAll(typeof(PhysicsVelocityMoveToStart))]
-        private partial struct MoveToStartingVelocityClipJob : IJobEntity
-        {
-            [ReadOnly]
-            public ComponentLookup<PhysicsVelocity> VelocityLookup;
-
-            private void Execute(ref PhysicsVelocityAnimated physicsVelocityAnimated, in TrackBinding trackBinding)
-            {
-                if (!this.VelocityLookup.TryGetComponent(trackBinding.Value, out var bindingVelocity))
-                {
-                    return;
-                }
-
-                physicsVelocityAnimated.Value = bindingVelocity;
-            }
         }
 
         [BurstCompile]
@@ -170,17 +60,39 @@ namespace BovineLabs.Timeline.Tracks
             {
                 this.Read(this.BlendData, entryIndex, out var entity, out var mixResult);
 
-                var velocity = this.VelocityLookup.GetRefRWOptional(entity);
-                if (!velocity.IsValid)
+                var velocityRW = this.VelocityLookup.GetRefRW(entity);
+                
+                var weights = mixResult.Weights;
+                var linearAccum = float3.zero;
+                var angularAccum = float3.zero;
+
+                if (weights.x > math.EPSILON)
                 {
-                    return;
+                    linearAccum += mixResult.Value1.Linear * weights.x;
+                    angularAccum += mixResult.Value1.Angular * weights.x;
                 }
 
-                var timelineContribution = JobHelpers.Blend<PhysicsVelocity, PhysicsVelocityMixer>(ref mixResult, default);
+                if (weights.y > math.EPSILON)
+                {
+                    linearAccum += mixResult.Value2.Linear * weights.y;
+                    angularAccum += mixResult.Value2.Angular * weights.y;
+                }
 
-                velocity.ValueRW.Linear += timelineContribution.Linear;
-                velocity.ValueRW.Angular += timelineContribution.Angular;
-                Debug.Log($"L: {velocity.ValueRO.Linear} A: {velocity.ValueRO.Angular}");
+                if (weights.z > math.EPSILON)
+                {
+                    linearAccum += mixResult.Value3.Linear * weights.z;
+                    angularAccum += mixResult.Value3.Angular * weights.z;
+                }
+
+                if (weights.w > math.EPSILON)
+                {
+                    linearAccum += mixResult.Value4.Linear * weights.w;
+                    angularAccum += mixResult.Value4.Angular * weights.w;
+                }
+
+                // Apply accumulated timeline velocity to the physics component
+                velocityRW.ValueRW.Linear += linearAccum;
+                velocityRW.ValueRW.Angular += angularAccum;
             }
         }
     }
