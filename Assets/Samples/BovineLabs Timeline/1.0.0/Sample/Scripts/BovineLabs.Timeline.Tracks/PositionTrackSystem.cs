@@ -175,13 +175,9 @@ namespace BovineLabs.Timeline.Tracks
             {
                 this.Read(this.BlendData, entryIndex, out var entity, out var target);
 
-                var lt = this.LocalTransforms.GetRefRWOptional(entity);
-                if (!lt.IsValid)
-                {
-                    return;
-                }
-
-                lt.ValueRW.Position = JobHelpers.Blend<float3, Float3Mixer>(ref target, lt.ValueRO.Position);
+                var has = this.LocalTransforms.TryGetRefRW(entity, out var localTransform);
+                if (!has) return;
+                localTransform.ValueRW.Position = JobHelpers.Blend<float3, Float3Mixer>(ref target, localTransform.ValueRO.Position);
             }
         }
     }

@@ -13,7 +13,6 @@ namespace BovineLabs.Timeline.Authoring
     [TrackClipType(typeof(PhysicsVelocityClip))]
     public class PhysicsVelocityClip : DOTSClip, ITimelineClipAsset
     {
-        public const string DEFAULT_DISPLAY_NAME = "Physics Velocity";
 
         [SerializeField]
         [Tooltip("Linear velocity in world units per second")]

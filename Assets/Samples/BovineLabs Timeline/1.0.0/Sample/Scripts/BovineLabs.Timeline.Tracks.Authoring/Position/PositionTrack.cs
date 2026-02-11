@@ -2,7 +2,6 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
-using Unity.Physics.Authoring;
 using UnityEngine.LowLevelPhysics2D;
 
 namespace BovineLabs.Timeline.Authoring
@@ -29,18 +28,6 @@ namespace BovineLabs.Timeline.Authoring
             {
                 context.Baker.AddComponent<PositionResetOnDeactivate>(context.TrackEntity);
             }
-        }
-    }
-
-    [Serializable]
-    [TrackClipType(typeof(PhysicsVelocityClip))]
-    [TrackColor(0.25f, 0.25f, 0)]
-    [TrackBindingType(typeof(PhysicsBodyAuthoring))]
-    [DisplayName("DOTS/Physics Velocity Target")]
-    public class PhysicsVelocityTrack : DOTSTrack
-    {
-        protected override void Bake(BakingContext context)
-        {
         }
     }
 }

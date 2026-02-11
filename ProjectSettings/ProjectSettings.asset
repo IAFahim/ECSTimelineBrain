@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: IAFahim
+  companyName: DefaultCompany
   productName: ECSTimelineBrain
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -527,10 +527,7 @@ PlayerSettings:
       m_Height: 720
       m_Kind: 1
       m_SubKind: 
-  m_BuildTargetBatching:
-  - m_BuildTarget: Standalone
-    m_StaticBatching: 1
-    m_DynamicBatching: 0
+  m_BuildTargetBatching: []
   m_BuildTargetShaderSettings: []
   m_BuildTargetGraphicsJobs: []
   m_BuildTargetGraphicsJobMode: []
@@ -832,7 +829,7 @@ PlayerSettings:
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
     Server: BL_CORE_EXTENSIONS
-    Standalone: BL_CORE_EXTENSIONS;UNITY_BURST_EXPERIMENTAL_ATOMIC_INTRINSICS;BL_ENTITIES_CUSTOM;UNITY_PHYSICS_CUSTOM;UNITY_PHYSICS;BL_DRAW_ENABLED;BL_DEBUG
+    Standalone: BL_CORE_EXTENSIONS;UNITY_BURST_EXPERIMENTAL_ATOMIC_INTRINSICS;BL_ENTITIES_CUSTOM;UNITY_PHYSICS_CUSTOM;UNITY_PHYSICS
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

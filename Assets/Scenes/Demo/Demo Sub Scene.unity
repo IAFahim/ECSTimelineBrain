@@ -786,13 +786,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 491129980}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0.39659846, y: -0.26705965, z: 0.12177882, w: -0.8698039}
+  m_LocalPosition: {x: -2.7938192, y: 9.120377, z: -7.9534845}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 57.961, y: 13.855, z: 0}
 --- !u!114 &491129982
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -802,9 +802,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 491129980}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc355e2200c74152b7fb829f9150215e, type: 3}
+  m_Script: {fileID: 11500000, guid: 91cffade3faa23640921cbb79b1e6bb0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: BovineLabs.Bridge.Authoring::BovineLabs.Bridge.Authoring.Camera.CameraMainAuthoring
+  m_EditorClassIdentifier: Assembly-CSharp::MainEntityCameraAuthoring
 --- !u!1 &651639307
 GameObject:
   m_ObjectHideFlags: 0
@@ -1178,8 +1178,8 @@ MonoBehaviour:
   m_AngularDamping: 0.05
   m_InitialLinearVelocity:
     x: 1
-    y: 2
-    z: 1
+    y: 0
+    z: 0
   m_InitialAngularVelocity:
     x: 0
     y: 0
@@ -2379,15 +2379,15 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1924475662}
-  - {fileID: 701075147}
+  - {fileID: 491129981}
   - {fileID: 651639309}
   - {fileID: 1232014565}
   - {fileID: 287637073}
+  - {fileID: 1924475662}
+  - {fileID: 701075147}
   - {fileID: 1155494191}
   - {fileID: 1948879556}
   - {fileID: 916731472}
-  - {fileID: 491129981}
   - {fileID: 61323579}
   - {fileID: 208679449}
   - {fileID: 2052591004}
