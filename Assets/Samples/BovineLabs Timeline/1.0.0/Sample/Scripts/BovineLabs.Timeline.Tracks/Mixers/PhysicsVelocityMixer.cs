@@ -9,6 +9,8 @@ namespace BovineLabs.Timeline.Tracks
     using Unity.Mathematics;
     using Unity.Physics;
 
+    [BurstCompile]
+
     public readonly struct PhysicsVelocityMixer : IMixer<PhysicsVelocity>
     {
         [BurstCompile]
