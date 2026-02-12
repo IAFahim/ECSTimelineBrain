@@ -2,10 +2,10 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
+using Unity.Entities;
+
 namespace BovineLabs.Timeline.Tracks.Data
 {
-    using Unity.Entities;
-
     public struct RotationLookAtStart : IComponentData
     {
     }

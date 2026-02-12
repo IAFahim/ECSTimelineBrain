@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using BovineLabs.Timeline.Tracks.Data;
 using Unity.Physics.Authoring;
 using UnityEngine.Timeline;
 

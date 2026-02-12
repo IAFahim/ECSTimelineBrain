@@ -6,11 +6,11 @@ using UnityEngine.Timeline;
 namespace BovineLabs.Timeline.Authoring
 {
     [Serializable]
-    [TrackClipType(typeof(CompanionLinkInstantiateClip))]
+    [TrackClipType(typeof(CompanionActivationClip))]
     [TrackColor(0.25f, 0.25f, 0)]
     [TrackBindingType(typeof(GameObject))]
-    [DisplayName("DOTS/" + "GameObjectInstantiateTrack")]
-    public class CompanionLinkInstantiateTrack : DOTSTrack
+    [DisplayName("DOTS/" + nameof(CompanionActivationTrack))]
+    public class CompanionActivationTrack : DOTSTrack
     {
         protected override void Bake(BakingContext context)
         {

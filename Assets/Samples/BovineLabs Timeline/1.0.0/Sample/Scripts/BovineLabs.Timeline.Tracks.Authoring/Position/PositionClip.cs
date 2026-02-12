@@ -2,13 +2,13 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
+using BovineLabs.Timeline.Tracks.Data;
+using Unity.Entities;
+using UnityEngine;
+using UnityEngine.Timeline;
+
 namespace BovineLabs.Timeline.Authoring
 {
-    using BovineLabs.Timeline.Tracks.Data;
-    using Unity.Entities;
-    using UnityEngine;
-    using UnityEngine.Timeline;
-
     public class PositionClip : DOTSClip, ITimelineClipAsset
     {
         public PositionType Type;
@@ -20,23 +20,24 @@ namespace BovineLabs.Timeline.Authoring
 
         public ClipCaps clipCaps => ClipCaps.Blending;
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public override void Bake(Entity clipEntity, BakingContext context)
         {
             // This value is used for PositionType.World, everything else will override it before use
-            context.Baker.AddComponent(clipEntity, new PositionAnimated { Value = this.Position });
+            context.Baker.AddComponent(clipEntity, new PositionAnimated { Value = Position });
             context.Baker.AddTransformUsageFlags(context.Binding!.Target, TransformUsageFlags.Dynamic);
 
-            switch (this.Type)
+            switch (Type)
             {
                 case PositionType.World:
                     break;
                 case PositionType.Offset:
-                    context.Baker.AddComponent(clipEntity, new PositionOffset { Type = this.OffsetType, Offset = this.Offset });
+                    context.Baker.AddComponent(clipEntity, new PositionOffset { Type = OffsetType, Offset = Offset });
                     break;
                 case PositionType.Target:
-                    var target = context.Baker.GetEntity(this.Target, TransformUsageFlags.Dynamic);
-                    context.Baker.AddComponent(clipEntity, new PositionTarget { Target = target, Type = this.OffsetType, Offset = this.Offset });
+                    var target = context.Baker.GetEntity(Target, TransformUsageFlags.Dynamic);
+                    context.Baker.AddComponent(clipEntity,
+                        new PositionTarget { Target = target, Type = OffsetType, Offset = Offset });
                     break;
             }
 
@@ -48,6 +49,6 @@ namespace BovineLabs.Timeline.Authoring
     {
         World,
         Offset,
-        Target,
+        Target
     }
 }

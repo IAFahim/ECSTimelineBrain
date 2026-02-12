@@ -2,17 +2,17 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
+using BovineLabs.Timeline.Tracks.Data;
+using Unity.Entities;
+using UnityEngine.Timeline;
+
 namespace BovineLabs.Timeline.Authoring
 {
-    using BovineLabs.Timeline.Tracks.Data;
-    using Unity.Entities;
-    using UnityEngine.Timeline;
-
     public class RotationLookAtStartClip : DOTSClip, ITimelineClipAsset
     {
         public ClipCaps clipCaps => ClipCaps.Blending;
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public override void Bake(Entity clipEntity, BakingContext context)
         {
             context.Baker.AddComponent<RotationLookAtStart>(clipEntity);

@@ -1,32 +1,26 @@
-// <copyright file="PhysicsVelocityClip.cs" company="BovineLabs">
-//     Copyright (c) BovineLabs. All rights reserved.
-// </copyright>
+using BovineLabs.Timeline.Tracks.Data;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Physics;
+using UnityEngine;
+using UnityEngine.Timeline;
 
 namespace BovineLabs.Timeline.Authoring
 {
-    using BovineLabs.Timeline.Tracks.Data;
-    using Unity.Entities;
-    using Unity.Mathematics;
-    using Unity.Physics;
-    using UnityEngine;
-    using UnityEngine.Timeline;
     public class PhysicsVelocityClip : DOTSClip, ITimelineClipAsset
     {
-
-        [SerializeField]
-        [Tooltip("Linear velocity in world units per second")]
+        [SerializeField] [Tooltip("Linear velocity in world units per second")]
         private Vector3 linearVelocity = Vector3.forward;
 
-        [SerializeField]
-        [Tooltip("Angular velocity in radians per second")]
+        [SerializeField] [Tooltip("Angular velocity in radians per second")]
         private Vector3 angularVelocity;
 
         public float3 LinearVelocity => linearVelocity;
         public float3 AngularVelocity => angularVelocity;
 
-        public ClipCaps clipCaps => ClipCaps.Looping;
-
         public override double duration => 1;
+
+        public ClipCaps clipCaps => ClipCaps.Looping;
 
         public override void Bake(Entity clipEntity, BakingContext context)
         {

@@ -2,16 +2,14 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
+using BovineLabs.Timeline.Data;
+using Unity.Mathematics;
+using Unity.Properties;
+
 namespace BovineLabs.Timeline.Tracks.Data
 {
-    using BovineLabs.Core.Collections;
-    using BovineLabs.Timeline.Data;
-    using Unity.Mathematics;
-    using Unity.Properties;
-
     public struct RotationAnimated : IAnimatedComponent<quaternion>
     {
-        [CreateProperty]
-        public quaternion Value { get; set; }
+        [CreateProperty] public quaternion Value { get; set; }
     }
 }

@@ -2,15 +2,15 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
+using Unity.Entities;
+using Unity.Mathematics;
+
 namespace BovineLabs.Timeline.Tracks.Data
 {
-    using Unity.Entities;
-    using Unity.Mathematics;
-
     public enum OffsetType : byte
     {
         World,
-        Local,
+        Local
     }
 
     public struct PositionOffset : IComponentData

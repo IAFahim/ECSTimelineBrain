@@ -1,21 +1,14 @@
-// <copyright file="PhysicsVelocityTrackSystem.cs" company="BovineLabs">
-//     Copyright (c) BovineLabs. All rights reserved.
-// </copyright>
-
-using BovineLabs.Core;
 using BovineLabs.Core.Jobs;
+using BovineLabs.Timeline.Data;
+using BovineLabs.Timeline.Tracks.Data;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Physics;
 
 namespace BovineLabs.Timeline.Tracks
 {
-    using BovineLabs.Timeline;
-    using BovineLabs.Timeline.Data;
-    using BovineLabs.Timeline.Tracks.Data;
-    using Unity.Burst;
-    using Unity.Collections;
-    using Unity.Entities;
-    using Unity.Mathematics;
-    using Unity.Physics;
-
     [UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
     public partial struct PhysicsVelocityTrackSystem : ISystem
     {
@@ -26,20 +19,20 @@ namespace BovineLabs.Timeline.Tracks
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            this.impl.OnCreate(ref state);
+            impl.OnCreate(ref state);
         }
 
         [BurstCompile]
         public void OnDestroy(ref SystemState state)
         {
-            this.impl.OnDestroy(ref state);
+            impl.OnDestroy(ref state);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var velocityLookup = SystemAPI.GetComponentLookup<PhysicsVelocity>(false);
-            var blendData = this.impl.Update(ref state);
+            var velocityLookup = SystemAPI.GetComponentLookup<PhysicsVelocity>();
+            var blendData = impl.Update(ref state);
 
             state.Dependency = new WriteVelocityJob
             {
@@ -49,20 +42,18 @@ namespace BovineLabs.Timeline.Tracks
         }
 
         [BurstCompile]
-        private partial struct WriteVelocityJob : IJobParallelHashMapDefer
+        private struct WriteVelocityJob : IJobParallelHashMapDefer
         {
-            [ReadOnly]
-            public NativeParallelHashMap<Entity, MixData<PhysicsVelocity>>.ReadOnly BlendData;
+            [ReadOnly] public NativeParallelHashMap<Entity, MixData<PhysicsVelocity>>.ReadOnly BlendData;
 
-            [NativeDisableParallelForRestriction]
-            public ComponentLookup<PhysicsVelocity> VelocityLookup;
+            [NativeDisableParallelForRestriction] public ComponentLookup<PhysicsVelocity> VelocityLookup;
 
             public void ExecuteNext(int entryIndex, int jobIndex)
             {
-                this.Read(this.BlendData, entryIndex, out var entity, out var mixResult);
+                this.Read(BlendData, entryIndex, out var entity, out var mixResult);
 
-                var velocityRW = this.VelocityLookup.GetRefRW(entity);
-                
+                var velocityRW = VelocityLookup.GetRefRW(entity);
+
                 var weights = mixResult.Weights;
                 var linearAccum = float3.zero;
                 var angularAccum = float3.zero;
@@ -91,7 +82,6 @@ namespace BovineLabs.Timeline.Tracks
                     angularAccum += mixResult.Value4.Angular * weights.w;
                 }
 
-                // Apply accumulated timeline velocity to the physics component
                 velocityRW.ValueRW.Linear += linearAccum;
                 velocityRW.ValueRW.Angular += angularAccum;
             }

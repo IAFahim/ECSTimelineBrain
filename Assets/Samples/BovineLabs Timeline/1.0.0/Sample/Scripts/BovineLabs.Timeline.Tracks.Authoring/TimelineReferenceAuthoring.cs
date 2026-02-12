@@ -10,7 +10,7 @@ namespace Samples.BovineLabs_Timeline._1._0._0.Sample.Scripts.BovineLabs.Timelin
         {
             public override void Bake(TimelineReferenceAuthoring authoring)
             {
-                this.AddComponent<TimelineReference>(this.GetEntity(TransformUsageFlags.None));
+                AddComponent<TimelineReference>(GetEntity(TransformUsageFlags.None));
             }
         }
     }

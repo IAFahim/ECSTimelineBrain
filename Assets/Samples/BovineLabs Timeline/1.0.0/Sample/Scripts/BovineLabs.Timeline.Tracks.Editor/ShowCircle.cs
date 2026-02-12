@@ -34,7 +34,7 @@ namespace Samples.BovineLabs_Timeline._1._0._0.Sample.Scripts.BovineLabs.Timelin
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var blendData = this._impl.Update(ref state);
+            var blendData = _impl.Update(ref state);
             state.Dependency = new ViewVelocityJob
             {
                 BlendData = blendData,
@@ -45,18 +45,23 @@ namespace Samples.BovineLabs_Timeline._1._0._0.Sample.Scripts.BovineLabs.Timelin
         }
 
         [BurstCompile]
-        private partial struct ViewVelocityJob : IJobParallelHashMapDefer
+        private struct ViewVelocityJob : IJobParallelHashMapDefer
         {
             [ReadOnly] public NativeParallelHashMap<Entity, MixData<PhysicsVelocity>>.ReadOnly BlendData;
-            [NativeDisableParallelForRestriction] [ReadOnly] public ComponentLookup<PhysicsVelocity> VelocityLookup;
-            [NativeDisableParallelForRestriction] [ReadOnly] public ComponentLookup<LocalTransform> LocalTransform;
+
+            [NativeDisableParallelForRestriction] [ReadOnly]
+            public ComponentLookup<PhysicsVelocity> VelocityLookup;
+
+            [NativeDisableParallelForRestriction] [ReadOnly]
+            public ComponentLookup<LocalTransform> LocalTransform;
+
             public Drawer Drawer;
 
             public void ExecuteNext(int entryIndex, int jobIndex)
             {
-                this.Read(BlendData, entryIndex, out Entity entity, out var mixData );
-                var physicsVelocity = this.VelocityLookup.GetRefRO(entity).ValueRO;
-                var transform = this.LocalTransform.GetRefRO(entity).ValueRO;
+                this.Read(BlendData, entryIndex, out var entity, out var mixData);
+                var physicsVelocity = VelocityLookup.GetRefRO(entity).ValueRO;
+                var transform = LocalTransform.GetRefRO(entity).ValueRO;
                 Drawer.Line(transform.Position, physicsVelocity.Linear, Color.aliceBlue);
             }
         }

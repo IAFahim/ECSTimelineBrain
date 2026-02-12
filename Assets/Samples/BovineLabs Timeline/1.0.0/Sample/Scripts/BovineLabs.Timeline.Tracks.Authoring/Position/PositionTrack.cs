@@ -2,16 +2,14 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
-using UnityEngine.LowLevelPhysics2D;
+using System;
+using System.ComponentModel;
+using BovineLabs.Timeline.Tracks.Data;
+using UnityEngine;
+using UnityEngine.Timeline;
 
 namespace BovineLabs.Timeline.Authoring
 {
-    using System;
-    using System.ComponentModel;
-    using BovineLabs.Timeline.Tracks.Data;
-    using UnityEngine;
-    using UnityEngine.Timeline;
-
     [Serializable]
     [TrackClipType(typeof(PositionStartClip))]
     [TrackClipType(typeof(PositionClip))]
@@ -24,10 +22,7 @@ namespace BovineLabs.Timeline.Authoring
 
         protected override void Bake(BakingContext context)
         {
-            if (this.ResetPositionOnDeactivate)
-            {
-                context.Baker.AddComponent<PositionResetOnDeactivate>(context.TrackEntity);
-            }
+            if (ResetPositionOnDeactivate) context.Baker.AddComponent<PositionResetOnDeactivate>(context.TrackEntity);
         }
     }
 }

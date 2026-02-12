@@ -2,11 +2,11 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
+using Unity.Entities;
+using Unity.Mathematics;
+
 namespace BovineLabs.Timeline.Tracks.Data
 {
-    using Unity.Entities;
-    using Unity.Mathematics;
-
     public struct PositionResetOnDeactivate : IComponentData
     {
         public float3 Value;

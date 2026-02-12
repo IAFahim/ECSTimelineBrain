@@ -1,20 +1,14 @@
-﻿// <copyright file="RotationTrackSystem.cs" company="BovineLabs">
-//     Copyright (c) BovineLabs. All rights reserved.
-// </copyright>
+﻿using BovineLabs.Core.Jobs;
+using BovineLabs.Timeline.Data;
+using BovineLabs.Timeline.Tracks.Data;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 
 namespace BovineLabs.Timeline.Tracks
 {
-    using BovineLabs.Core.Collections;
-    using BovineLabs.Core.Jobs;
-    using BovineLabs.Timeline;
-    using BovineLabs.Timeline.Data;
-    using BovineLabs.Timeline.Tracks.Data;
-    using Unity.Burst;
-    using Unity.Collections;
-    using Unity.Entities;
-    using Unity.Mathematics;
-    using Unity.Transforms;
-
     [UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
     public partial struct RotationTrackSystem : ISystem
     {
@@ -23,13 +17,13 @@ namespace BovineLabs.Timeline.Tracks
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            this.impl.OnCreate(ref state);
+            impl.OnCreate(ref state);
         }
 
         [BurstCompile]
         public void OnDestroy(ref SystemState state)
         {
-            this.impl.OnDestroy(ref state);
+            impl.OnDestroy(ref state);
         }
 
         [BurstCompile]
@@ -46,7 +40,7 @@ namespace BovineLabs.Timeline.Tracks
             state.Dependency = new LookAtStartingDirectionClipJob { LocalTransforms = localTransforms }
                 .ScheduleParallel(state.Dependency);
 
-            var blendData = this.impl.Update(ref state);
+            var blendData = impl.Update(ref state);
 
             state.Dependency = new WriteRotationJob { BlendData = blendData, LocalTransforms = localTransforms }
                 .ScheduleParallel(blendData, 64, state.Dependency);
@@ -56,15 +50,11 @@ namespace BovineLabs.Timeline.Tracks
         [WithNone(typeof(TimelineActivePrevious))]
         private partial struct ActivateResetJob : IJobEntity
         {
-            [ReadOnly]
-            public ComponentLookup<LocalTransform> LocalTransforms;
+            [ReadOnly] public ComponentLookup<LocalTransform> LocalTransforms;
 
             private void Execute(ref RotationResetOnDeactivate rotationResetOnDeactivate, in TrackBinding trackBinding)
             {
-                if (!this.LocalTransforms.TryGetComponent(trackBinding.Value, out var bindingTransform))
-                {
-                    return;
-                }
+                if (!LocalTransforms.TryGetComponent(trackBinding.Value, out var bindingTransform)) return;
 
                 rotationResetOnDeactivate.Value = bindingTransform.Rotation;
             }
@@ -78,11 +68,8 @@ namespace BovineLabs.Timeline.Tracks
 
             private void Execute(in RotationResetOnDeactivate rotationResetOnDeactivate, in TrackBinding trackBinding)
             {
-                var localTransform = this.LocalTransforms.GetRefRWOptional(trackBinding.Value);
-                if (!localTransform.IsValid)
-                {
-                    return;
-                }
+                var localTransform = LocalTransforms.GetRefRWOptional(trackBinding.Value);
+                if (!localTransform.IsValid) return;
 
                 localTransform.ValueRW.Rotation = rotationResetOnDeactivate.Value;
             }
@@ -91,35 +78,29 @@ namespace BovineLabs.Timeline.Tracks
         [WithAll(typeof(TimelineActive))]
         private partial struct LookAtTargetClipJob : IJobEntity
         {
-            [ReadOnly]
-            public ComponentLookup<LocalTransform> LocalTransforms;
+            [ReadOnly] public ComponentLookup<LocalTransform> LocalTransforms;
 
-            private void Execute(ref RotationAnimated rotationAnimated, in TrackBinding trackBinding, in RotationLookAtTarget rotationLookAtTarget)
+            private void Execute(ref RotationAnimated rotationAnimated, in TrackBinding trackBinding,
+                in RotationLookAtTarget rotationLookAtTarget)
             {
-                if (!this.LocalTransforms.TryGetComponent(trackBinding.Value, out var bt) ||
-                    !this.LocalTransforms.TryGetComponent(rotationLookAtTarget.Target, out var lt))
-                {
+                if (!LocalTransforms.TryGetComponent(trackBinding.Value, out var bt) ||
+                    !LocalTransforms.TryGetComponent(rotationLookAtTarget.Target, out var lt))
                     return;
-                }
 
                 rotationAnimated.Value = quaternion.LookRotation(lt.Position - bt.Position, math.up());
             }
         }
 
         [WithAll(typeof(TimelineActive))]
-        [WithNone(typeof(TimelineActivePrevious))] // we only update this once and cache it
+        [WithNone(typeof(TimelineActivePrevious))]
         [WithAll(typeof(RotationLookAtStart))]
         private partial struct LookAtStartingDirectionClipJob : IJobEntity
         {
-            [ReadOnly]
-            public ComponentLookup<LocalTransform> LocalTransforms;
+            [ReadOnly] public ComponentLookup<LocalTransform> LocalTransforms;
 
             private void Execute(ref RotationAnimated rotationAnimated, in TrackBinding trackBinding)
             {
-                if (!this.LocalTransforms.TryGetComponent(trackBinding.Value, out var bindingTransform))
-                {
-                    return;
-                }
+                if (!LocalTransforms.TryGetComponent(trackBinding.Value, out var bindingTransform)) return;
 
                 rotationAnimated.Value = bindingTransform.Rotation;
             }
@@ -128,21 +109,16 @@ namespace BovineLabs.Timeline.Tracks
         [BurstCompile]
         private struct WriteRotationJob : IJobParallelHashMapDefer
         {
-            [ReadOnly]
-            public NativeParallelHashMap<Entity, MixData<quaternion>>.ReadOnly BlendData;
+            [ReadOnly] public NativeParallelHashMap<Entity, MixData<quaternion>>.ReadOnly BlendData;
 
-            [NativeDisableParallelForRestriction]
-            public ComponentLookup<LocalTransform> LocalTransforms;
+            [NativeDisableParallelForRestriction] public ComponentLookup<LocalTransform> LocalTransforms;
 
             public void ExecuteNext(int entryIndex, int jobIndex)
             {
-                this.Read(this.BlendData, entryIndex, out var entity, out var target);
+                this.Read(BlendData, entryIndex, out var entity, out var target);
 
-                var lt = this.LocalTransforms.GetRefRWOptional(entity);
-                if (!lt.IsValid)
-                {
-                    return;
-                }
+                var lt = LocalTransforms.GetRefRWOptional(entity);
+                if (!lt.IsValid) return;
 
                 lt.ValueRW.Rotation = JobHelpers.Blend<quaternion, QuaternionMixer>(ref target, lt.ValueRO.Rotation);
             }
