@@ -4,6 +4,7 @@ using BovineLabs.Timeline.Tracks.Data.GameObjects;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine.Timeline;
 
 namespace BovineLabs.Timeline.Tracks
 {
@@ -11,8 +12,6 @@ namespace BovineLabs.Timeline.Tracks
     public partial struct ActivationTrackSystem : ISystem
     {
         private TrackBlendImpl<float, ActivationAnimatedComponent> impl;
-
-        public const int INNERLOOP_BATCH_COUNT = 64;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -30,22 +29,27 @@ namespace BovineLabs.Timeline.Tracks
         public void OnUpdate(ref SystemState state)
         {
             var disabledLookup = SystemAPI.GetComponentLookup<Disabled>(true);
+            var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
 
-            new ActivateResetJob
+            // 1. CAPTURE STATE (On Start)
+            // Runs when Timeline becomes Active this frame
+            new CaptureOriginalStateJob
             {
                 DisabledLookup = disabledLookup
             }.ScheduleParallel();
 
-            var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-            new DeactivateResetJob
+            // 2. APPLY POST-PLAYBACK STATE (On Stop)
+            // Runs when Timeline becomes Inactive this frame
+            new ApplyPostPlaybackStateJob
             {
                 DisabledLookup = disabledLookup,
                 ECB = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged)
             }.Schedule();
 
+            // 3. RUNTIME ACTIVATION (On Update)
             var blendData = this.impl.Update(ref state);
 
-            state.Dependency = new ApplyActivationJob
+            state.Dependency = new ApplyRuntimeActivationJob
             {
                 BlendData = blendData,
                 DisabledLookup = disabledLookup,
@@ -53,62 +57,98 @@ namespace BovineLabs.Timeline.Tracks
             }.ScheduleParallel(state.Dependency);
         }
 
+        // --------------------------------------------------------------------------------
+        // JOB: Capture Original State (For 'Revert')
+        // --------------------------------------------------------------------------------
         [BurstCompile]
         [WithAll(typeof(TimelineActive))]
         [WithNone(typeof(TimelineActivePrevious))]
-        private partial struct ActivateResetJob : IJobEntity
+        private partial struct CaptureOriginalStateJob : IJobEntity
         {
             [ReadOnly] public ComponentLookup<Disabled> DisabledLookup;
 
-            private void Execute(ref ActivationResetOnDeactivate reset, in TrackBinding binding)
+            private void Execute(ref ActivationTrackComponent trackData, in TrackBinding binding)
             {
-                reset.WasDisabled = this.DisabledLookup.HasComponent(binding.Value);
+                // Record if the target was disabled before we started messing with it
+                trackData.OriginalWasDisabled = this.DisabledLookup.HasComponent(binding.Value);
             }
         }
 
+        // --------------------------------------------------------------------------------
+        // JOB: Runtime Logic (Standard Activation Track Behavior)
+        // --------------------------------------------------------------------------------
         [BurstCompile]
-        [WithNone(typeof(TimelineActive))]
-        [WithAll(typeof(TimelineActivePrevious))]
-        private partial struct DeactivateResetJob : IJobEntity
-        {
-            [ReadOnly] public ComponentLookup<Disabled> DisabledLookup;
-            public EntityCommandBuffer ECB;
-
-            private void Execute(in ActivationResetOnDeactivate reset, in TrackBinding binding)
-            {
-                var currentlyDisabled = this.DisabledLookup.HasComponent(binding.Value);
-
-                if (reset.WasDisabled && !currentlyDisabled)
-                {
-                    this.ECB.AddComponent<Disabled>(binding.Value);
-                }
-                else if (!reset.WasDisabled && currentlyDisabled)
-                {
-                    this.ECB.RemoveComponent<Disabled>(binding.Value);
-                }
-            }
-        }
-
-        [BurstCompile]
-        [WithAll(typeof(TimelineActive), typeof(ActivationTrackComponent))]
-        private partial struct ApplyActivationJob : IJobEntity
+        [WithAll(typeof(TimelineActive))]
+        private partial struct ApplyRuntimeActivationJob : IJobEntity
         {
             [ReadOnly] public NativeParallelHashMap<Entity, MixData<float>>.ReadOnly BlendData;
             [ReadOnly] public ComponentLookup<Disabled> DisabledLookup;
             public EntityCommandBuffer.ParallelWriter ECB;
 
-            private void Execute(Entity entity, [EntityIndexInQuery] int sortKey, in TrackBinding binding)
+            private void Execute(Entity trackEntity, [EntityIndexInQuery] int sortKey, in TrackBinding binding)
             {
+                // Standard Unity Logic:
+                // Clip Exists = Active
+                // Gap (No Clip) = Inactive
                 bool shouldBeActive = this.BlendData.ContainsKey(binding.Value);
-                bool isDisabled = this.DisabledLookup.HasComponent(binding.Value);
+                
+                bool isCurrentlyDisabled = this.DisabledLookup.HasComponent(binding.Value);
 
-                if (shouldBeActive && isDisabled)
+                if (shouldBeActive && isCurrentlyDisabled)
                 {
                     this.ECB.RemoveComponent<Disabled>(sortKey, binding.Value);
                 }
-                else if (!shouldBeActive && !isDisabled)
+                else if (!shouldBeActive && !isCurrentlyDisabled)
                 {
                     this.ECB.AddComponent<Disabled>(sortKey, binding.Value);
+                }
+            }
+        }
+
+        // --------------------------------------------------------------------------------
+        // JOB: Post-Playback Logic (Handle Enum)
+        // --------------------------------------------------------------------------------
+        [BurstCompile]
+        [WithNone(typeof(TimelineActive))]
+        [WithAll(typeof(TimelineActivePrevious))]
+        private partial struct ApplyPostPlaybackStateJob : IJobEntity
+        {
+            [ReadOnly] public ComponentLookup<Disabled> DisabledLookup;
+            public EntityCommandBuffer ECB;
+
+            private void Execute(in ActivationTrackComponent trackData, in TrackBinding binding)
+            {
+                bool isCurrentlyDisabled = this.DisabledLookup.HasComponent(binding.Value);
+
+                switch (trackData.PostPlaybackState)
+                {
+                    case PostPlaybackState.Active:
+                        // Force Active
+                        if (isCurrentlyDisabled)
+                            this.ECB.RemoveComponent<Disabled>(binding.Value);
+                        break;
+
+                    case PostPlaybackState.Inactive:
+                        // Force Inactive
+                        if (!isCurrentlyDisabled)
+                            this.ECB.AddComponent<Disabled>(binding.Value);
+                        break;
+
+                    case PostPlaybackState.Revert:
+                        // Restore to what it was at start
+                        if (trackData.OriginalWasDisabled && !isCurrentlyDisabled)
+                        {
+                            this.ECB.AddComponent<Disabled>(binding.Value);
+                        }
+                        else if (!trackData.OriginalWasDisabled && isCurrentlyDisabled)
+                        {
+                            this.ECB.RemoveComponent<Disabled>(binding.Value);
+                        }
+                        break;
+
+                    case PostPlaybackState.LeaveAsIs:
+                        // Do nothing. Leave it in whatever state the last frame of timeline left it.
+                        break;
                 }
             }
         }

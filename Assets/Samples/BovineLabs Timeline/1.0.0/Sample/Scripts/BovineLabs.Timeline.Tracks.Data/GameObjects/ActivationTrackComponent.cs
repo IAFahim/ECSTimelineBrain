@@ -1,15 +1,15 @@
-// <copyright file="ActivationTrackComponent.cs" company="BovineLabs">
-//     Copyright (c) BovineLabs. All rights reserved.
-// </copyright>
+using UnityEngine.Timeline;
 
 namespace BovineLabs.Timeline.Tracks.Data.GameObjects
 {
     using Unity.Entities;
 
-    /// <summary>
-    /// Tag component identifying an entity as an Activation Track.
-    /// </summary>
     public struct ActivationTrackComponent : IComponentData
     {
+        public PostPlaybackState PostPlaybackState;
+        
+        // Stored state for the 'Revert' logic. 
+        // True if the entity was Disabled when timeline started.
+        public bool OriginalWasDisabled; 
     }
 }

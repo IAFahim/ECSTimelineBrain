@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using BovineLabs.Timeline.Tracks.Data.GameObjects;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Timeline;
 
 namespace BovineLabs.Timeline.Authoring
@@ -14,16 +13,17 @@ namespace BovineLabs.Timeline.Authoring
     [DisplayName("DOTS/" + nameof(ActivationTrack))]
     public class ActivationTrack : DOTSTrack
     {
-        public bool activationResetOnDeactivate = true;
+
+        [Tooltip("Select the state of the bound object when the Timeline stops.")]
+        public PostPlaybackState postPlaybackState = PostPlaybackState.LeaveAsIs;
 
         protected override void Bake(BakingContext context)
         {
-            context.Baker.AddComponent<ActivationTrackComponent>(context.TrackEntity);
-
-            if (!activationResetOnDeactivate) return;
+            // We bake the configuration into the component
+            context.Baker.AddComponent(context.TrackEntity, new ActivationTrackComponent
             {
-                context.Baker.AddComponent<ActivationResetOnDeactivate>(context.TrackEntity);
-            }
+                PostPlaybackState = postPlaybackState
+            });
         }
     }
 }
