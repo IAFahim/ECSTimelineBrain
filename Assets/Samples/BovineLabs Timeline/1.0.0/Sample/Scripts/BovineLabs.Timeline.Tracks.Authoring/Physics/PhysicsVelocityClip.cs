@@ -16,7 +16,7 @@ namespace BovineLabs.Timeline.Authoring
 
         [SerializeField]
         [Tooltip("Linear velocity in world units per second")]
-        private Vector3 linearVelocity;
+        private Vector3 linearVelocity = Vector3.forward;
 
         [SerializeField]
         [Tooltip("Angular velocity in radians per second")]
@@ -26,6 +26,8 @@ namespace BovineLabs.Timeline.Authoring
         public float3 AngularVelocity => angularVelocity;
 
         public ClipCaps clipCaps => ClipCaps.Looping;
+
+        public override double duration => 1;
 
         public override void Bake(Entity clipEntity, BakingContext context)
         {

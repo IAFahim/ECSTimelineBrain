@@ -2,6 +2,7 @@
 //     Copyright (c) BovineLabs. All rights reserved.
 // </copyright>
 
+using BovineLabs.Core;
 using BovineLabs.Core.Jobs;
 
 namespace BovineLabs.Timeline.Tracks
