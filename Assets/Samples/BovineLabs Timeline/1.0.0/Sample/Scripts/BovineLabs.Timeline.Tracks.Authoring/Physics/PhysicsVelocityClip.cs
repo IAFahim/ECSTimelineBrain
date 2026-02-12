@@ -10,7 +10,6 @@ namespace BovineLabs.Timeline.Authoring
     using Unity.Physics;
     using UnityEngine;
     using UnityEngine.Timeline;
-    [TrackClipType(typeof(PhysicsVelocityClip))]
     public class PhysicsVelocityClip : DOTSClip, ITimelineClipAsset
     {
 
@@ -39,10 +38,6 @@ namespace BovineLabs.Timeline.Authoring
                     Angular = AngularVelocity
                 }
             });
-
-            if (context.Binding != null)
-                context.Baker.AddTransformUsageFlags(context.Binding.Target, TransformUsageFlags.Dynamic);
-
             base.Bake(clipEntity, context);
         }
     }
