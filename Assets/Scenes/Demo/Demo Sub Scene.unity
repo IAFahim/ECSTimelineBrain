@@ -836,8 +836,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: BovineLabs.Core.Authoring::BovineLabs.Core.Authoring.Settings.SettingsAuthoring
   settings:
   - {fileID: 11400000, guid: fcfce5bfd6cf23589b307617c97393be, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 091c3400a1824e447a75a912e5f1552e, type: 2}
+  - {fileID: 11400000, guid: 6426fd5f8b2430c409ebbe91f5753f13, type: 2}
 --- !u!4 &651639309
 Transform:
   m_ObjectHideFlags: 0
@@ -2438,7 +2438,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8877832272646035873, guid: 02f5c4131f087a342a9749c7eb9d1d49, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

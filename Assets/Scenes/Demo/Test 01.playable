@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3454c79644a646648e4869c9a07be5e3, type: 3}
   m_Name: GameObjectInstantiateClip
   m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring::BovineLabs.Timeline.Authoring.GameObjectInstantiateClip
-  gameObject: {fileID: 8877832272646035873, guid: 02f5c4131f087a342a9749c7eb9d1d49, type: 3}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
