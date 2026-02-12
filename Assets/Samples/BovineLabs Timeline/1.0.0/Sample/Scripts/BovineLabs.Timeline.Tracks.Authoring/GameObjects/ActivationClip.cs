@@ -11,7 +11,7 @@ namespace BovineLabs.Timeline.Authoring
 
         public override void Bake(Entity clipEntity, BakingContext context)
         {
-            context.Baker.AddComponent(clipEntity, new ActivationAnimatedComponent { Value = 1f });
+            context.Baker.AddComponent(clipEntity, new ActivationAnimatedComponent { Value = false });
             base.Bake(clipEntity, context);
         }
     }

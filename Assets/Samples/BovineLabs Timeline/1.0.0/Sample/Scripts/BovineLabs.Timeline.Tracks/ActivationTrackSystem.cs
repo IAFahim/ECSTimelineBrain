@@ -1,4 +1,3 @@
-using BovineLabs.Core.Jobs;
 using BovineLabs.Timeline.Data;
 using BovineLabs.Timeline.Tracks.Data.GameObjects;
 using Unity.Burst;
@@ -11,7 +10,7 @@ namespace BovineLabs.Timeline.Tracks
     [UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
     public partial struct ActivationTrackSystem : ISystem
     {
-        private TrackBlendImpl<float, ActivationAnimatedComponent> impl;
+        private TrackBlendImpl<bool, ActivationAnimatedComponent> impl;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -31,22 +30,17 @@ namespace BovineLabs.Timeline.Tracks
             var disabledLookup = SystemAPI.GetComponentLookup<Disabled>(true);
             var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
 
-            // 1. CAPTURE STATE (On Start)
-            // Runs when Timeline becomes Active this frame
             new CaptureOriginalStateJob
             {
                 DisabledLookup = disabledLookup
             }.ScheduleParallel();
 
-            // 2. APPLY POST-PLAYBACK STATE (On Stop)
-            // Runs when Timeline becomes Inactive this frame
             new ApplyPostPlaybackStateJob
             {
                 DisabledLookup = disabledLookup,
                 ECB = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged)
             }.Schedule();
 
-            // 3. RUNTIME ACTIVATION (On Update)
             var blendData = this.impl.Update(ref state);
 
             state.Dependency = new ApplyRuntimeActivationJob
@@ -57,9 +51,6 @@ namespace BovineLabs.Timeline.Tracks
             }.ScheduleParallel(state.Dependency);
         }
 
-        // --------------------------------------------------------------------------------
-        // JOB: Capture Original State (For 'Revert')
-        // --------------------------------------------------------------------------------
         [BurstCompile]
         [WithAll(typeof(TimelineActive))]
         [WithNone(typeof(TimelineActivePrevious))]
@@ -69,29 +60,22 @@ namespace BovineLabs.Timeline.Tracks
 
             private void Execute(ref ActivationTrackComponent trackData, in TrackBinding binding)
             {
-                // Record if the target was disabled before we started messing with it
                 trackData.OriginalWasDisabled = this.DisabledLookup.HasComponent(binding.Value);
             }
         }
 
-        // --------------------------------------------------------------------------------
-        // JOB: Runtime Logic (Standard Activation Track Behavior)
-        // --------------------------------------------------------------------------------
         [BurstCompile]
         [WithAll(typeof(TimelineActive))]
         private partial struct ApplyRuntimeActivationJob : IJobEntity
         {
-            [ReadOnly] public NativeParallelHashMap<Entity, MixData<float>>.ReadOnly BlendData;
+            [ReadOnly] public NativeParallelHashMap<Entity, MixData<bool>>.ReadOnly BlendData;
             [ReadOnly] public ComponentLookup<Disabled> DisabledLookup;
             public EntityCommandBuffer.ParallelWriter ECB;
 
             private void Execute(Entity trackEntity, [EntityIndexInQuery] int sortKey, in TrackBinding binding)
             {
-                // Standard Unity Logic:
-                // Clip Exists = Active
-                // Gap (No Clip) = Inactive
                 bool shouldBeActive = this.BlendData.ContainsKey(binding.Value);
-                
+
                 bool isCurrentlyDisabled = this.DisabledLookup.HasComponent(binding.Value);
 
                 if (shouldBeActive && isCurrentlyDisabled)
@@ -105,9 +89,6 @@ namespace BovineLabs.Timeline.Tracks
             }
         }
 
-        // --------------------------------------------------------------------------------
-        // JOB: Post-Playback Logic (Handle Enum)
-        // --------------------------------------------------------------------------------
         [BurstCompile]
         [WithNone(typeof(TimelineActive))]
         [WithAll(typeof(TimelineActivePrevious))]
@@ -123,19 +104,16 @@ namespace BovineLabs.Timeline.Tracks
                 switch (trackData.PostPlaybackState)
                 {
                     case PostPlaybackState.Active:
-                        // Force Active
                         if (isCurrentlyDisabled)
                             this.ECB.RemoveComponent<Disabled>(binding.Value);
                         break;
 
                     case PostPlaybackState.Inactive:
-                        // Force Inactive
                         if (!isCurrentlyDisabled)
                             this.ECB.AddComponent<Disabled>(binding.Value);
                         break;
 
                     case PostPlaybackState.Revert:
-                        // Restore to what it was at start
                         if (trackData.OriginalWasDisabled && !isCurrentlyDisabled)
                         {
                             this.ECB.AddComponent<Disabled>(binding.Value);
@@ -144,10 +122,10 @@ namespace BovineLabs.Timeline.Tracks
                         {
                             this.ECB.RemoveComponent<Disabled>(binding.Value);
                         }
+
                         break;
 
                     case PostPlaybackState.LeaveAsIs:
-                        // Do nothing. Leave it in whatever state the last frame of timeline left it.
                         break;
                 }
             }

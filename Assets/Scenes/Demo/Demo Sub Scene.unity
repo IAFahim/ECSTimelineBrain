@@ -1734,8 +1734,6 @@ PlayableDirector:
     value: {fileID: 287637075}
   - key: {fileID: 8941850868348712728, guid: 03b9a7c2875910f3f950783947667679, type: 2}
     value: {fileID: 1612731230}
-  - key: {fileID: -7848255667484312085, guid: 03b9a7c2875910f3f950783947667679, type: 2}
-    value: {fileID: 1612731230}
   m_ExposedReferences:
     m_References: []
 --- !u!114 &1232014567
@@ -2462,7 +2460,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8877832272646035873, guid: 02f5c4131f087a342a9749c7eb9d1d49, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
