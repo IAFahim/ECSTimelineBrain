@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95b55b7dd413ea8469ffd00f4538a832, type: 3}
+  m_Name: GameObjectSheetDefinition
+  m_EditorClassIdentifier: BovineLabs.Tabulate.Editor::BovineLabs.Tabulate.Editor.Core.SheetDefinition
+  type: 0
+  assetManagementMode: 0
+  customSearchString: 
+  columns: []
+  variables:
+  - variableId: 0
+    displayName: looping
+    type: 0
+    dataValue: 0
+    dataType: 1
+    targetTypeName: 
+    propertyPath: 
+    targetObject: {fileID: 0}
+    formula: 
+  dataEntries: []
+  managedGameObjects:
+  - {fileID: 8877832272646035873, guid: 02f5c4131f087a342a9749c7eb9d1d49, type: 3}
+  managedScriptableObjects: []
