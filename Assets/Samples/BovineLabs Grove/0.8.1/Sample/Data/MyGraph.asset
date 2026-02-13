@@ -1,0 +1,177 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6722854243441378801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72bab1d0eb9a41ccbb583177dec0d85b, type: 3}
+  m_Name: GraphInputNode
+  m_EditorClassIdentifier: 
+  Bounds:
+    serializedVersion: 2
+    x: 247
+    y: 163
+    width: 92
+    height: 77
+  Description: 
+--- !u!114 &-6547806338822269903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdbe52fabbaa4526b8d3dda0a1dea39b, type: 3}
+  m_Name: Graph Composite
+  m_EditorClassIdentifier: 
+  Bounds:
+    serializedVersion: 2
+    x: 732
+    y: 319
+    width: 146
+    height: 101
+  Description: 
+  nodeName: 
+  SwapInput: 0
+  ActionCount: 2
+--- !u!114 &-1553956225031160991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03944be2d97d4232997bc209559b0c8f, type: 3}
+  m_Name: Score Is Direction Old
+  m_EditorClassIdentifier: 
+  Bounds:
+    serializedVersion: 2
+    x: 293
+    y: 318
+    width: 133
+    height: 77
+  Description: 
+  nodeName: 
+  Duration: 5
+  Score:
+    value: 1
+    invert: 0
+--- !u!114 &-1186105021422547243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db66a97044b46e68aecb423a0e39d58, type: 3}
+  m_Name: First Score Wins
+  m_EditorClassIdentifier: 
+  Bounds:
+    serializedVersion: 2
+    x: 507
+    y: 295
+    width: 189
+    height: 101
+  Description: 
+  nodeName: 
+  SwapInput: 0
+  ScorerCount: 2
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9f4732c3bb74b97b59f96eeef51d35a, type: 3}
+  m_Name: MyGraph
+  m_EditorClassIdentifier: 
+  Graph:
+    Nodes:
+    - {fileID: -6547806338822269903}
+    - {fileID: -1186105021422547243}
+    - {fileID: -6722854243441378801}
+    - {fileID: -1553956225031160991}
+    - {fileID: 4946119830849111024}
+    - {fileID: 6160729573732325285}
+    Edges:
+    - InputPort: Input
+      Input: {fileID: -1186105021422547243}
+      OutputPort: Action
+      Output: {fileID: -6722854243441378801}
+    - InputPort: Data0
+      Input: {fileID: -1186105021422547243}
+      OutputPort: Output
+      Output: {fileID: -1553956225031160991}
+    - InputPort: Input
+      Input: {fileID: 4946119830849111024}
+      OutputPort: Execution1
+      Output: {fileID: -1186105021422547243}
+    - InputPort: Input
+      Input: {fileID: -6547806338822269903}
+      OutputPort: Execution0
+      Output: {fileID: -1186105021422547243}
+    - InputPort: Input
+      Input: {fileID: 4946119830849111024}
+      OutputPort: Execution1
+      Output: {fileID: -6547806338822269903}
+    - InputPort: Input
+      Input: {fileID: 6160729573732325285}
+      OutputPort: Execution0
+      Output: {fileID: -6547806338822269903}
+--- !u!114 &4946119830849111024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 693cc1e13cce4cfd88fe73003db25037, type: 3}
+  m_Name: Move
+  m_EditorClassIdentifier: 
+  Bounds:
+    serializedVersion: 2
+    x: 895
+    y: 420
+    width: 78
+    height: 77
+  Description: 
+  nodeName: 
+  SwapInput: 0
+  Speed: 1
+--- !u!114 &6160729573732325285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 934ef951f6a045439349f1bcebfb80e9, type: 3}
+  m_Name: Set Direction
+  m_EditorClassIdentifier: 
+  Bounds:
+    serializedVersion: 2
+    x: 895
+    y: 319
+    width: 120
+    height: 77
+  Description: 
+  nodeName: 
+  SwapInput: 0

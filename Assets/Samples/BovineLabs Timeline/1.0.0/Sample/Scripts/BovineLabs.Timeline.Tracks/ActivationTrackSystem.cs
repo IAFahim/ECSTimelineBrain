@@ -30,14 +30,10 @@ namespace BovineLabs.Timeline.Tracks
             var disabledLookup = SystemAPI.GetComponentLookup<Disabled>(true);
             var ecbSingleton = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
 
-            new CaptureOriginalStateJob
-            {
-                DisabledLookup = disabledLookup
-            }.ScheduleParallel();
-
             new ApplyPostPlaybackStateJob
             {
                 DisabledLookup = disabledLookup,
+                OriginalWasDisabledTagLookup =  SystemAPI.GetComponentLookup<OriginalWasDisabledTag>(true),
                 ECB = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged)
             }.Schedule();
 
@@ -50,19 +46,6 @@ namespace BovineLabs.Timeline.Tracks
                 ECB = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
             }.ScheduleParallel(state.Dependency);
         }
-
-        [BurstCompile]
-        [WithAll(typeof(TimelineActive))]
-        [WithNone(typeof(TimelineActivePrevious))]
-        private partial struct CaptureOriginalStateJob : IJobEntity
-        {
-            [ReadOnly] public ComponentLookup<Disabled> DisabledLookup;
-
-            private void Execute(ref ActivationTrackComponent trackData, in TrackBinding binding)
-            {
-                trackData.OriginalWasDisabled = DisabledLookup.HasComponent(binding.Value);
-            }
-        }
         
         
         [BurstCompile]
@@ -71,6 +54,7 @@ namespace BovineLabs.Timeline.Tracks
         private partial struct ApplyPostPlaybackStateJob : IJobEntity
         {
             [ReadOnly] public ComponentLookup<Disabled> DisabledLookup;
+            [ReadOnly] public ComponentLookup<OriginalWasDisabledTag> OriginalWasDisabledTagLookup;
             public EntityCommandBuffer ECB;
 
             private void Execute(in ActivationTrackComponent trackData, in TrackBinding binding)
@@ -88,7 +72,7 @@ namespace BovineLabs.Timeline.Tracks
                         break;
 
                     case PostPlaybackState.Revert:
-                        switch (trackData.OriginalWasDisabled)
+                        switch (OriginalWasDisabledTagLookup.HasComponent(binding.Value))
                         {
                             case true when !isCurrentlyDisabled:
                                 ECB.AddComponent<Disabled>(binding.Value);

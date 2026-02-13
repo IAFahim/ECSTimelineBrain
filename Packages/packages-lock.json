@@ -45,6 +45,15 @@
       },
       "hash": "5a76f8f678f3d0b63c2172bec2fcd0a432d07b22"
     },
+    "com.bovinelabs.grove": {
+      "version": "https://github.com/IAFahim/com.bovinelabs.grove.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.bovinelabs.core": "1.4.4"
+      },
+      "hash": "7d467618eccd99eaed184c42e39abc00de4c35a5"
+    },
     "com.bovinelabs.quill": {
       "version": "file:com.bovinelabs.quill",
       "depth": 0,

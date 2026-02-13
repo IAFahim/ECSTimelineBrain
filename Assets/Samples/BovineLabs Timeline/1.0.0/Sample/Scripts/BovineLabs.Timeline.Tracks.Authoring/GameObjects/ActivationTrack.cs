@@ -19,11 +19,14 @@ namespace BovineLabs.Timeline.Authoring
 
         protected override void Bake(BakingContext context)
         {
-            // We bake the configuration into the component
             context.Baker.AddComponent(context.TrackEntity, new ActivationTrackComponent
             {
                 PostPlaybackState = postPlaybackState
             });
+            if ((context.Director.GetGenericBinding(context.Track) as GameObject).activeInHierarchy)
+            {
+                context.Baker.AddComponent(context.TrackEntity, new OriginalWasDisabledTag());
+            }
         }
     }
 }

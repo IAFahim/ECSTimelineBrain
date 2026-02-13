@@ -7,9 +7,10 @@ namespace BovineLabs.Timeline.Tracks.Data.GameObjects
     public struct ActivationTrackComponent : IComponentData
     {
         public PostPlaybackState PostPlaybackState;
+    }
+
+    public struct OriginalWasDisabledTag : IComponentData
+    {
         
-        // Stored state for the 'Revert' logic. 
-        // True if the entity was Disabled when timeline started.
-        public bool OriginalWasDisabled; 
     }
 }

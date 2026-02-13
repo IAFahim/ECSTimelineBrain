@@ -802,9 +802,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 491129980}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91cffade3faa23640921cbb79b1e6bb0, type: 3}
+  m_Script: {fileID: 11500000, guid: fc355e2200c74152b7fb829f9150215e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MainEntityCameraAuthoring
+  m_EditorClassIdentifier: BovineLabs.Bridge.Authoring::BovineLabs.Bridge.Authoring.Camera.CameraMainAuthoring
+  projectionCenterOffset: {x: 0, y: 0}
 --- !u!1 &651639307
 GameObject:
   m_ObjectHideFlags: 0
