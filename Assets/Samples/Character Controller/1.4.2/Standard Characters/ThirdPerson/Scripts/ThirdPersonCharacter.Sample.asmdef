@@ -1,0 +1,32 @@
+{
+  "name": "ThirdPersonCharacter.Sample",
+  "rootNamespace": "",
+  "references": [
+    "BovineLabs.Core",
+    "BovineLabs.Core.Extensions",
+    "BovineLabs.Timeline",
+    "BovineLabs.Timeline.Data",
+    "BovineLabs.Timeline.Tracks.Data",
+    "Unity.Burst",
+    "Unity.Collections",
+    "Unity.Entities",
+    "Unity.Entities.Graphics",
+    "Unity.Entities.Hybrid",
+    "Unity.InputSystem",
+    "Unity.Mathematics",
+    "Unity.Physics",
+    "Unity.Timeline",
+    "Unity.Transforms",
+    "Unity.CharacterController",
+    "ThirdPersonCharacter.Sample.Util"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": true,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -6,7 +6,7 @@ namespace BovineLabs.Timeline.Tracks.Data.GameObjects
 
     public struct ActivationTrackComponent : IComponentData
     {
-        public PostPlaybackState PostPlaybackState;
+        public ActivationTrack.PostPlaybackState PostPlaybackState;
     }
 
     public struct OriginalWasDisabledTag : IComponentData

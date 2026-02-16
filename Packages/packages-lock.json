@@ -106,6 +106,14 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
+    "com.rukhanka.animation": {
+      "version": "file:com.rukhanka.animation",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.entities.graphics": "1.4.16"
+      }
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.10",
       "depth": 0,
@@ -381,6 +389,15 @@
         "com.unity.modules.audio": "1.0.0",
         "com.unity.modules.physics2d": "1.0.0",
         "com.unity.modules.physics": "1.0.0"
+      }
+    },
+    "com.unity.visualeffectgraph": {
+      "version": "17.5.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.shadergraph": "17.5.0",
+        "com.unity.render-pipelines.core": "17.5.0"
       }
     },
     "com.unity.modules.accessibility": {

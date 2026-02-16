@@ -15,7 +15,7 @@ namespace BovineLabs.Timeline.Authoring
     {
 
         [Tooltip("Select the state of the bound object when the Timeline stops.")]
-        public PostPlaybackState postPlaybackState = PostPlaybackState.LeaveAsIs;
+        public UnityEngine.Timeline.ActivationTrack.PostPlaybackState postPlaybackState = UnityEngine.Timeline.ActivationTrack.PostPlaybackState.LeaveAsIs;
 
         protected override void Bake(BakingContext context)
         {

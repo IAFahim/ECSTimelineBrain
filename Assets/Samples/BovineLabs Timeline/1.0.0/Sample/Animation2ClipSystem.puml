@@ -1,0 +1,23 @@
+@startuml
+
+hide empty description
+
+[*] --> CLIP_A_ONLY
+CLIP_A_ONLY -> BLEND_AB : NEW_CLIP
+BLEND_AB --> CLIP_B_ONLY : BLEND_COMPLETE
+CLIP_B_ONLY -> BLEND_BA : NEW_CLIP
+BLEND_BA -> CLIP_A_ONLY : BLEND_COMPLETE
+
+/'
+public struct AnimationClipA : IComponentData
+{
+    public int ClipId;
+}
+
+public struct AnimationClipB : IComponentData
+{
+    public int ClipId;
+}
+'/
+@enduml
+

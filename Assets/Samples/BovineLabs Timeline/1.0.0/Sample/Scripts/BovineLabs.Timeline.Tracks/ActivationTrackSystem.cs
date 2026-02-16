@@ -50,7 +50,7 @@ namespace BovineLabs.Timeline.Tracks
         
         [BurstCompile]
         [WithNone(typeof(TimelineActive))]
-        [WithAll(typeof(TimelineActivePrevious))]
+        [WithAll(typeof(TimelineActivePrevious), typeof(ActivationTrackComponent))]
         private partial struct ApplyPostPlaybackStateJob : IJobEntity
         {
             [ReadOnly] public ComponentLookup<Disabled> DisabledLookup;
@@ -63,15 +63,15 @@ namespace BovineLabs.Timeline.Tracks
 
                 switch (trackData.PostPlaybackState)
                 {
-                    case PostPlaybackState.Active:
+                    case ActivationTrack.PostPlaybackState.Active:
                         if (isCurrentlyDisabled) ECB.RemoveComponent<Disabled>(binding.Value);
                         break;
 
-                    case PostPlaybackState.Inactive:
+                    case ActivationTrack.PostPlaybackState.Inactive:
                         if (!isCurrentlyDisabled) ECB.AddComponent<Disabled>(binding.Value);
                         break;
 
-                    case PostPlaybackState.Revert:
+                    case ActivationTrack.PostPlaybackState.Revert:
                         switch (OriginalWasDisabledTagLookup.HasComponent(binding.Value))
                         {
                             case true when !isCurrentlyDisabled:
@@ -83,14 +83,14 @@ namespace BovineLabs.Timeline.Tracks
                         }
                         break;
 
-                    case PostPlaybackState.LeaveAsIs:
+                    case ActivationTrack.PostPlaybackState.LeaveAsIs:
                         break;
                 }
             }
         }
 
         [BurstCompile]
-        [WithAll(typeof(TimelineActive))]
+        [WithAll(typeof(TimelineActive), typeof(ActivationAnimatedComponent))]
         private partial struct ApplyRuntimeActivationJob : IJobEntity
         {
             [ReadOnly] public NativeParallelHashMap<Entity, MixData<bool>>.ReadOnly BlendData;
