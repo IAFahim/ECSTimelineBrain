@@ -31,6 +31,7 @@ public struct ThirdPersonCharacterProcessor : IKinematicCharacterProcessor<Third
 
     public void PhysicsUpdate(ref ThirdPersonCharacterUpdateContext context, ref KinematicCharacterUpdateContext baseContext)
     {
+        Debug.Log("WTF");
         ref ThirdPersonCharacterComponent characterComponent = ref CharacterComponent.ValueRW;
         ref BasicStepAndSlopeHandlingParametersComponent basicStepAndSlopeHandlingParametersComponent = ref BasicStepAndSlopeHandlingParametersComponent.ValueRW;
         ref KinematicCharacterBody characterBody = ref CharacterDataAccess.CharacterBody.ValueRW;
