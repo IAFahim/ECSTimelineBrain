@@ -16,3 +16,9 @@ MonoBehaviour:
   - Stat: {fileID: 11400000, guid: b1786c519b67e9a0f83946d13a4a6157, type: 2}
     ModifyType: 0
     Value: 100
+  - Stat: {fileID: 11400000, guid: f8b32e73d59a00b4cab4da8830c75bde, type: 2}
+    ModifyType: 0
+    Value: 0
+  - Stat: {fileID: 11400000, guid: 4299c3d9ba332ed488a85b9ccb62e336, type: 2}
+    ModifyType: 0
+    Value: 0
