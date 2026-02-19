@@ -5,6 +5,7 @@
     "com.bovinelabs.anchor": "https://gitlab.com/tertle/com.bovinelabs.anchor.git#2.0.0",
     "com.bovinelabs.bridge": "https://gitlab.com/tertle/com.bovinelabs.bridge.git#1.1.0",
     "com.bovinelabs.core": "https://gitlab.com/tertle/com.bovinelabs.core.git#1.6.0",
+    "com.bovinelabs.essence": "https://gitlab.com/tertle/com.bovinelabs.essence.git",
     "com.bovinelabs.grove": "https://github.com/IAFahim/com.bovinelabs.grove.git",
     "com.bovinelabs.quill": "https://github.com/IAFahim/com.bovinelabs.quill.git",
     "com.bovinelabs.reaction": "https://gitlab.com/tertle/com.bovinelabs.reaction.git#2.0",

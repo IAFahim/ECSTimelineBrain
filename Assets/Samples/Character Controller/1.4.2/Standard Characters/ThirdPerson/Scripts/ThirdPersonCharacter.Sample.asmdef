@@ -27,6 +27,11 @@
   "precompiledReferences": [],
   "autoReferenced": false,
   "defineConstraints": [],
-  "versionDefines": [],
+  "versionDefines": [{
+    "name": "com.unity.charactercontroller",
+    "expression": "1.0.0",
+    "define": "RUKHANKA_SAMPLES_WITH_CHARACTER_CONTROLLER"
+  }
+  ],
   "noEngineReferences": false
 }
