@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: EssenceSettings
   m_EditorClassIdentifier: BovineLabs.Essence.Authoring::BovineLabs.Essence.Authoring.EssenceSettings
   statSchemas:
+  - {fileID: 11400000, guid: 9ac7f5ea8090d8241a3a353a7674a042, type: 2}
   - {fileID: 11400000, guid: dcefc81a486caa340b548ef7babd237b, type: 2}
   - {fileID: 11400000, guid: c8e8badd1a0d9984ba5ec4fba523150b, type: 2}
+  - {fileID: 11400000, guid: 4321341bba86b3f439bdbac0dccd2f4f, type: 2}
   - {fileID: 11400000, guid: 98dcacdebc1696f4b940fdd9580024a9, type: 2}
   - {fileID: 11400000, guid: b1786c519b67e9a0f83946d13a4a6157, type: 2}
   - {fileID: 11400000, guid: e623d02e117a8e74a9743d805745887e, type: 2}

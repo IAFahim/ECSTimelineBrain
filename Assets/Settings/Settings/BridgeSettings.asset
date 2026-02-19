@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 486f1388d4df4d3bad460d123e4aab4d, type: 3}
   m_Name: BridgeSettings
   m_EditorClassIdentifier: BovineLabs.Bridge.Authoring::BovineLabs.Bridge.Authoring.BridgeSettings
-  loopedAudioPoolSize: 32
-  oneShotAudioPoolSize: 32
+  loopedAudioPoolSize: 16
+  oneShotAudioPoolSize: 16
   musicTracks:
   - {fileID: 11400000, guid: b5e15af01ed92344e9ebca3d27d8abde, type: 2}
   defaultMusicBlendSeconds: 2
