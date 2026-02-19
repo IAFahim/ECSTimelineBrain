@@ -17,7 +17,7 @@
       "dependencies": {
         "com.unity.mathematics": "1.2.6"
       },
-      "hash": "70c36b1851c728076d88b3ccc26ccefe8dade2a3"
+      "hash": "aa8acfb90e565ccc7e95f7080e8dd3b993a18716"
     },
     "com.bovinelabs.anchor": {
       "version": "https://gitlab.com/tertle/com.bovinelabs.anchor.git#2.0.0",
@@ -27,14 +27,14 @@
         "com.bovinelabs.core": "1.5.1",
         "com.unity.dt.app-ui": "2.2.0-pre.4"
       },
-      "hash": "23639604fcc2966f4f46650d7ba75aa7e8458584"
+      "hash": "f5eb548f68f7dc121b1488ed1f08e54fb3dd2da0"
     },
     "com.bovinelabs.bridge": {
       "version": "https://gitlab.com/tertle/com.bovinelabs.bridge.git#1.1.0",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "e1cc5c26c5894c4ede7c542947fb27762ee2f76b"
+      "hash": "0044c4f51a3db836821b165b771bacfddf9f3dca"
     },
     "com.bovinelabs.core": {
       "version": "https://gitlab.com/tertle/com.bovinelabs.core.git#1.6.0",
@@ -43,7 +43,7 @@
       "dependencies": {
         "com.unity.entities": "1.4.3"
       },
-      "hash": "5a76f8f678f3d0b63c2172bec2fcd0a432d07b22"
+      "hash": "032e5d47d9998f780ac60b93b43a744faab2e3a7"
     },
     "com.bovinelabs.essence": {
       "version": "https://gitlab.com/tertle/com.bovinelabs.essence.git",
@@ -81,7 +81,7 @@
       "dependencies": {
         "com.bovinelabs.core": "1.4.6"
       },
-      "hash": "1592e7e6b6fa1ff9998580c31920f17b29621d5c"
+      "hash": "60fdd1e0f5a247e19dc37f020334f975e14143b1"
     },
     "com.bovinelabs.tabulate": {
       "version": "https://github.com/IAFahim/tabulate.git",

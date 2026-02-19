@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ObjectDefinition
   m_EditorClassIdentifier: BovineLabs.Core.Extensions.Authoring::BovineLabs.Core.Authoring.ObjectManagement.ObjectDefinition
   id: 1
-  friendlyName: 
+  friendlyName: Plane_1
   description: 
   categories: 0
-  prefab: {fileID: 0}
+  prefab: {fileID: 2425957483212700883, guid: e52bfcdab16a4b840810de716198e889, type: 3}

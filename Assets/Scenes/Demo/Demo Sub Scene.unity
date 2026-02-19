@@ -582,6 +582,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 091c3400a1824e447a75a912e5f1552e, type: 2}
   - {fileID: 11400000, guid: 6426fd5f8b2430c409ebbe91f5753f13, type: 2}
   - {fileID: 11400000, guid: 6118f693b11dfb75198242322adb918e, type: 2}
+  - {fileID: 11400000, guid: 253315b37dcaa2758bb56be45f1ccbd4, type: 2}
 --- !u!4 &651639309
 Transform:
   m_ObjectHideFlags: 0
@@ -1873,7 +1874,7 @@ MonoBehaviour:
       Target: 1
       Operation: 5
       ComparisonMode: 0
-      Value: 100
+      Value: 200
       CustomValue:
         rid: -2
       MinComparisonMode: 0
@@ -1951,15 +1952,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1428068399}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: baddbaf9d465492f893085a6710849e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Reaction.Authoring::BovineLabs.Reaction.Authoring.Actions.ActionCreateAuthoring
   Create:
   - Definition: {fileID: 11400000, guid: e666b2a615e7afb418f5ef98a68be19d, type: 2}
-    Target: 1
-    DestroyOnDisabled: 0
+    Target: 4
+    DestroyOnDisabled: 1
 --- !u!1 &1612731230
 GameObject:
   m_ObjectHideFlags: 0
