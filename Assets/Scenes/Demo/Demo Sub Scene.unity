@@ -631,11 +631,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Essence.Authoring::BovineLabs.Essence.Authoring.StatAuthoring
   AddStats: 1
-  StatDefaults:
-  - Stat: {fileID: 11400000, guid: b1786c519b67e9a0f83946d13a4a6157, type: 2}
-    ModifyType: 0
-    Value: 100
-  StatDefaultGroups: []
+  StatDefaults: []
+  StatDefaultGroups:
+  - {fileID: 11400000, guid: 4d5bcfa5ac1016544ac8f95aeb0ac6b5, type: 2}
   StatsCanBeModified: 1
   AddIntrinsics: 0
   IntrinsicDefaults: []
@@ -1651,7 +1649,7 @@ MonoBehaviour:
       Target: 1
       Operation: 5
       ComparisonMode: 0
-      Value: 101
+      Value: 20
       CustomValue:
         rid: -2
       MinComparisonMode: 0
@@ -1682,10 +1680,10 @@ MonoBehaviour:
       CustomValueMax:
         rid: -2
       Features: 2
-      DestroyIfTargetDestroyed: 1
+      DestroyIfTargetDestroyed: 0
       CancelActive: 0
     conditionLogic:
-      expression: '0 & 1 '
+      expression: 
     chanceToTrigger: 1
     doNotReset: 0
   references:
