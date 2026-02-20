@@ -64,7 +64,7 @@ namespace Unity.Physics.Authoring
                 AddComponent(entity, new PhysicsCompoundData()
                 {
                     AssociateBlobToBody = false,
-                    ConvertedBodyInstanceID = authoring.GetInstanceID(),
+                    ConvertedBodyEntityId = authoring.GetEntityId(),
                     Hash = default,
                 });
                 AddComponent<PhysicsRootBaked>(entity);

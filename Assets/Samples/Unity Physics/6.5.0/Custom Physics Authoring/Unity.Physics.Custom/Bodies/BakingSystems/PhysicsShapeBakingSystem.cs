@@ -56,7 +56,7 @@ namespace Unity.Physics.Authoring
             GameObject shapeGameObject = shape.gameObject;
             var body = GetPrimaryBody(shapeGameObject, out bool hasBodyComponent, out bool isStaticBody);
             var child = shapeGameObject;
-            var shapeInstanceID = shape.GetInstanceID();
+            var shapeEntityId = shape.GetEntityId();
 
             var bodyEntity = GetEntity(body, TransformUsageFlags.Dynamic);
 
@@ -64,7 +64,7 @@ namespace Unity.Physics.Authoring
             if (isStaticBody)
             {
                 var staticRootMarker = CreateAdditionalEntity(TransformUsageFlags.Dynamic, true, "StaticRootBakeMarker");
-                AddComponent(staticRootMarker, new BakeStaticRoot() { Body = bodyEntity, ConvertedBodyInstanceID = body.transform.GetInstanceID() });
+                AddComponent(staticRootMarker, new BakeStaticRoot() { Body = bodyEntity, ConvertedBodyEntityId = body.transform.GetEntityId() });
             }
 
             // Track dependencies to the transforms
@@ -72,7 +72,7 @@ namespace Unity.Physics.Authoring
             Transform bodyTransform = GetComponent<Transform>(body);
             var instance = new ColliderInstanceBaking
             {
-                AuthoringComponentId = shapeInstanceID,
+                AuthoringComponentEntityId = shapeEntityId,
                 BodyEntity = bodyEntity,
                 ShapeEntity = GetEntity(shapeGameObject, TransformUsageFlags.Dynamic),
                 ChildEntity = GetEntity(child, TransformUsageFlags.Dynamic),
@@ -84,8 +84,8 @@ namespace Unity.Physics.Authoring
 
             var data = GenerateComputationData(shape, bodyTransform, instance, colliderEntity, isForceUniqueComponentPresent);
 
-            data.Instance.ConvertedAuthoringInstanceID = shapeInstanceID;
-            data.Instance.ConvertedBodyInstanceID = bodyTransform.GetInstanceID();
+            data.Instance.ConvertedAuthoringEntityId = shapeEntityId;
+            data.Instance.ConvertedBodyEntityId = bodyTransform.GetEntityId();
 
             var rb = FindFirstEnabledAncestor(shapeGameObject, PhysicsShapeExtensions_NonBursted.s_RigidbodiesBuffer);
             var pb = FindFirstEnabledAncestor(shapeGameObject, PhysicsShapeExtensions_NonBursted.s_PhysicsBodiesBuffer);
@@ -97,7 +97,7 @@ namespace Unity.Physics.Authoring
                 // We need to check that there are no other colliders in the same object, if so, only the first one should do this, otherwise there will be 2 bakers adding this to the entity
                 // This will be needed to trigger BuildCompoundColliderBakingSystem
                 // If they are legacy Colliders and PhysicsShapeAuthoring in the same object, the PhysicsShapeAuthoring will add this
-                if (colliderComponents.Count == 0 && physicsShapeComponents.Count > 0 && physicsShapeComponents[0].GetInstanceID() == shapeInstanceID)
+                if (colliderComponents.Count == 0 && physicsShapeComponents.Count > 0 && physicsShapeComponents[0].GetEntityId() == shapeEntityId)
                 {
                     var entity = GetEntity(TransformUsageFlags.Dynamic);
 
@@ -111,7 +111,7 @@ namespace Unity.Physics.Authoring
                     AddComponent(entity, new PhysicsCompoundData()
                     {
                         AssociateBlobToBody = false,
-                        ConvertedBodyInstanceID = shapeInstanceID,
+                        ConvertedBodyEntityId = shapeEntityId,
                         Hash = default,
                     });
                     AddComponent<PhysicsRootBaked>(entity);

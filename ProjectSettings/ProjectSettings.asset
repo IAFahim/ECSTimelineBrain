@@ -118,6 +118,7 @@ PlayerSettings:
   xboxEnableGuest: 0
   xboxEnablePIXSampling: 0
   metalFramebufferOnly: 0
+  metalUseMetalDisplayLink: 0
   xboxOneResolution: 0
   xboxOneSResolution: 0
   xboxOneXResolution: 3
@@ -271,7 +272,6 @@ PlayerSettings:
   useCustomGradleSettingsTemplate: 0
   useCustomProguardFile: 0
   AndroidTargetArchitectures: 2
-  AndroidAllowedArchitectures: -13
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
   AndroidKeystoreName: 
@@ -719,6 +719,8 @@ PlayerSettings:
   switchMicroSleepForYieldTime: 25
   switchRamDiskSpaceSize: 12
   switchUpgradedPlayerSettingsToNMETA: 0
+  switchCaStoreSource: 0
+  switchCaStoreFilePath: 
   ps4NPAgeRating: 12
   ps4NPTitleSecret: 
   ps4NPTrophyPackPath: 
@@ -829,7 +831,7 @@ PlayerSettings:
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
     Server: BL_CORE_EXTENSIONS
-    Standalone: BL_CORE_EXTENSIONS;UNITY_BURST_EXPERIMENTAL_ATOMIC_INTRINSICS;BL_ENTITIES_CUSTOM;UNITY_PHYSICS_CUSTOM;UNITY_PHYSICS;RUKHANKA_DEBUG_INFO
+    Standalone: BL_CORE_EXTENSIONS;UNITY_BURST_EXPERIMENTAL_ATOMIC_INTRINSICS;BL_ENTITIES_CUSTOM;UNITY_PHYSICS_CUSTOM;UNITY_PHYSICS
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
