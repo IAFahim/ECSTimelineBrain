@@ -27,14 +27,14 @@
         "com.bovinelabs.core": "1.5.1",
         "com.unity.dt.app-ui": "2.2.0-pre.4"
       },
-      "hash": "f5eb548f68f7dc121b1488ed1f08e54fb3dd2da0"
+      "hash": "93a1a0d37fa941076339ec0228a7cf2b905d1ccd"
     },
     "com.bovinelabs.bridge": {
       "version": "https://gitlab.com/tertle/com.bovinelabs.bridge.git#1.1.0",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "0044c4f51a3db836821b165b771bacfddf9f3dca"
+      "hash": "eea18910a1541fa621c893376692c75a4ee6c501"
     },
     "com.bovinelabs.core": {
       "version": "https://gitlab.com/tertle/com.bovinelabs.core.git#1.6.0",
@@ -43,7 +43,7 @@
       "dependencies": {
         "com.unity.entities": "1.4.3"
       },
-      "hash": "032e5d47d9998f780ac60b93b43a744faab2e3a7"
+      "hash": "0f11fe8b9ef6166b3e1cf5deaef2161573ff0c61"
     },
     "com.bovinelabs.essence": {
       "version": "https://gitlab.com/tertle/com.bovinelabs.essence.git",
@@ -81,7 +81,7 @@
       "dependencies": {
         "com.bovinelabs.core": "1.4.6"
       },
-      "hash": "60fdd1e0f5a247e19dc37f020334f975e14143b1"
+      "hash": "6d4ba48fe740fe226dd2fe4107a88e3f415d3c58"
     },
     "com.bovinelabs.tabulate": {
       "version": "https://github.com/IAFahim/tabulate.git",
@@ -100,7 +100,7 @@
         "com.bovinelabs.core": "1.5.1",
         "com.unity.timeline": "1.8.10"
       },
-      "hash": "85dbf8781b8d4bdb607b53dc7a821c747b681236"
+      "hash": "a2743e5b47e04b7ca097acf26cfdd68d1d89bbf9"
     },
     "com.github-glitchenzo.nugetforunity": {
       "version": "https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity",
