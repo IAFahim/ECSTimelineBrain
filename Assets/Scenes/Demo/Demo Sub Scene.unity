@@ -1273,6 +1273,7 @@ GameObject:
   - component: {fileID: 916731470}
   - component: {fileID: 916731474}
   - component: {fileID: 916731473}
+  - component: {fileID: 916731475}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -1553,6 +1554,18 @@ MonoBehaviour:
     Tag05: 0
     Tag06: 0
     Tag07: 0
+--- !u!114 &916731475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 916731469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04bf47502c954c93841aaf72acf9fb79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SpatialMaps.Authoring::SpatialMaps.SpatialMaps.Data.NeighboursAuthoring
 --- !u!1 &966090038
 GameObject:
   m_ObjectHideFlags: 0
@@ -3539,6 +3552,9 @@ PrefabInstance:
       insertIndex: 0
       addedObject: {fileID: 1330209667}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 192142732961666847, guid: 911761e3fdfe1854f8445440bf6ab0c3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1810607329}
     - targetCorrespondingSourceObject: {fileID: 5870650000058048428, guid: 911761e3fdfe1854f8445440bf6ab0c3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1810607324}
@@ -3602,6 +3618,18 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4345100569974401348, guid: 911761e3fdfe1854f8445440bf6ab0c3, type: 3}
   m_PrefabInstance: {fileID: 1810607320}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1810607329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1810607321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04bf47502c954c93841aaf72acf9fb79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SpatialMaps.Authoring::SpatialMaps.SpatialMaps.Data.NeighboursAuthoring
 --- !u!1 &1846276178
 GameObject:
   m_ObjectHideFlags: 0
