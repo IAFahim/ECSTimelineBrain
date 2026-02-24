@@ -297,63 +297,6 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 10fc4df2da32a41aaa32d77bc913491c, type: 2}
---- !u!1001 &857123626
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3733473910454625856, guid: c83f2e1555badee489c4cdc267e71792, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -3.43998
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733473910454625856, guid: c83f2e1555badee489c4cdc267e71792, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733473910454625856, guid: c83f2e1555badee489c4cdc267e71792, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 10.50454
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733473910454625856, guid: c83f2e1555badee489c4cdc267e71792, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733473910454625856, guid: c83f2e1555badee489c4cdc267e71792, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733473910454625856, guid: c83f2e1555badee489c4cdc267e71792, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733473910454625856, guid: c83f2e1555badee489c4cdc267e71792, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733473910454625856, guid: c83f2e1555badee489c4cdc267e71792, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733473910454625856, guid: c83f2e1555badee489c4cdc267e71792, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733473910454625856, guid: c83f2e1555badee489c4cdc267e71792, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3733473910454625857, guid: c83f2e1555badee489c4cdc267e71792, type: 3}
-      propertyPath: m_Name
-      value: Razor Missile Yellow
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: c83f2e1555badee489c4cdc267e71792, type: 3}
 --- !u!1 &958042609
 GameObject:
   m_ObjectHideFlags: 0
@@ -885,4 +828,3 @@ SceneRoots:
   - {fileID: 260045319}
   - {fileID: 1890687346}
   - {fileID: 1255173357}
-  - {fileID: 857123626}

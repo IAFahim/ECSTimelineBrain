@@ -11,9 +11,6 @@ VisualEffectImporter:
   externalObjects: {}
   serializedVersion: 2
   template:
-    name: Orb Silver
-    category: sd
-    description: buildup
     icon: {instanceID: 0}
     thumbnail: {instanceID: 0}
     order: 0
