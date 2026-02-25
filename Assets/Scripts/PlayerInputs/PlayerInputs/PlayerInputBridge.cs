@@ -1,5 +1,6 @@
+using System.Collections.Generic;
+using JetBrains.Annotations;
 using PlayerInputs.PlayerInputs.Data;
-using Unity.Entities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,92 +9,116 @@ namespace PlayerInputs.PlayerInputs
     [RequireComponent(typeof(PlayerInput))]
     public class PlayerInputBridge : MonoBehaviour
     {
-        private Entity _playerEntity;
-        private EntityManager _entityManager;
-        private ECSPlayerInput _ecsInputData;
+        public static readonly HashSet<PlayerInputBridge> Instances = new();
+
+        [HideInInspector] public ECSPlayerInputCurrent InputCurrentData;
+        [HideInInspector] public bool HasNewData;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            Instances.Clear();
+        }
+
+        private void OnEnable()
+        {
+            Instances.Add(this);
+        }
+
+        private void OnDisable()
+        {
+            Instances.Remove(this);
+        }
 
         private void Start()
         {
-            _entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-            _playerEntity = _entityManager.CreateEntity(typeof(ECSPlayerInput), typeof(ECSPlayerInputUpdateThisFrame));
             var unityPlayerInput = GetComponent<PlayerInput>();
-            _ecsInputData = new ECSPlayerInput
+            InputCurrentData = new ECSPlayerInputCurrent
             {
-                ID = (byte)unityPlayerInput.playerIndex
+                Value = new PlayerInputData()
+                {
+                    ID = (byte)unityPlayerInput.playerIndex
+                }
             };
-
-            PushToECS();
+            HasNewData = true;
         }
 
-        private void OnDestroy()
-        {
-            if (_entityManager != default && _entityManager.Exists(_playerEntity))
-            {
-                _entityManager.DestroyEntity(_playerEntity);
-            }
-        }
-
-        private void PushToECS()
-        {
-            if (_entityManager != default && _entityManager.Exists(_playerEntity))
-            {
-                _entityManager.SetComponentData(_playerEntity, _ecsInputData);
-                _entityManager.SetComponentEnabled<ECSPlayerInputUpdateThisFrame>(_playerEntity, true);
-            }
-        }
-
+        [UsedImplicitly]
         public void OnMove(InputValue value)
         {
-            _ecsInputData.Move = value.Get<Vector2>();
-            PushToECS();
+            InputCurrentData.Value.Move = value.Get<Vector2>();
+            HasNewData = true;
         }
 
+        [UsedImplicitly]
         public void OnLook(InputValue value)
         {
-            _ecsInputData.Look = value.Get<Vector2>();
-            PushToECS();
+            InputCurrentData.Value.Look = value.Get<Vector2>();
+            HasNewData = true;
         }
 
+        [UsedImplicitly]
         public void OnAttack(InputValue value)
         {
-            _ecsInputData.SetButton(ECSPlayerButton.Attack, value.isPressed);
-            PushToECS();
+            if (value.isPressed)
+            {
+                InputCurrentData.Value.SetButton(ECSPlayerButton.Attack, true);
+                HasNewData = true;
+            }
         }
 
+        [UsedImplicitly]
         public void OnInteract(InputValue value)
         {
-            _ecsInputData.SetButton(ECSPlayerButton.Interact, value.isPressed);
-            PushToECS();
+            if (value.isPressed)
+            {
+                InputCurrentData.Value.SetButton(ECSPlayerButton.Interact, true);
+                HasNewData = true;
+            }
         }
 
+        [UsedImplicitly]
         public void OnCrouch(InputValue value)
         {
-            _ecsInputData.SetButton(ECSPlayerButton.Crouch, value.isPressed);
-            PushToECS();
+            InputCurrentData.Value.SetButton(ECSPlayerButton.Crouch, value.isPressed);
+            HasNewData = true;
         }
 
+        [UsedImplicitly]
         public void OnJump(InputValue value)
         {
-            _ecsInputData.SetButton(ECSPlayerButton.Jump, value.isPressed);
-            PushToECS();
+            if (value.isPressed)
+            {
+                InputCurrentData.Value.SetButton(ECSPlayerButton.Jump, true);
+                HasNewData = true;
+            }
         }
 
+        [UsedImplicitly]
         public void OnPrevious(InputValue value)
         {
-            _ecsInputData.SetButton(ECSPlayerButton.Previous, value.isPressed);
-            PushToECS();
+            if (value.isPressed)
+            {
+                InputCurrentData.Value.SetButton(ECSPlayerButton.Previous, true);
+                HasNewData = true;
+            }
         }
 
+        [UsedImplicitly]
         public void OnNext(InputValue value)
         {
-            _ecsInputData.SetButton(ECSPlayerButton.Next, value.isPressed);
-            PushToECS();
+            if (value.isPressed)
+            {
+                InputCurrentData.Value.SetButton(ECSPlayerButton.Next, true);
+                HasNewData = true;
+            }
         }
 
+        [UsedImplicitly]
         public void OnSprint(InputValue value)
         {
-            _ecsInputData.SetButton(ECSPlayerButton.Sprint, value.isPressed);
-            PushToECS();
+            InputCurrentData.Value.SetButton(ECSPlayerButton.Sprint, value.isPressed);
+            HasNewData = true;
         }
     }
 }
