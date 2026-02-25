@@ -1181,8 +1181,6 @@ GameObject:
   m_Component:
   - component: {fileID: 869933576}
   - component: {fileID: 869933575}
-  - component: {fileID: 869933574}
-  - component: {fileID: 869933573}
   m_Layer: 0
   m_Name: Robot Kyle_Rukhanka
   m_TagString: Untagged
@@ -1190,36 +1188,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &869933573
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 869933572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6026ebc68b6fcbf439739f8d850a0d2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &869933574
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 869933572}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37148bf45591b3941a167e98d316845b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animationClips:
-  - {fileID: 7400000, guid: 4cc7c1ce3002485449dd5853a52be905, type: 2}
-  - {fileID: 7400000, guid: b25dfad170eceb14b831199d43de7592, type: 2}
-  - {fileID: 7400000, guid: ac3b2003546d06a488461e398494861d, type: 2}
-  - {fileID: 7400000, guid: 2b990e63a82e6814d8225d86078b1801, type: 2}
-  avatarMasks: []
 --- !u!114 &869933575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1252,7 +1220,7 @@ Transform:
   m_GameObject: {fileID: 869933572}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.4868693, y: 0, z: -0.08847356}
+  m_LocalPosition: {x: -4.07, y: 0, z: -0.08847356}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -2387,6 +2355,8 @@ PlayableDirector:
     value: {fileID: 0}
   - key: {fileID: -7487853965330801300, guid: 03b9a7c2875910f3f950783947667679, type: 2}
     value: {fileID: 2038114253}
+  - key: {fileID: -4396056095833877835, guid: 03b9a7c2875910f3f950783947667679, type: 2}
+    value: {fileID: 869933575}
   m_ExposedReferences:
     m_References: []
 --- !u!114 &1232014567

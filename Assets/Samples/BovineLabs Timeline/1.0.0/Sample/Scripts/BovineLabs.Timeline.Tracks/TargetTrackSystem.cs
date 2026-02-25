@@ -52,7 +52,6 @@ namespace BovineLabs.Timeline.Tracks
                 if (!TargetSelectLookup.TryGetComponent(entity, out var component))
                     return;
 
-                // Discrete blending: Select the target with the highest weight
                 var bestWeight = -1.0f;
                 var result = component.Target;
 
@@ -77,7 +76,6 @@ namespace BovineLabs.Timeline.Tracks
                     result = mixData.Value4;
                 }
 
-                // Only write if we have a valid weight (active clip)
                 if (bestWeight > math.EPSILON)
                 {
                     component.Target = result;

@@ -22,7 +22,9 @@
         "Unity.Transforms",
         "Unity.Physics.Custom",
         "BovineLabs.Reaction.Data",
-        "BovineLabs.Reaction.Authoring"
+        "BovineLabs.Reaction.Authoring",
+        "Rukhanka.Hybrid",
+        "Rukhanka.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

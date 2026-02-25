@@ -19,7 +19,8 @@
         "Unity.Timeline",
         "Unity.Transforms",
         "BovineLabs.Timeline.Sample",
-        "BovineLabs.Reaction.Data"
+        "BovineLabs.Reaction.Data",
+        "Rukhanka.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
