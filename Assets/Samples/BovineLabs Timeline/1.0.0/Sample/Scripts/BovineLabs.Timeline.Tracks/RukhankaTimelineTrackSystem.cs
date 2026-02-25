@@ -1,14 +1,11 @@
-using BovineLabs.Core;
-using BovineLabs.Core.Jobs;
 using BovineLabs.Timeline;
 using BovineLabs.Timeline.Data;
 using BovineLabs.Timeline.Tracks.Data.Animations;
 using Unity.Burst;
 using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Transforms;
 
 namespace Rukhanka.Timeline.Systems
 {
@@ -16,74 +13,139 @@ namespace Rukhanka.Timeline.Systems
     [UpdateBefore(typeof(AnimationProcessSystem))]
     public partial struct RukhankaTimelineTrackSystem : ISystem
     {
-        private TrackBlendImpl<float, RukhankaAnimationClipAnimated> impl;
+        private NativeParallelMultiHashMap<Entity, AnimationToProcessComponent> activeAnimationsMap;
+        private NativeHashSet<Entity> drivenEntitiesLastFrame;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            impl.OnCreate(ref state);
+            activeAnimationsMap =
+                new NativeParallelMultiHashMap<Entity, AnimationToProcessComponent>(64, Allocator.Persistent);
+            drivenEntitiesLastFrame = new NativeHashSet<Entity>(64, Allocator.Persistent);
+
             state.RequireForUpdate<BlobDatabaseSingleton>();
         }
 
         [BurstCompile]
         public void OnDestroy(ref SystemState state)
         {
-            impl.OnDestroy(ref state);
+            if (activeAnimationsMap.IsCreated)
+                activeAnimationsMap.Dispose();
+
+            if (drivenEntitiesLastFrame.IsCreated)
+                drivenEntitiesLastFrame.Dispose();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            new RukhankaTimelineTrackSystemJob()
-            {
-                animDB = SystemAPI.GetSingleton<BlobDatabaseSingleton>().animations,
-                AnimationToProcessComponentBufferLookup = SystemAPI.GetBufferLookup<AnimationToProcessComponent>(),
-                AnimationTime = (float)SystemAPI.Time.ElapsedTime,
-            }.ScheduleParallel();
+            activeAnimationsMap.Clear();
 
-            var blendData = impl.Update(ref state);
-            var blLogger = SystemAPI.GetSingleton<BLLogger>();
-            new WriteRukhankaTimelineJob()
+            var blobDB = SystemAPI.GetSingleton<BlobDatabaseSingleton>();
+
+            var gatherJob = new GatherActiveClipsJob
             {
-                BlendData = blendData,
-                BlLogger = blLogger,
-            }.ScheduleParallel(blendData, 64, state.Dependency);
+                AnimDB = blobDB.animations,
+                ClipWeights = SystemAPI.GetComponentLookup<ClipWeight>(true),
+                ActiveAnimations = activeAnimationsMap.AsParallelWriter()
+            };
+
+            state.Dependency = gatherJob.ScheduleParallel(state.Dependency);
+
+            var applyJob = new ApplyAnimationsJob
+            {
+                ActiveAnimations = activeAnimationsMap,
+                DrivenEntitiesLastFrame = drivenEntitiesLastFrame,
+                AnimationBuffers = SystemAPI.GetBufferLookup<AnimationToProcessComponent>(false)
+            };
+
+            state.Dependency = applyJob.Schedule(state.Dependency);
         }
 
         [BurstCompile]
-        public partial struct RukhankaTimelineTrackSystemJob : IJobEntity
+        [WithAll(typeof(ClipActive), typeof(TimelineActive))]
+        public partial struct GatherActiveClipsJob : IJobEntity
         {
-            [ReadOnly] public NativeHashMap<Hash128, BlobAssetReference<AnimationClipBlob>> animDB;
-            [NativeDisableContainerSafetyRestriction]
-            public BufferLookup<AnimationToProcessComponent> AnimationToProcessComponentBufferLookup;
-            public float AnimationTime;
+            [ReadOnly] public NativeHashMap<Hash128, BlobAssetReference<AnimationClipBlob>> AnimDB;
+            [ReadOnly] public ComponentLookup<ClipWeight> ClipWeights;
 
-            void Execute(ref RukhankaAnimationClipAnimated rukhankaAnimationClipAnimated, in TrackBinding trackBinding)
+            public NativeParallelMultiHashMap<Entity, AnimationToProcessComponent>.ParallelWriter ActiveAnimations;
+
+            void Execute(Entity clipEntity, in RukhankaAnimationClipAnimated clipData, in TrackBinding binding,
+                in LocalTime localTime)
             {
-                var animationToProcessComponents = AnimationToProcessComponentBufferLookup[trackBinding.Value];
-                ScriptedAnimator.ResetAnimationState(ref animationToProcessComponents);
-                animDB.TryGetValue(rukhankaAnimationClipAnimated.AnimationHash, out var clip0Blob);
-                ScriptedAnimator.PlayAnimation(ref animationToProcessComponents, clip0Blob, AnimationTime);
+                if (!AnimDB.TryGetValue(clipData.AnimationHash, out var clipBlob))
+                    return;
+
+                float weight = 1f;
+                if (ClipWeights.TryGetComponent(clipEntity, out var clipWeight))
+                    weight = clipWeight.Value;
+
+                if (weight <= 0f)
+                    return;
+
+                float timeInSeconds = (float)(double)localTime.Value;
+                float normalizedTime = clipBlob.Value.length > 0f ? (timeInSeconds / clipBlob.Value.length) : 0f;
+
+                var atp = new AnimationToProcessComponent
+                {
+                    animation = clipBlob,
+                    time = normalizedTime,
+                    weight = weight,
+                    avatarMask = default,
+                    blendMode = AnimationBlendingMode.Override,
+                    layerIndex = 0,
+                    layerWeight = 1f,
+                    motionId = (uint)clipEntity
+                        .Index
+                };
+
+                ActiveAnimations.Add(binding.Value, atp);
             }
         }
-        
-        [BurstCompile]
-        private struct WriteRukhankaTimelineJob : IJobParallelHashMapDefer
-        {
-            [ReadOnly] public NativeHashMap<Hash128, BlobAssetReference<AnimationClipBlob>> animDB;
-            [NativeDisableContainerSafetyRestriction]
-            public BufferLookup<AnimationToProcessComponent> AnimationToProcessComponentBufferLookup;
-            public float AnimationTime;
-            
-            
-            [ReadOnly] public NativeParallelHashMap<Entity, MixData<float>>.ReadOnly BlendData;
-            [WriteOnly] public BLLogger BlLogger;
 
-            public void ExecuteNext(int entryIndex, int jobIndex)
+        [BurstCompile]
+        public struct ApplyAnimationsJob : IJob
+        {
+            [ReadOnly] public NativeParallelMultiHashMap<Entity, AnimationToProcessComponent> ActiveAnimations;
+            public NativeHashSet<Entity> DrivenEntitiesLastFrame;
+            public BufferLookup<AnimationToProcessComponent> AnimationBuffers;
+
+            public void Execute()
             {
-                this.Read(BlendData, entryIndex, out var entity, out var target);
-                BlLogger.LogDebug512(target.ToString());
-                
+                var (uniqueKeys, uniqueCount) = ActiveAnimations.GetUniqueKeyArray(Allocator.Temp);
+
+                foreach (var entity in DrivenEntitiesLastFrame)
+                {
+                    if (!ActiveAnimations.ContainsKey(entity))
+                    {
+                        if (AnimationBuffers.TryGetBuffer(entity, out var buffer))
+                        {
+                            buffer.Clear();
+                        }
+                    }
+                }
+
+                DrivenEntitiesLastFrame.Clear();
+
+                for (int i = 0; i < uniqueCount; i++)
+                {
+                    var entity = uniqueKeys[i];
+
+                    if (AnimationBuffers.TryGetBuffer(entity, out var buffer))
+                    {
+                        buffer.Clear();
+
+                        foreach (var atp in ActiveAnimations.GetValuesForKey(entity))
+                        {
+                            buffer.Add(atp);
+                        }
+                    }
+
+                    DrivenEntitiesLastFrame.Add(entity);
+                }
+
+                uniqueKeys.Dispose();
             }
         }
     }
