@@ -6,7 +6,7 @@ using UnityEngine.Timeline;
 namespace BovineLabs.Timeline.Authoring
 {
     [Serializable]
-    [TrackClipType(typeof(PhysicsVelocityClip))]
+    [TrackClipType(typeof(AnimationClip))]
     [TrackColor(0.25f, 0.25f, 0)]
     [TrackBindingType(typeof(Animator))]
     [DisplayName("DOTS/Physics Velocity Target")]
