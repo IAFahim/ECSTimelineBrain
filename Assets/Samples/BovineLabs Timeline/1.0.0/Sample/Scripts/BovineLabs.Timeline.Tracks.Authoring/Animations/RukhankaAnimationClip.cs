@@ -43,7 +43,7 @@ namespace BovineLabs.Timeline.Authoring
                 var animHash = BakingUtils.ComputeAnimationHash(animationClipHolder, avatar);
 
                 // 3. Store the hash on the clip entity for the runtime system to read
-                context.Baker.AddComponent(clipEntity, new RukhankaAnimationClipData
+                context.Baker.AddComponent(clipEntity, new RukhankaAnimationClipAnimated
                 {
                     AnimationHash = animHash
                 });
