@@ -1,8 +1,4 @@
-﻿// <copyright file="RotationLookAtTargetClip.cs" company="BovineLabs">
-//     Copyright (c) BovineLabs. All rights reserved.
-// </copyright>
-
-using BovineLabs.Timeline.Tracks.Data;
+﻿using BovineLabs.Timeline.Tracks.Data;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Timeline;

@@ -1,8 +1,4 @@
-﻿// <copyright file="RotationTrack.cs" company="BovineLabs">
-//     Copyright (c) BovineLabs. All rights reserved.
-// </copyright>
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using BovineLabs.Timeline.Tracks.Data;
 using UnityEngine;

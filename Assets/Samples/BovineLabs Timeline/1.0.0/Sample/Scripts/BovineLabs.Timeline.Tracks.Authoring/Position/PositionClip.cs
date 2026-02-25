@@ -1,8 +1,4 @@
-﻿// <copyright file="PositionClip.cs" company="BovineLabs">
-//     Copyright (c) BovineLabs. All rights reserved.
-// </copyright>
-
-using BovineLabs.Timeline.Tracks.Data;
+﻿using BovineLabs.Timeline.Tracks.Data;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -23,7 +19,6 @@ namespace BovineLabs.Timeline.Authoring
         /// <inheritdoc />
         public override void Bake(Entity clipEntity, BakingContext context)
         {
-            // This value is used for PositionType.World, everything else will override it before use
             context.Baker.AddComponent(clipEntity, new PositionAnimated { Value = Position });
             context.Baker.AddTransformUsageFlags(context.Binding!.Target, TransformUsageFlags.Dynamic);
 
