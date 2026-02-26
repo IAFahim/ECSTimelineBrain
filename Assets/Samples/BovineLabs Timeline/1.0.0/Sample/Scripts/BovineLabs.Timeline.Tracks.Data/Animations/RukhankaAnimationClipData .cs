@@ -1,6 +1,4 @@
-using BovineLabs.Timeline.Data;
 using Unity.Entities;
-using Unity.Properties;
 
 namespace BovineLabs.Timeline.Tracks.Data.Animations
 {

@@ -21,7 +21,7 @@ namespace BovineLabs.Timeline.Authoring
         }
 
         /// <summary>Returns the animation hash if the clip is non-null, otherwise returns default.</summary>
-        public static Hash128 ComputeHashOrDefault(this AnimationClip clip, UnityEngine.Avatar avatar)
+        public static Hash128 ComputeHashOrDefault(this AnimationClip clip, Avatar avatar)
         {
             return clip != null ? BakingUtils.ComputeAnimationHash(clip, avatar) : default;
         }
@@ -32,13 +32,11 @@ namespace BovineLabs.Timeline.Authoring
             NativeArray<BlobAssetReference<AnimationClipBlob>> bakedAnimations)
         {
             foreach (var ba in bakedAnimations.Where(ba => ba != BlobAssetReference<AnimationClipBlob>.Null))
-            {
                 buffer.Add(new NewBlobAssetDatabaseRecord<AnimationClipBlob>
                 {
                     hash = ba.Value.hash,
                     value = ba
                 });
-            }
         }
     }
 }

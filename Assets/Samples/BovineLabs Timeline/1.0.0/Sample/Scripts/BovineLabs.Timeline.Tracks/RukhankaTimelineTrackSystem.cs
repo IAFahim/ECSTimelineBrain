@@ -5,7 +5,6 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using Unity.Mathematics;
 
 namespace Rukhanka.Timeline.Systems
 {
@@ -56,7 +55,7 @@ namespace Rukhanka.Timeline.Systems
             {
                 ActiveAnimations = activeAnimationsMap,
                 DrivenEntitiesLastFrame = drivenEntitiesLastFrame,
-                AnimationBuffers = SystemAPI.GetBufferLookup<AnimationToProcessComponent>(false)
+                AnimationBuffers = SystemAPI.GetBufferLookup<AnimationToProcessComponent>()
             };
 
             state.Dependency = applyJob.Schedule(state.Dependency);
@@ -71,21 +70,21 @@ namespace Rukhanka.Timeline.Systems
 
             public NativeParallelMultiHashMap<Entity, AnimationToProcessComponent>.ParallelWriter ActiveAnimations;
 
-            void Execute(Entity clipEntity, in RukhankaAnimationClipAnimated clipData, in TrackBinding binding,
+            private void Execute(Entity clipEntity, in RukhankaAnimationClipAnimated clipData, in TrackBinding binding,
                 in LocalTime localTime)
             {
                 if (!AnimDB.TryGetValue(clipData.AnimationHash, out var clipBlob))
                     return;
 
-                float weight = 1f;
+                var weight = 1f;
                 if (ClipWeights.TryGetComponent(clipEntity, out var clipWeight))
                     weight = clipWeight.Value;
 
                 if (weight <= 0f)
                     return;
 
-                float timeInSeconds = (float)(double)localTime.Value;
-                float normalizedTime = clipBlob.Value.length > 0f ? (timeInSeconds / clipBlob.Value.length) : 0f;
+                var timeInSeconds = (float)(double)localTime.Value;
+                var normalizedTime = clipBlob.Value.length > 0f ? timeInSeconds / clipBlob.Value.length : 0f;
 
                 var atp = new AnimationToProcessComponent
                 {
@@ -116,19 +115,13 @@ namespace Rukhanka.Timeline.Systems
                 var (uniqueKeys, uniqueCount) = ActiveAnimations.GetUniqueKeyArray(Allocator.Temp);
 
                 foreach (var entity in DrivenEntitiesLastFrame)
-                {
                     if (!ActiveAnimations.ContainsKey(entity))
-                    {
                         if (AnimationBuffers.TryGetBuffer(entity, out var buffer))
-                        {
                             buffer.Clear();
-                        }
-                    }
-                }
 
                 DrivenEntitiesLastFrame.Clear();
 
-                for (int i = 0; i < uniqueCount; i++)
+                for (var i = 0; i < uniqueCount; i++)
                 {
                     var entity = uniqueKeys[i];
 
@@ -136,10 +129,7 @@ namespace Rukhanka.Timeline.Systems
                     {
                         buffer.Clear();
 
-                        foreach (var atp in ActiveAnimations.GetValuesForKey(entity))
-                        {
-                            buffer.Add(atp);
-                        }
+                        foreach (var atp in ActiveAnimations.GetValuesForKey(entity)) buffer.Add(atp);
                     }
 
                     DrivenEntitiesLastFrame.Add(entity);

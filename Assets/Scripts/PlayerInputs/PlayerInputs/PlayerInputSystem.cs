@@ -23,7 +23,7 @@ namespace PlayerInputs.PlayerInputs
                 if (!_bridgeToEntity.TryGetValue(bridge, out var entity))
                 {
                     entity = EntityManager.CreateEntity(
-                        typeof(ECSPlayerInputCurrent), 
+                        typeof(ECSPlayerInputCurrent),
                         typeof(ECSPlayerInputPrevious),
                         typeof(ECSPlayerInputActiveThisFrame),
                         typeof(ECSPlayerInputActivePreviousFrame), typeof(InputAttack), typeof(InputAttackPrevious),
@@ -34,12 +34,13 @@ namespace PlayerInputs.PlayerInputs
                         typeof(InputNext), typeof(InputNextPrevious),
                         typeof(InputSprint), typeof(InputSprintPrevious)
                     );
-                    
+
                     _bridgeToEntity[bridge] = entity;
 
                     EntityManager.SetComponentData(entity, bridge.InputCurrentData);
-                    EntityManager.SetComponentData(entity, new ECSPlayerInputPrevious { Value = bridge.InputCurrentData.Value });
-                    
+                    EntityManager.SetComponentData(entity,
+                        new ECSPlayerInputPrevious { Value = bridge.InputCurrentData.Value });
+
                     EntityManager.SetComponentEnabled<ECSPlayerInputActiveThisFrame>(entity, false);
                     EntityManager.SetComponentEnabled<ECSPlayerInputActivePreviousFrame>(entity, false);
 
@@ -84,20 +85,13 @@ namespace PlayerInputs.PlayerInputs
 
             _deadBridges.Clear();
             foreach (var bridge in _bridgeToEntity.Keys)
-            {
                 if (!PlayerInputBridge.Instances.Contains(bridge))
-                {
                     _deadBridges.Add(bridge);
-                }
-            }
 
             foreach (var bridge in _deadBridges)
             {
                 var entity = _bridgeToEntity[bridge];
-                if (SystemAPI.Exists(entity))
-                {
-                    EntityManager.DestroyEntity(entity);
-                }
+                if (SystemAPI.Exists(entity)) EntityManager.DestroyEntity(entity);
                 _bridgeToEntity.Remove(bridge);
             }
         }

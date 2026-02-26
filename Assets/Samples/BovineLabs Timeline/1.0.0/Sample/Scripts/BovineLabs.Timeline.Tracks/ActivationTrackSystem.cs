@@ -33,7 +33,7 @@ namespace BovineLabs.Timeline.Tracks
             new ApplyPostPlaybackStateJob
             {
                 DisabledLookup = disabledLookup,
-                OriginalWasDisabledTagLookup =  SystemAPI.GetComponentLookup<OriginalWasDisabledTag>(true),
+                OriginalWasDisabledTagLookup = SystemAPI.GetComponentLookup<OriginalWasDisabledTag>(true),
                 ECB = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged)
             }.Schedule();
 
@@ -46,8 +46,8 @@ namespace BovineLabs.Timeline.Tracks
                 ECB = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
             }.ScheduleParallel(state.Dependency);
         }
-        
-        
+
+
         [BurstCompile]
         [WithNone(typeof(TimelineActive))]
         [WithAll(typeof(TimelineActivePrevious), typeof(ActivationTrackComponent))]
@@ -59,7 +59,7 @@ namespace BovineLabs.Timeline.Tracks
 
             private void Execute(in ActivationTrackComponent trackData, in TrackBinding binding)
             {
-                bool isCurrentlyDisabled = DisabledLookup.HasComponent(binding.Value);
+                var isCurrentlyDisabled = DisabledLookup.HasComponent(binding.Value);
 
                 switch (trackData.PostPlaybackState)
                 {
@@ -81,6 +81,7 @@ namespace BovineLabs.Timeline.Tracks
                                 ECB.RemoveComponent<Disabled>(binding.Value);
                                 break;
                         }
+
                         break;
 
                     case ActivationTrack.PostPlaybackState.LeaveAsIs:
@@ -99,8 +100,8 @@ namespace BovineLabs.Timeline.Tracks
 
             private void Execute(Entity trackEntity, [EntityIndexInQuery] int sortKey, in TrackBinding binding)
             {
-                bool shouldBeActive = BlendData.ContainsKey(binding.Value);
-                bool isCurrentlyDisabled = DisabledLookup.HasComponent(binding.Value);
+                var shouldBeActive = BlendData.ContainsKey(binding.Value);
+                var isCurrentlyDisabled = DisabledLookup.HasComponent(binding.Value);
                 switch (shouldBeActive)
                 {
                     case true when isCurrentlyDisabled:

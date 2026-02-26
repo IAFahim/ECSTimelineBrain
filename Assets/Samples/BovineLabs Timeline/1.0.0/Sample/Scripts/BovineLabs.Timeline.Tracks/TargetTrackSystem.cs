@@ -60,16 +60,19 @@ namespace BovineLabs.Timeline.Tracks
                     bestWeight = mixData.Weights.x;
                     result = mixData.Value1;
                 }
+
                 if (mixData.Weights.y > bestWeight)
                 {
                     bestWeight = mixData.Weights.y;
                     result = mixData.Value2;
                 }
+
                 if (mixData.Weights.z > bestWeight)
                 {
                     bestWeight = mixData.Weights.z;
                     result = mixData.Value3;
                 }
+
                 if (mixData.Weights.w > bestWeight)
                 {
                     bestWeight = mixData.Weights.w;

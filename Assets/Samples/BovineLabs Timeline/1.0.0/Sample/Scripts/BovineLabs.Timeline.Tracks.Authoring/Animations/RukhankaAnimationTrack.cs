@@ -30,7 +30,7 @@ namespace BovineLabs.Timeline.Authoring
             }
 
             var clipsToBake = CollectClipsToBake();
-            if (clipsToBake.Count ==0 ) 
+            if (clipsToBake.Count == 0)
             {
                 base.Bake(context);
                 return;
@@ -40,7 +40,7 @@ namespace BovineLabs.Timeline.Authoring
 
             context.Baker.AddComponent(context.TrackEntity, new RukhankaTimelineTrack
             {
-                ExitIdleClipHash = exitIdleClip.ComputeHashOrDefault(rigDef.GetAvatar()),
+                ExitIdleClipHash = exitIdleClip.ComputeHashOrDefault(rigDef.GetAvatar())
             });
 
             base.Bake(context);

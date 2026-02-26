@@ -14,13 +14,11 @@ namespace BovineLabs.Timeline.Authoring
     [DisplayName("DOTS/" + nameof(TargetTrack))]
     public class TargetTrack : DOTSTrack
     {
-
         [Tooltip("What should Target be set to on Instantiation.")]
         public Target Target = Target.Target;
-        
+
         protected override void Bake(BakingContext context)
         {
-            
         }
     }
 }

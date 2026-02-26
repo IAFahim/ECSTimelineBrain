@@ -8,11 +8,10 @@ namespace BovineLabs.Timeline.Authoring
 {
     public class RukhankaAnimationClip : DOTSClip, ITimelineClipAsset
     {
-        public ClipCaps clipCaps => ClipCaps.Blending | ClipCaps.ClipIn | ClipCaps.SpeedMultiplier | ClipCaps.Looping;
-        
         public AnimationClip animationClipHolder;
 
         public override double duration => animationClipHolder != null ? animationClipHolder.length : base.duration;
+        public ClipCaps clipCaps => ClipCaps.Blending | ClipCaps.ClipIn | ClipCaps.SpeedMultiplier | ClipCaps.Looping;
 
         public override void Bake(Entity clipEntity, BakingContext context)
         {
@@ -23,7 +22,7 @@ namespace BovineLabs.Timeline.Authoring
                 if (context.Director != null && context.Track != null)
                 {
                     var binding = context.Director.GetGenericBinding(context.Track);
-                    
+
                     if (binding is RigDefinitionAuthoring rigDef)
                     {
                         avatar = rigDef.GetAvatar();

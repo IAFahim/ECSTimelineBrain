@@ -5,6 +5,6 @@ namespace BovineLabs.Timeline.Tracks.Data.GameObjects
 {
     public struct ActivationAnimatedComponent : IAnimatedComponent<bool>
     {
-        [CreateProperty] public bool Value { get; set; } 
+        [CreateProperty] public bool Value { get; set; }
     }
 }

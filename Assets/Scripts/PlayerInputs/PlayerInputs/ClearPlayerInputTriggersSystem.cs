@@ -1,11 +1,10 @@
-using BovineLabs.Core;
 using PlayerInputs.PlayerInputs.Data;
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 
 namespace PlayerInputs.PlayerInputs
-{[UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
+{
+    [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
     [BurstCompile]
     public partial struct ClearPlayerInputTriggersSystem : ISystem
     {
@@ -24,7 +23,8 @@ namespace PlayerInputs.PlayerInputs
             state.Dependency = new ClearMiscJob().ScheduleParallel(state.Dependency);
         }
 
-        [BurstCompile][WithOptions(EntityQueryOptions.IgnoreComponentEnabledState)]
+        [BurstCompile]
+        [WithOptions(EntityQueryOptions.IgnoreComponentEnabledState)]
         public partial struct ClearDataJob : IJobEntity
         {
             private void Execute(
@@ -40,7 +40,8 @@ namespace PlayerInputs.PlayerInputs
             }
         }
 
-        [WithOptions(EntityQueryOptions.IgnoreComponentEnabledState)][WithAll(typeof(ECSPlayerInputCurrent))]
+        [WithOptions(EntityQueryOptions.IgnoreComponentEnabledState)]
+        [WithAll(typeof(ECSPlayerInputCurrent))]
         public partial struct ClearCombatJob : IJobEntity
         {
             private void Execute(
@@ -57,7 +58,8 @@ namespace PlayerInputs.PlayerInputs
             }
         }
 
-        [WithOptions(EntityQueryOptions.IgnoreComponentEnabledState)][WithAll(typeof(ECSPlayerInputCurrent))]
+        [WithOptions(EntityQueryOptions.IgnoreComponentEnabledState)]
+        [WithAll(typeof(ECSPlayerInputCurrent))]
         public partial struct ClearMovementJob : IJobEntity
         {
             private void Execute(
@@ -77,7 +79,8 @@ namespace PlayerInputs.PlayerInputs
             }
         }
 
-        [BurstCompile][WithOptions(EntityQueryOptions.IgnoreComponentEnabledState)]
+        [BurstCompile]
+        [WithOptions(EntityQueryOptions.IgnoreComponentEnabledState)]
         [WithAll(typeof(ECSPlayerInputCurrent))]
         public partial struct ClearMiscJob : IJobEntity
         {

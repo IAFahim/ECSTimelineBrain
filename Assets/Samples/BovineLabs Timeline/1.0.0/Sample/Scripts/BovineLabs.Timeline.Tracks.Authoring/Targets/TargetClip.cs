@@ -8,12 +8,12 @@ namespace BovineLabs.Timeline.Authoring
 {
     public class TargetClip : DOTSClip, ITimelineClipAsset
     {
-        public override double duration => 1;
-        public ClipCaps clipCaps => ClipCaps.Looping;
-        
         [Tooltip("What should Target be set to on Instantiation.")]
         public Target target = Target.Target;
-        
+
+        public override double duration => 1;
+        public ClipCaps clipCaps => ClipCaps.Looping;
+
         public override void Bake(Entity clipEntity, BakingContext context)
         {
             context.Baker.AddComponent(clipEntity, new TargetAnimationComponent { Value = target });

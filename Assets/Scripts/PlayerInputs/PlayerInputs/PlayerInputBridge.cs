@@ -10,8 +10,6 @@ namespace PlayerInputs.PlayerInputs
     public class PlayerInputBridge : MonoBehaviour
     {
         public static readonly HashSet<PlayerInputBridge> Instances = new();
-
-        public ECSPlayerInputCurrent InputCurrentData;
         public bool HasNewData;
 
         public bool AttackPressed;
@@ -22,10 +20,19 @@ namespace PlayerInputs.PlayerInputs
         public bool NextPressed;
         public bool SprintHeld;
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics()
+        public ECSPlayerInputCurrent InputCurrentData;
+
+        private void Start()
         {
-            Instances.Clear();
+            var unityPlayerInput = GetComponent<PlayerInput>();
+            InputCurrentData = new ECSPlayerInputCurrent
+            {
+                Value = new PlayerInputData
+                {
+                    ID = (byte)unityPlayerInput.playerIndex
+                }
+            };
+            HasNewData = true;
         }
 
         private void OnEnable()
@@ -38,17 +45,10 @@ namespace PlayerInputs.PlayerInputs
             Instances.Remove(this);
         }
 
-        private void Start()
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
         {
-            var unityPlayerInput = GetComponent<PlayerInput>();
-            InputCurrentData = new ECSPlayerInputCurrent
-            {
-                Value = new PlayerInputData()
-                {
-                    ID = (byte)unityPlayerInput.playerIndex
-                }
-            };
-            HasNewData = true;
+            Instances.Clear();
         }
 
         [UsedImplicitly]

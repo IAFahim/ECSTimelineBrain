@@ -41,7 +41,7 @@ namespace BovineLabs.Timeline.Authoring
                 var entity = GetEntity(TransformUsageFlags.None);
                 AddComponent(entity, new IdleAnimationClip
                 {
-                    AnimationHash = authoring.AnimationClip.ComputeHashOrDefault(avatar),
+                    AnimationHash = authoring.AnimationClip.ComputeHashOrDefault(avatar)
                 });
             }
         }

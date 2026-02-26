@@ -13,9 +13,9 @@ namespace BovineLabs.Timeline.Authoring
     [DisplayName("DOTS/" + nameof(ActivationTrack))]
     public class ActivationTrack : DOTSTrack
     {
-
         [Tooltip("Select the state of the bound object when the Timeline stops.")]
-        public UnityEngine.Timeline.ActivationTrack.PostPlaybackState postPlaybackState = UnityEngine.Timeline.ActivationTrack.PostPlaybackState.LeaveAsIs;
+        public UnityEngine.Timeline.ActivationTrack.PostPlaybackState postPlaybackState =
+            UnityEngine.Timeline.ActivationTrack.PostPlaybackState.LeaveAsIs;
 
         protected override void Bake(BakingContext context)
         {
@@ -24,9 +24,7 @@ namespace BovineLabs.Timeline.Authoring
                 PostPlaybackState = postPlaybackState
             });
             if ((context.Director.GetGenericBinding(context.Track) as GameObject).activeInHierarchy)
-            {
                 context.Baker.AddComponent(context.TrackEntity, new OriginalWasDisabledTag());
-            }
         }
     }
 }
