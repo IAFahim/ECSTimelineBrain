@@ -24,6 +24,7 @@ namespace PlayerInputs.PlayerInputs
                 {
                     entity = EntityManager.CreateEntity(
                         typeof(ECSPlayerInputCurrent),
+                        typeof(ECSPlayerInputID),
                         typeof(ECSPlayerInputPrevious),
                         typeof(ECSPlayerInputActiveThisFrame),
                         typeof(ECSPlayerInputActivePreviousFrame), typeof(InputAttack), typeof(InputAttackPrevious),
@@ -36,7 +37,10 @@ namespace PlayerInputs.PlayerInputs
                     );
 
                     _bridgeToEntity[bridge] = entity;
-
+                    EntityManager.SetComponentData(entity, new ECSPlayerInputID
+                    {
+                        ID = bridge.id
+                    });
                     EntityManager.SetComponentData(entity, bridge.InputCurrentData);
                     EntityManager.SetComponentData(entity,
                         new ECSPlayerInputPrevious { Value = bridge.InputCurrentData.Value });

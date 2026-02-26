@@ -20,16 +20,19 @@ namespace PlayerInputs.PlayerInputs
         public bool NextPressed;
         public bool SprintHeld;
 
+        public byte id;
         public ECSPlayerInputCurrent InputCurrentData;
 
         private void Start()
         {
             var unityPlayerInput = GetComponent<PlayerInput>();
+            id = (byte)unityPlayerInput.playerIndex;
             InputCurrentData = new ECSPlayerInputCurrent
             {
                 Value = new PlayerInputData
                 {
-                    ID = (byte)unityPlayerInput.playerIndex
+                    Move = default,
+                    Look = default
                 }
             };
             HasNewData = true;

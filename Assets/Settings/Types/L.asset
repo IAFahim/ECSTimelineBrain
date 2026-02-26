@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9832e39aa6d4410caec73bfd6d4aad58, type: 3}
   m_Name: L
   m_EditorClassIdentifier: BovineLabs.Core::BovineLabs.Core.TypeAsset
-  typeName: 
+  typeName: PlayerInputs.PlayerInputs.Data.InputAttack, PlayerInputs.Data, Version=0.0.0.0,
+    Culture=neutral, PublicKeyToken=null

@@ -1,3 +1,4 @@
+using System;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -70,28 +71,32 @@ namespace PlayerInputs.PlayerInputs.Data
     }
 
     // --- State Data ---
+    [Serializable]
     public struct ECSPlayerInputCurrent : IComponentData
     {
         public PlayerInputData Value;
     }
 
+    [Serializable]
     public struct ECSPlayerInputPrevious : IComponentData
     {
         public PlayerInputData Value;
     }
 
-    public struct PlayerInputData
+    public struct ECSPlayerInputID : IComponentData
     {
         public byte ID;
+    }
+    
+    [Serializable]
+    public struct PlayerInputData
+    {
         public float2 Move;
         public float2 Look;
 
         public FixedString128Bytes ToStringFixedString128Bytes()
         {
             var fs = new FixedString128Bytes();
-
-            fs.Append((FixedString32Bytes)"ID:");
-            fs.Append(ID);
 
             if (math.any(Move != float2.zero))
             {
