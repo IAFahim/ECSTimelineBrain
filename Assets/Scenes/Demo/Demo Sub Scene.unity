@@ -1151,14 +1151,7 @@ MonoBehaviour:
     Look:
       x: 0
       y: 0
-  initialState:
-    attack: 0
-    interact: 0
-    crouch: 0
-    jump: 0
-    previous: 0
-    next: 0
-    sprint: 0
+  initialState: 0
 --- !u!1 &460927160
 GameObject:
   m_ObjectHideFlags: 0

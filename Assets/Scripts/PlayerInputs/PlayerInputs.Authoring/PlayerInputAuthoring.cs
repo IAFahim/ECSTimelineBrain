@@ -7,7 +7,7 @@ namespace PlayerInputs.PlayerInputs.Authoring
     public class PlayerInputAuthoring : MonoBehaviour
     {
         public PlayerInputData data;
-        public PlayerInputBaker.InputInitialState initialState;
+        public InputInitialState initialState;
 
         public class PlayerInputBaker : Baker<PlayerInputAuthoring>
         {
@@ -22,13 +22,40 @@ namespace PlayerInputs.PlayerInputs.Authoring
 
                 AddComponent<ECSPlayerInputPrevious>(entity);
 
-                Setup<InputAttack, InputAttackPrevious>(entity, authoring.initialState.attack);
-                Setup<InputInteract, InputInteractPrevious>(entity, authoring.initialState.interact);
-                Setup<InputCrouch, InputCrouchPrevious>(entity, authoring.initialState.crouch);
-                Setup<InputJump, InputJumpPrevious>(entity, authoring.initialState.jump);
-                Setup<InputPrevious, InputPreviousPrevious>(entity, authoring.initialState.previous);
-                Setup<InputNext, InputNextPrevious>(entity, authoring.initialState.next);
-                Setup<InputSprint, InputSprintPrevious>(entity, authoring.initialState.sprint);
+                Setup<InputAttack, InputAttackPrevious>(
+                    entity, 
+                    authoring.initialState.HasFlagFast(InputInitialState.Attack)
+                );
+
+                Setup<InputInteract, InputInteractPrevious>(
+                    entity, 
+                    authoring.initialState.HasFlagFast(InputInitialState.Interact)
+                );
+
+                Setup<InputCrouch, InputCrouchPrevious>(
+                    entity, 
+                    authoring.initialState.HasFlagFast(InputInitialState.Crouch)
+                );
+
+                Setup<InputJump, InputJumpPrevious>(
+                    entity, 
+                    authoring.initialState.HasFlagFast(InputInitialState.Jump)
+                );
+
+                Setup<InputPrevious, InputPreviousPrevious>(
+                    entity, 
+                    authoring.initialState.HasFlagFast(InputInitialState.Previous)
+                );
+
+                Setup<InputNext, InputNextPrevious>(
+                    entity, 
+                    authoring.initialState.HasFlagFast(InputInitialState.Next)
+                );
+
+                Setup<InputSprint, InputSprintPrevious>(
+                    entity, 
+                    authoring.initialState.HasFlagFast(InputInitialState.Sprint)
+                );
             }
 
             private void Setup<TCurrent, TPrevious>(Entity entity, bool isActive)
@@ -40,18 +67,6 @@ namespace PlayerInputs.PlayerInputs.Authoring
 
                 AddComponent<TPrevious>(entity);
                 SetComponentEnabled<TPrevious>(entity, false);
-            }
-            
-            [System.Serializable]
-            public struct InputInitialState
-            {
-                public bool attack;
-                public bool interact;
-                public bool crouch;
-                public bool jump;
-                public bool previous;
-                public bool next;
-                public bool sprint;
             }
         }
     }
