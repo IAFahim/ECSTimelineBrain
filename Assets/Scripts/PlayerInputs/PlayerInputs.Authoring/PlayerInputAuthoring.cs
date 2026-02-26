@@ -7,53 +7,51 @@ namespace PlayerInputs.PlayerInputs.Authoring
     public class PlayerInputAuthoring : MonoBehaviour
     {
         public PlayerInputData data;
-        
+        public PlayerInputBaker.InputInitialState initialState;
+
         public class PlayerInputBaker : Baker<PlayerInputAuthoring>
         {
             public override void Bake(PlayerInputAuthoring authoring)
             {
                 var entity = GetEntity(TransformUsageFlags.None);
 
-                AddComponent(entity, new ECSPlayerInputCurrent()
+                AddComponent(entity, new ECSPlayerInputCurrent
                 {
                     Value = authoring.data
                 });
-                AddComponent(entity, new ECSPlayerInputPrevious());
 
-                AddComponent<InputAttack>(entity);
-                SetComponentEnabled<InputAttack>(entity, false);
-                AddComponent<InputAttackPrevious>(entity);
-                SetComponentEnabled<InputAttackPrevious>(entity, false);
+                AddComponent<ECSPlayerInputPrevious>(entity);
 
-                AddComponent<InputInteract>(entity);
-                SetComponentEnabled<InputInteract>(entity, false);
-                AddComponent<InputInteractPrevious>(entity);
-                SetComponentEnabled<InputInteractPrevious>(entity, false);
+                Setup<InputAttack, InputAttackPrevious>(entity, authoring.initialState.attack);
+                Setup<InputInteract, InputInteractPrevious>(entity, authoring.initialState.interact);
+                Setup<InputCrouch, InputCrouchPrevious>(entity, authoring.initialState.crouch);
+                Setup<InputJump, InputJumpPrevious>(entity, authoring.initialState.jump);
+                Setup<InputPrevious, InputPreviousPrevious>(entity, authoring.initialState.previous);
+                Setup<InputNext, InputNextPrevious>(entity, authoring.initialState.next);
+                Setup<InputSprint, InputSprintPrevious>(entity, authoring.initialState.sprint);
+            }
 
-                AddComponent<InputCrouch>(entity);
-                SetComponentEnabled<InputCrouch>(entity, false);
-                AddComponent<InputCrouchPrevious>(entity);
-                SetComponentEnabled<InputCrouchPrevious>(entity, false);
+            private void Setup<TCurrent, TPrevious>(Entity entity, bool isActive)
+                where TCurrent : unmanaged, IComponentData, IEnableableComponent
+                where TPrevious : unmanaged, IComponentData, IEnableableComponent
+            {
+                AddComponent<TCurrent>(entity);
+                SetComponentEnabled<TCurrent>(entity, isActive);
 
-                AddComponent<InputJump>(entity);
-                SetComponentEnabled<InputJump>(entity, false);
-                AddComponent<InputJumpPrevious>(entity);
-                SetComponentEnabled<InputJumpPrevious>(entity, false);
-
-                AddComponent<InputPrevious>(entity);
-                SetComponentEnabled<InputPrevious>(entity, false);
-                AddComponent<InputPreviousPrevious>(entity);
-                SetComponentEnabled<InputPreviousPrevious>(entity, false);
-
-                AddComponent<InputNext>(entity);
-                SetComponentEnabled<InputNext>(entity, false);
-                AddComponent<InputNextPrevious>(entity);
-                SetComponentEnabled<InputNextPrevious>(entity, false);
-
-                AddComponent<InputSprint>(entity);
-                SetComponentEnabled<InputSprint>(entity, false);
-                AddComponent<InputSprintPrevious>(entity);
-                SetComponentEnabled<InputSprintPrevious>(entity, false);
+                AddComponent<TPrevious>(entity);
+                SetComponentEnabled<TPrevious>(entity, false);
+            }
+            
+            [System.Serializable]
+            public struct InputInitialState
+            {
+                public bool attack;
+                public bool interact;
+                public bool crouch;
+                public bool jump;
+                public bool previous;
+                public bool next;
+                public bool sprint;
             }
         }
     }

@@ -4,87 +4,51 @@ using BovineLabs.Timeline.Tracks.Data;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Physics;
+using UnityEngine;
 
 namespace BovineLabs.Timeline.Tracks
 {
     [UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
     public partial struct PhysicsVelocityTrackSystem : ISystem
     {
-        private TrackBlendImpl<PhysicsVelocity, PhysicsVelocityAnimated> impl;
-
-        public const int INNERLOOP_BATCH_COUNT = 64;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            impl.OnCreate(ref state);
         }
 
         [BurstCompile]
         public void OnDestroy(ref SystemState state)
         {
-            impl.OnDestroy(ref state);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var velocityLookup = SystemAPI.GetComponentLookup<PhysicsVelocity>();
-            var blendData = impl.Update(ref state);
-
-            state.Dependency = new WriteVelocityJob
+            new PhysicsVelocityTrackSystemJob
             {
-                BlendData = blendData,
-                VelocityLookup = velocityLookup
-            }.ScheduleParallel(blendData, INNERLOOP_BATCH_COUNT, state.Dependency);
+                PhysicsVelocityLookup = velocityLookup
+            }.ScheduleParallel();
+
         }
 
         [BurstCompile]
-        private struct WriteVelocityJob : IJobParallelHashMapDefer
+        [WithAll(typeof(ClipActive), typeof(TimelineActive))]
+        
+        public partial struct PhysicsVelocityTrackSystemJob : IJobEntity
         {
-            [ReadOnly] public NativeParallelHashMap<Entity, MixData<PhysicsVelocity>>.ReadOnly BlendData;
-
-            [NativeDisableParallelForRestriction] public ComponentLookup<PhysicsVelocity> VelocityLookup;
-
-            public void ExecuteNext(int entryIndex, int jobIndex)
+            [NativeDisableParallelForRestriction] public ComponentLookup<PhysicsVelocity> PhysicsVelocityLookup; 
+            public void Execute(in PhysicsVelocityClip physicsVelocityClip, in TrackBinding trackBinding)
             {
-                this.Read(BlendData, entryIndex, out var entity, out var mixResult);
-
-                var velocityRW = VelocityLookup.GetRefRW(entity);
-
-                var weights = mixResult.Weights;
-                var linearAccum = float3.zero;
-                var angularAccum = float3.zero;
-
-                if (weights.x > math.EPSILON)
-                {
-                    linearAccum += mixResult.Value1.Linear * weights.x;
-                    angularAccum += mixResult.Value1.Angular * weights.x;
-                }
-
-                if (weights.y > math.EPSILON)
-                {
-                    linearAccum += mixResult.Value2.Linear * weights.y;
-                    angularAccum += mixResult.Value2.Angular * weights.y;
-                }
-
-                if (weights.z > math.EPSILON)
-                {
-                    linearAccum += mixResult.Value3.Linear * weights.z;
-                    angularAccum += mixResult.Value3.Angular * weights.z;
-                }
-
-                if (weights.w > math.EPSILON)
-                {
-                    linearAccum += mixResult.Value4.Linear * weights.w;
-                    angularAccum += mixResult.Value4.Angular * weights.w;
-                }
-
-                velocityRW.ValueRW.Linear += linearAccum;
-                velocityRW.ValueRW.Angular += angularAccum;
+                var velocity = PhysicsVelocityLookup.GetRefRW(trackBinding.Value);
+                velocity.ValueRW.Linear += physicsVelocityClip.Value.Linear;
+                velocity.ValueRW.Angular += physicsVelocityClip.Value.Angular;
             }
         }
+        
     }
 }

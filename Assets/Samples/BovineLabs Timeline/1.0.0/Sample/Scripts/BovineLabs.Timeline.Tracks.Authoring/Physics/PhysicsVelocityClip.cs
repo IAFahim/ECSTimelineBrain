@@ -24,7 +24,7 @@ namespace BovineLabs.Timeline.Authoring
 
         public override void Bake(Entity clipEntity, BakingContext context)
         {
-            context.Baker.AddComponent(clipEntity, new PhysicsVelocityAnimated
+            context.Baker.AddComponent(clipEntity, new Tracks.Data.PhysicsVelocityClip
             {
                 Value = new PhysicsVelocity
                 {
