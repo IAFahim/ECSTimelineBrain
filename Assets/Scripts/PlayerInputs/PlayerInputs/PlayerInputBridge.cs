@@ -11,8 +11,16 @@ namespace PlayerInputs.PlayerInputs
     {
         public static readonly HashSet<PlayerInputBridge> Instances = new();
 
-        [HideInInspector] public ECSPlayerInputCurrent InputCurrentData;
-        [HideInInspector] public bool HasNewData;
+        public ECSPlayerInputCurrent InputCurrentData;
+        public bool HasNewData;
+
+        public bool AttackPressed;
+        public bool InteractPressed;
+        public bool CrouchHeld;
+        public bool JumpPressed;
+        public bool PreviousPressed;
+        public bool NextPressed;
+        public bool SprintHeld;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics()
@@ -62,7 +70,7 @@ namespace PlayerInputs.PlayerInputs
         {
             if (value.isPressed)
             {
-                InputCurrentData.Value.SetButton(ECSPlayerButton.Attack, true);
+                AttackPressed = true;
                 HasNewData = true;
             }
         }
@@ -72,7 +80,7 @@ namespace PlayerInputs.PlayerInputs
         {
             if (value.isPressed)
             {
-                InputCurrentData.Value.SetButton(ECSPlayerButton.Interact, true);
+                InteractPressed = true;
                 HasNewData = true;
             }
         }
@@ -80,7 +88,7 @@ namespace PlayerInputs.PlayerInputs
         [UsedImplicitly]
         public void OnCrouch(InputValue value)
         {
-            InputCurrentData.Value.SetButton(ECSPlayerButton.Crouch, value.isPressed);
+            CrouchHeld = value.isPressed;
             HasNewData = true;
         }
 
@@ -89,7 +97,7 @@ namespace PlayerInputs.PlayerInputs
         {
             if (value.isPressed)
             {
-                InputCurrentData.Value.SetButton(ECSPlayerButton.Jump, true);
+                JumpPressed = true;
                 HasNewData = true;
             }
         }
@@ -99,7 +107,7 @@ namespace PlayerInputs.PlayerInputs
         {
             if (value.isPressed)
             {
-                InputCurrentData.Value.SetButton(ECSPlayerButton.Previous, true);
+                PreviousPressed = true;
                 HasNewData = true;
             }
         }
@@ -109,7 +117,7 @@ namespace PlayerInputs.PlayerInputs
         {
             if (value.isPressed)
             {
-                InputCurrentData.Value.SetButton(ECSPlayerButton.Next, true);
+                NextPressed = true;
                 HasNewData = true;
             }
         }
@@ -117,7 +125,7 @@ namespace PlayerInputs.PlayerInputs
         [UsedImplicitly]
         public void OnSprint(InputValue value)
         {
-            InputCurrentData.Value.SetButton(ECSPlayerButton.Sprint, value.isPressed);
+            SprintHeld = value.isPressed;
             HasNewData = true;
         }
     }

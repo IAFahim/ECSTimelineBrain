@@ -18,69 +18,64 @@ namespace BovineLabs.Timeline.Authoring
     [DisplayName("DOTS/Animation Track")]
     public class RukhankaAnimationTrack : DOTSTrack
     {
-        public HashSet<AnimationClip> AnimationClips { get; private set; } = new();
+        public AnimationClip exitIdleClip;
 
         protected override void Bake(BakingContext context)
         {
-            foreach (var clip in GetClips())
-            {
-                if (clip.asset is RukhankaAnimationClip holder && holder.animationClipHolder != null)
-                {
-                    AnimationClips.Add(holder.animationClipHolder);
-                }
-            }
-
-            if (AnimationClips.Count == 0)
-            {
-                base.Bake(context);
-                return;
-            }
-
-            var binding = context.Director.GetGenericBinding(this);
-            RigDefinitionAuthoring rigDef = binding as RigDefinitionAuthoring;
-
-            if (rigDef == null && binding is GameObject go)
-            {
-                rigDef = go.GetComponent<RigDefinitionAuthoring>();
-            }
-
+            var rigDef = context.Director.ResolveRigDefinition(this);
             if (rigDef == null)
             {
                 base.Bake(context);
                 return;
             }
 
-            var avatar = rigDef.GetAvatar();
+            var clipsToBake = CollectClipsToBake();
+            if (clipsToBake.Count ==0 ) 
+            {
+                base.Bake(context);
+                return;
+            }
 
-            var animationBaker = new AnimationClipBaker();
-            var bakedAnimations = animationBaker.BakeAnimations(
+            BakeAnimationsToEntity(context, rigDef, clipsToBake);
+
+            context.Baker.AddComponent(context.TrackEntity, new RukhankaTimelineTrack
+            {
+                ExitIdleClipHash = exitIdleClip.ComputeHashOrDefault(rigDef.GetAvatar()),
+            });
+
+            base.Bake(context);
+        }
+
+        private HashSet<AnimationClip> CollectClipsToBake()
+        {
+            var clips = GetClips()
+                .Select(c => c.asset as RukhankaAnimationClip)
+                .Where(h => h?.animationClipHolder != null)
+                .Select(h => h.animationClipHolder)
+                .ToHashSet();
+
+            if (exitIdleClip != null)
+                clips.Add(exitIdleClip);
+
+            return clips;
+        }
+
+        private void BakeAnimationsToEntity(BakingContext context, RigDefinitionAuthoring rigDef,
+            HashSet<AnimationClip> clipsToBake)
+        {
+            var bakedAnimations = new AnimationClipBaker().BakeAnimations(
                 context.Baker,
-                AnimationClips.ToArray(),
-                avatar,
-                rigDef.gameObject);
+                clipsToBake.ToArray(),
+                rigDef.GetAvatar(),
+                rigDef.gameObject
+            );
 
             var e = context.Baker.CreateAdditionalEntity(TransformUsageFlags.None, false, name + "_AnimationAssets");
-            var newAnimArr = context.Baker.AddBuffer<NewBlobAssetDatabaseRecord<AnimationClipBlob>>(e);
+            var buffer = context.Baker.AddBuffer<NewBlobAssetDatabaseRecord<AnimationClipBlob>>(e);
 
-            foreach (var ba in bakedAnimations)
-            {
-                if (ba != BlobAssetReference<AnimationClipBlob>.Null)
-                {
-                    newAnimArr.Add(new NewBlobAssetDatabaseRecord<AnimationClipBlob>
-                    {
-                        hash = ba.Value.hash,
-                        value = ba
-                    });
-                }
-            }
+            buffer.AddValidAnimations(bakedAnimations);
 
-            if (bakedAnimations.IsCreated)
-            {
-                bakedAnimations.Dispose();
-            }
-            
-            context.Baker.AddComponent<RukhankaTimelineTargetTag>(context.TrackEntity);
-            base.Bake(context);
+            if (bakedAnimations.IsCreated) bakedAnimations.Dispose();
         }
     }
 }

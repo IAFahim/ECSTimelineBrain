@@ -9,7 +9,7 @@ namespace SpatialMaps.SpatialMaps.Data
         {
             public override void Bake(NeighboursAuthoring authoring)
             {
-                var entity = GetEntity(TransformUsageFlags.Dynamic);
+                var entity = GetEntity(TransformUsageFlags.None);
                 AddBuffer<Neighbours>(entity);
             }
         }

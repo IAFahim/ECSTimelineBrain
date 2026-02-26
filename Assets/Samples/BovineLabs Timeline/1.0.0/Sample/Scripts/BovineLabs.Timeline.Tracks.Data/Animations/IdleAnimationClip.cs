@@ -1,10 +1,9 @@
-using BovineLabs.Timeline.Data;
 using Unity.Entities;
-using Unity.Properties;
+using Hash128 = Unity.Entities.Hash128;
 
 namespace BovineLabs.Timeline.Tracks.Data.Animations
 {
-    public struct RukhankaAnimationClipAnimated : IComponentData
+    public struct IdleAnimationClip : IComponentData
     {
         public Hash128 AnimationHash;
     }
