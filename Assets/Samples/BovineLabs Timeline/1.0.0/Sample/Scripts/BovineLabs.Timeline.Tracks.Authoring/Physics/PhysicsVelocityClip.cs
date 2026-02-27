@@ -15,6 +15,8 @@ namespace BovineLabs.Timeline.Authoring
         [SerializeField] [Tooltip("Angular velocity in radians per second")]
         private Vector3 angularVelocity;
 
+        [SerializeField] private bool isLocalSpace;
+
         public float3 LinearVelocity => linearVelocity;
         public float3 AngularVelocity => angularVelocity;
 
@@ -24,13 +26,14 @@ namespace BovineLabs.Timeline.Authoring
 
         public override void Bake(Entity clipEntity, BakingContext context)
         {
-            context.Baker.AddComponent(clipEntity, new Tracks.Data.PhysicsVelocityClip
+            context.Baker.AddComponent(clipEntity, new PhysicsVelocityComponent
             {
-                Value = new PhysicsVelocity
+                PhysicsVelocity = new PhysicsVelocity
                 {
                     Linear = LinearVelocity,
                     Angular = AngularVelocity
-                }
+                },
+                IsLocalSpace = isLocalSpace
             });
             base.Bake(clipEntity, context);
         }
