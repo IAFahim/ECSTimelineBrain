@@ -1,17 +1,18 @@
 using Unity.Entities;
 using UnityEngine;
 
-namespace SpatialMaps.SpatialMaps.Authoring
+public class PlayerAuthoring : MonoBehaviour
 {
-    public class PlayerAuthoring : MonoBehaviour
+    public float SearchRadius = 5f;
+
+    public class Baker : Baker<PlayerAuthoring>
     {
-        public class Baker : Baker<PlayerAuthoring>
+        public override void Bake(PlayerAuthoring authoring)
         {
-            public override void Bake(PlayerAuthoring authoring)
-            {
-                var entity = GetEntity(TransformUsageFlags.Dynamic);
-                AddComponent<Player>(entity);
-            }
+            var entity = GetEntity(TransformUsageFlags.Dynamic);
+            
+            AddComponent(entity, new SpatialMapsSearch { SearchRadius = authoring.SearchRadius });
+            AddBuffer<SpatialMapsNeighbours>(entity);
         }
     }
 }

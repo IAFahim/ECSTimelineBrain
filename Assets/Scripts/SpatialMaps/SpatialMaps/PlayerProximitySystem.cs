@@ -2,29 +2,31 @@ using BovineLabs.Core.Spatial;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
-using Unity.Transforms;[UpdateInGroup(typeof(SimulationSystemGroup))]
+using Unity.Transforms;
+
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct PlayerProximitySystem : ISystem
 {
     private EntityQuery playerQuery;
     private PositionBuilder positionBuilder;
     private SpatialMap<SpatialPosition> spatialMap;
 
+    // Exposed for the Debug Gizmo / Quill Drawer
+    public float CellSize => 2.0f;
+    public int WorldSize => 1000;
+    public SpatialMap<SpatialPosition> Map => spatialMap;
+
     public void OnCreate(ref SystemState state)
     {
-        // Query for all players that have a transform
         playerQuery = SystemAPI.QueryBuilder()
-            .WithAllRW<Player>()
-            .WithAll<LocalTransform>()
+            .WithAll<SpatialMapsSearch, LocalTransform>()
+            .WithAllRW<SpatialMapsNeighbours>() // We are writing to this!
             .Build();
 
-        // PositionBuilder is a highly-optimized helper to grab positions out of a query
         positionBuilder = new PositionBuilder(ref state, playerQuery);
-
-        // Initialize SpatialMap:
-        // parameter 1: Cell Size (e.g., 2.0f means 2x2 unit grids)
-        // parameter 2: Total World Size (e.g., 1000 units). Needed for hashing math.
-        spatialMap = new SpatialMap<SpatialPosition>(2.0f, 1000, Allocator.Persistent);
+        spatialMap = new SpatialMap<SpatialPosition>(CellSize, WorldSize, Allocator.Persistent);
     }
 
     public void OnDestroy(ref SystemState state)
@@ -35,72 +37,70 @@ public partial struct PlayerProximitySystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        if (playerQuery.IsEmpty)
-            return;
+        if (playerQuery.IsEmpty) return;
 
-        // 1. Gather all player positions. 
-        // The resulting array maps 1:1 with the [EntityIndexInQuery] used in IJobEntity later!
+        // 1. Gather all positions
         state.Dependency = positionBuilder.Gather(ref state, state.Dependency, out var positions);
 
-        // 2. Build the spatial map. This efficiently hashes all points into buckets.
+        // 2. Build Spatial Map
         state.Dependency = spatialMap.Build(positions, state.Dependency);
 
-        // 3. Find neighbors
-        state.Dependency = new ProximityJob
+        // 3. To store Entities in the buffer, we need an index-to-Entity mapping.
+        // ToEntityListAsync uses WorldUpdateAllocator, meaning it allocates 0 garbage and automatically frees at the end of the frame!
+        var entities = playerQuery.ToEntityListAsync(state.WorldUpdateAllocator, state.Dependency, out var entityDeps);
+        state.Dependency = JobHandle.CombineDependencies(state.Dependency, entityDeps);
+
+        // 4. Run the Proximity Job
+        state.Dependency = new FindNeighboursJob
         {
             Positions = positions,
-            SpatialMap = spatialMap.AsReadOnly(), // Pass read-only map to the job
-            SearchRadius = 2.0f,
-            SearchRadiusSq = 4.0f // Pre-squared for math.distancesq
+            Entities = entities.AsDeferredJobArray(), // Pass the matching entity array
+            SpatialMap = spatialMap.AsReadOnly()
         }.ScheduleParallel(playerQuery, state.Dependency);
-        
-        // Note: We don't dispose 'positions' because PositionBuilder allocates it using 
-        // WorldRewindableAllocator, which automatically cleans up every frame!
     }
 
     [BurstCompile]
-    public partial struct ProximityJob : IJobEntity
+    public partial struct FindNeighboursJob : IJobEntity
     {
         [ReadOnly] public NativeArray<SpatialPosition> Positions;
+        [ReadOnly] public NativeArray<Entity> Entities;
         [ReadOnly] public SpatialMap.ReadOnly SpatialMap;
 
-        public float SearchRadius;
-        public float SearchRadiusSq;
-
-        // [EntityIndexInQuery] gives us the exact index into the Positions array
-        private void Execute([EntityIndexInQuery] int index, ref Player player)
+        private void Execute([EntityIndexInQuery] int index, in SpatialMapsSearch spatialMapsSearch, ref DynamicBuffer<SpatialMapsNeighbours> neighbours)
         {
+            // Clear the buffer from the previous frame
+            neighbours.Clear();
+
             float3 myPos = Positions[index].Position;
+            float radius = spatialMapsSearch.SearchRadius;
+            float radiusSq = radius * radius;
 
-            // Get the X/Z bounds for our search radius to know which cells to check
-            int2 minCell = SpatialMap.Quantized(myPos.xz - new float2(SearchRadius));
-            int2 maxCell = SpatialMap.Quantized(myPos.xz + new float2(SearchRadius));
+            // Get the X/Z bounds based on this specific spatialMapsSearch's SearchRadius
+            int2 minCell = SpatialMap.Quantized(myPos.xz - new float2(radius));
+            int2 maxCell = SpatialMap.Quantized(myPos.xz + new float2(radius));
 
-            player.IsNearAnotherPlayer = false;
-
-            // Iterate over the surrounding grid cells
+            // Iterate over all cells that intersect this spatialMapsSearch's specific bounding box
             for (int y = minCell.y; y <= maxCell.y; y++)
             {
                 for (int x = minCell.x; x <= maxCell.x; x++)
                 {
                     int cellHash = SpatialMap.Hash(new int2(x, y));
 
-                    // If the cell has entities in it...
+                    // If the cell contains targets...
                     if (SpatialMap.Map.TryGetFirstValue(cellHash, out int otherIndex, out var iterator))
                     {
                         do
                         {
-                            // Don't compare against ourselves
-                            if (otherIndex == index) 
-                                continue;
+                            // Skip checking distance against ourselves
+                            if (otherIndex == index) continue;
 
                             float3 otherPos = Positions[otherIndex].Position;
 
-                            // Actual exact distance check
-                            if (math.distancesq(myPos, otherPos) <= SearchRadiusSq)
+                            // If within this spatialMapsSearch's custom radius, add them to the buffer!
+                            if (math.distancesq(myPos, otherPos) <= radiusSq)
                             {
-                                player.IsNearAnotherPlayer = true;
-                                return; // Early exit, we only needed to know if AT LEAST ONE is near
+                                // Map the otherIndex back to its actual Entity using our Entities array!
+                                neighbours.Add(new SpatialMapsNeighbours { Entity = Entities[otherIndex] });
                             }
 
                         } while (SpatialMap.Map.TryGetNextValue(out otherIndex, ref iterator));
