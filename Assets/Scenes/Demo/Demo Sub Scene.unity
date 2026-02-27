@@ -2796,9 +2796,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 916731469}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04bf47502c954c93841aaf72acf9fb79, type: 3}
+  m_Script: {fileID: 11500000, guid: c8bef60433314bf2830c24c9f6b3d0fd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: SpatialMaps.Authoring::SpatialMaps.SpatialMaps.Data.NeighboursAuthoring
+  m_EditorClassIdentifier: SpatialMaps.Authoring::PlayerAuthoring
 --- !u!1 &946387547
 GameObject:
   m_ObjectHideFlags: 0
@@ -9799,7 +9799,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 192142732961666847, guid: 911761e3fdfe1854f8445440bf6ab0c3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1810607329}
+      addedObject: {fileID: 1810607334}
     - targetCorrespondingSourceObject: {fileID: 5870650000058048428, guid: 911761e3fdfe1854f8445440bf6ab0c3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1810607324}
@@ -9863,7 +9863,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4345100569974401348, guid: 911761e3fdfe1854f8445440bf6ab0c3, type: 3}
   m_PrefabInstance: {fileID: 1810607320}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1810607329
+--- !u!114 &1810607334
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9872,9 +9872,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1810607321}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04bf47502c954c93841aaf72acf9fb79, type: 3}
+  m_Script: {fileID: 11500000, guid: c8bef60433314bf2830c24c9f6b3d0fd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: SpatialMaps.Authoring::SpatialMaps.SpatialMaps.Data.NeighboursAuthoring
+  m_EditorClassIdentifier: SpatialMaps.Authoring::SpatialMaps.SpatialMaps.Authoring.PlayerAuthoring
 --- !u!1 &1815884305
 GameObject:
   m_ObjectHideFlags: 0
