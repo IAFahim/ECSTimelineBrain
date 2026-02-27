@@ -190,25 +190,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -235,25 +217,7 @@ MonoBehaviour:
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -312,6 +276,7 @@ MonoBehaviour:
   - {fileID: -7487853965330801300}
   - {fileID: -7360935165072914369}
   - {fileID: 8000669148658712415}
+  - {fileID: 5093461093862936731}
   m_FixedDuration: 0
   m_EditorSettings:
     m_Framerate: 60
@@ -343,6 +308,99 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c69381bc0c9d4b42b34db50d439ce2a6, type: 3}
   m_Name: UnParentingClip
   m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring::BovineLabs.Timeline.Authoring.UnParentingClip
+--- !u!114 &5093461093862936731
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9eca54711dce46d6a976b77e69570ee5, type: 3}
+  m_Name: Instantiate Track
+  m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring::BovineLabs.Timeline.Authoring.InstantiateTrack
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips:
+  - m_Version: 1
+    m_Start: 0.21666666666666667
+    m_ClipIn: 0
+    m_Asset: {fileID: 8907362913875521779}
+    m_Duration: 1
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 5093461093862936731}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: 0
+    m_BlendOutDuration: 0
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: InstantiateClip
+  m_Markers:
+    m_Objects: []
+  resetOnDeactivate: 1
 --- !u!114 &8000669148658712415
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -449,3 +507,17 @@ MonoBehaviour:
   m_Name: RukhankaAnimationClip
   m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring::BovineLabs.Timeline.Authoring.RukhankaAnimationClip
   animationClipHolder: {fileID: 7400008, guid: 1bbe72df8c2b6af46bfbadad72175372, type: 3}
+--- !u!114 &8907362913875521779
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3570c3f35c7434a861873ba14bbfb92, type: 3}
+  m_Name: InstantiateClip
+  m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring::BovineLabs.Timeline.Authoring.InstantiateClip
+  prefab: {fileID: 100000, guid: 257e753645ba2954ca2439c671e5337b, type: 3}
+  parent: 0

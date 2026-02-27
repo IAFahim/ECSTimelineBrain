@@ -14,7 +14,7 @@ namespace BovineLabs.Timeline.Authoring
         public override void Bake(Entity clipEntity, BakingContext context)
         {
             var parent = (context.Director.GetGenericBinding(context.Track) as GameObject).transform.parent;
-            context.Baker.AddComponent<UnParentComponent>(clipEntity, new UnParentComponent()
+            context.Baker.AddComponent<UnParentComponent>(clipEntity, new UnParentComponent
             {
                 LastParent = context.Baker.GetEntity(parent, TransformUsageFlags.None)
             });
