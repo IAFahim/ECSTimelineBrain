@@ -7,10 +7,10 @@ namespace BovineLabs.Timeline.Authoring
 {
     public class InstantiateClip : DOTSClip, ITimelineClipAsset
     {
-        public override double duration => 1;
-        public ClipCaps clipCaps => ClipCaps.None;
         public GameObject prefab;
         public bool parent;
+        public override double duration => 1;
+        public ClipCaps clipCaps => ClipCaps.None;
 
         public override void Bake(Entity clipEntity, BakingContext context)
         {

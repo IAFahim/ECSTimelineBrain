@@ -1,4 +1,3 @@
-using BovineLabs.Timeline;
 using BovineLabs.Timeline.Data;
 using BovineLabs.Timeline.Tracks.Data.Instantiates;
 using Unity.Burst;
@@ -58,17 +57,15 @@ namespace BovineLabs.Timeline.Tracks
                 }
                 else
                 {
-                    if (LocalToWorldLookup.TryGetComponent(target, out var targetLtw))
-                    {
-                        var spawnTransform = ExtractLocalTransform(targetLtw.Value);
-                        ECB.SetComponent(chunkIndex, instance, spawnTransform);
-                    }
+                    if (!LocalToWorldLookup.TryGetComponent(target, out var targetLtw)) return;
+                    var spawnTransform = ExtractLocalTransform(targetLtw.Value);
+                    ECB.SetComponent(chunkIndex, instance, spawnTransform);
                 }
             }
         }
 
         /// <summary>
-        /// Safely converts a float4x4 into a LocalTransform structure. 
+        ///     Safely converts a float4x4 into a LocalTransform structure.
         /// </summary>
         private static LocalTransform ExtractLocalTransform(float4x4 m)
         {

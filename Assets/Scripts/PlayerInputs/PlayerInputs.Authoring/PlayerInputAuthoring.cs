@@ -23,37 +23,37 @@ namespace PlayerInputs.PlayerInputs.Authoring
                 AddComponent<ECSPlayerInputPrevious>(entity);
 
                 Setup<InputAttack, InputAttackPrevious>(
-                    entity, 
+                    entity,
                     authoring.initialState.HasFlagFast(InputInitialState.Attack)
                 );
 
                 Setup<InputInteract, InputInteractPrevious>(
-                    entity, 
+                    entity,
                     authoring.initialState.HasFlagFast(InputInitialState.Interact)
                 );
 
                 Setup<InputCrouch, InputCrouchPrevious>(
-                    entity, 
+                    entity,
                     authoring.initialState.HasFlagFast(InputInitialState.Crouch)
                 );
 
                 Setup<InputJump, InputJumpPrevious>(
-                    entity, 
+                    entity,
                     authoring.initialState.HasFlagFast(InputInitialState.Jump)
                 );
 
                 Setup<InputPrevious, InputPreviousPrevious>(
-                    entity, 
+                    entity,
                     authoring.initialState.HasFlagFast(InputInitialState.Previous)
                 );
 
                 Setup<InputNext, InputNextPrevious>(
-                    entity, 
+                    entity,
                     authoring.initialState.HasFlagFast(InputInitialState.Next)
                 );
 
                 Setup<InputSprint, InputSprintPrevious>(
-                    entity, 
+                    entity,
                     authoring.initialState.HasFlagFast(InputInitialState.Sprint)
                 );
             }

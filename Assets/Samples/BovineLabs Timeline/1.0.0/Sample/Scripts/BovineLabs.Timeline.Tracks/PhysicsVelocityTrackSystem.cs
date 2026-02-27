@@ -39,8 +39,8 @@ namespace BovineLabs.Timeline.Tracks
 
                 var velocity = PhysicsVelocityLookup.GetRefRW(trackBinding.Value);
 
-                float3 linear = physicsVelocityComponent.PhysicsVelocity.Linear;
-                float3 angular = physicsVelocityComponent.PhysicsVelocity.Angular;
+                var linear = physicsVelocityComponent.PhysicsVelocity.Linear;
+                var angular = physicsVelocityComponent.PhysicsVelocity.Angular;
 
                 if (physicsVelocityComponent.IsLocalSpace && LocalTransformLookup.HasComponent(trackBinding.Value))
                 {

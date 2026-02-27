@@ -87,7 +87,7 @@ namespace PlayerInputs.PlayerInputs.Data
     {
         public byte ID;
     }
-    
+
     [Serializable]
     public struct PlayerInputData
     {

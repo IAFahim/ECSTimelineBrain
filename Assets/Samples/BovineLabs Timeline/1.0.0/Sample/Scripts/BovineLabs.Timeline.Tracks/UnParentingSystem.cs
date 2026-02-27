@@ -1,4 +1,3 @@
-using BovineLabs.Timeline;
 using BovineLabs.Timeline.Data;
 using Samples.BovineLabs_Timeline._1._0._0.Sample.Scripts.BovineLabs.Timeline.Tracks.Data.Parenting;
 using Unity.Burst;
@@ -8,7 +7,8 @@ using Unity.Mathematics;
 using Unity.Transforms;
 
 namespace BovineLabs.Timeline.Tracks
-{[UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
+{
+    [UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
     public partial struct UnParentingSystem : ISystem
     {
         [BurstCompile]
@@ -47,7 +47,8 @@ namespace BovineLabs.Timeline.Tracks
             ecb.Dispose();
         }
 
-        [BurstCompile][WithAll(typeof(ClipActive))]
+        [BurstCompile]
+        [WithAll(typeof(ClipActive))]
         [WithNone(typeof(ClipActivePrevious))]
         private partial struct UnparentJob : IJobEntity
         {
@@ -56,16 +57,15 @@ namespace BovineLabs.Timeline.Tracks
             [ReadOnly] public ComponentLookup<LocalTransform> LocalTransformLookup;
             [ReadOnly] public ComponentLookup<Parent> ParentLookup;
 
-            private void Execute([ChunkIndexInQuery] int chunkIndex, ref UnParentComponent unparent, in TrackBinding binding)
+            private void Execute([ChunkIndexInQuery] int chunkIndex, ref UnParentComponent unparent,
+                in TrackBinding binding)
             {
                 var target = binding.Value;
 
                 if (!ParentLookup.HasComponent(target)) return;
 
                 if (LocalTransformLookup.TryGetComponent(target, out var originalLT))
-                {
                     unparent.OriginalLocalTransform = originalLT;
-                }
 
                 if (LocalToWorldLookup.TryGetComponent(target, out var targetLTW))
                 {
@@ -79,12 +79,14 @@ namespace BovineLabs.Timeline.Tracks
         }
 
         [BurstCompile]
-        [WithNone(typeof(ClipActive))][WithAll(typeof(ClipActivePrevious))]
+        [WithNone(typeof(ClipActive))]
+        [WithAll(typeof(ClipActivePrevious))]
         private partial struct ReparentJob : IJobEntity
         {
             public EntityCommandBuffer.ParallelWriter ECB;
 
-            private void Execute([ChunkIndexInQuery] int chunkIndex, in UnParentComponent unparent, in TrackBinding binding)
+            private void Execute([ChunkIndexInQuery] int chunkIndex, in UnParentComponent unparent,
+                in TrackBinding binding)
             {
                 var target = binding.Value;
                 var parent = unparent.LastParent;
@@ -101,7 +103,7 @@ namespace BovineLabs.Timeline.Tracks
         {
             var pos = m.c3.xyz;
             var scale3 = new float3(math.length(m.c0.xyz), math.length(m.c1.xyz), math.length(m.c2.xyz));
-            var scale = scale3.x; 
+            var scale = scale3.x;
 
             if (scale > 1e-6f)
             {
