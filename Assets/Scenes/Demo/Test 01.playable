@@ -15,7 +15,7 @@ MonoBehaviour:
   m_Version: 3
   m_AnimClip: {fileID: 0}
   m_Locked: 0
-  m_Muted: 0
+  m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
@@ -285,7 +285,7 @@ MonoBehaviour:
     m_Start: 0
     m_ClipIn: 0
     m_Asset: {fileID: -38867640811114429}
-    m_Duration: 1
+    m_Duration: 3.7
     m_TimeScale: 1
     m_ParentTrack: {fileID: -149406956944026668}
     m_EaseInDuration: 0
@@ -354,22 +354,27 @@ MonoBehaviour:
     m_Objects: []
   resetOnDeactivate: 1
   BlendTreeType: 5
-  WalkOnly: 1
   Motions:
-  - Clip: {fileID: 1827226128182048838, guid: f21aba5fa470df644a1834882b5afe9f, type: 3}
-    Position: {x: 0, y: 0}
-  - Clip: {fileID: 7400000, guid: 9d703e84815204b499c34db7f9ec5cd9, type: 3}
-    Position: {x: -0.000000021855694, y: 0.5}
-  - Clip: {fileID: 7400002, guid: 9d703e84815204b499c34db7f9ec5cd9, type: 3}
-    Position: {x: -0.24999996, y: 0.43301272}
-  - Clip: {fileID: 7400006, guid: 9d703e84815204b499c34db7f9ec5cd9, type: 3}
-    Position: {x: 0.24999999, y: 0.43301272}
-  - Clip: {fileID: 7400002, guid: 9d703e84815204b499c34db7f9ec5cd9, type: 3}
-    Position: {x: -0.24999996, y: 0.43301272}
-  - Clip: {fileID: 7400008, guid: 9d703e84815204b499c34db7f9ec5cd9, type: 3}
-    Position: {x: 0.24999999, y: 0.43301272}
-  - Clip: {fileID: 7400008, guid: 9d703e84815204b499c34db7f9ec5cd9, type: 3}
-    Position: {x: 0.24999999, y: 0.43301272}
+  - clip: {fileID: 7400000, guid: 83b647f9ffea82b4a9680e016dec2197, type: 3}
+    degreeCalc: 0
+    rangeCalc: 1
+    directionCalc: {x: 0, y: 1}
+    direction: {x: 0, y: 0}
+  - clip: {fileID: 7400000, guid: cbea0a3c4e8997243af19761d1b6048f, type: 2}
+    degreeCalc: -90
+    rangeCalc: 1
+    directionCalc: {x: -1, y: -0.00000004371139}
+    direction: {x: -1, y: 0}
+  - clip: {fileID: 7400000, guid: 523ecaaab6756f045b3ef6f3c9cdb61e, type: 2}
+    degreeCalc: 90
+    rangeCalc: 1
+    directionCalc: {x: 1, y: -0.00000004371139}
+    direction: {x: 1, y: 0}
+  - clip: {fileID: 7400000, guid: 523ecaaab6756f045b3ef6f3c9cdb61e, type: 2}
+    degreeCalc: 180
+    rangeCalc: 1
+    directionCalc: {x: -0.00000008742278, y: -1}
+    direction: {x: -0.00000008742278, y: -1}
 --- !u!114 &-38867640811114429
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -448,7 +453,7 @@ MonoBehaviour:
   m_Version: 3
   m_AnimClip: {fileID: 0}
   m_Locked: 0
-  m_Muted: 0
+  m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
@@ -541,7 +546,7 @@ MonoBehaviour:
   m_Version: 3
   m_AnimClip: {fileID: 0}
   m_Locked: 0
-  m_Muted: 0
+  m_Muted: 1
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}

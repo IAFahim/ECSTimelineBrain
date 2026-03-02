@@ -11,7 +11,7 @@ namespace BovineLabs.Timeline.Tracks.Data.Animations
     public struct BlendTree2DMotionData : IBufferElementData
     {
         public Hash128 AnimationHash;
-        public float2 Position;
+        public ScriptedAnimator.BlendTree2DMotionElement BlendTree2DMotionElement;
     }
     
     public struct BlendTree2DClipData : IAnimatedComponent<float2>

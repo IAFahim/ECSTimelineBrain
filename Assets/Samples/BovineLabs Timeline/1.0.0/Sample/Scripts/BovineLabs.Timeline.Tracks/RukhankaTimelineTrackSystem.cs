@@ -116,9 +116,12 @@ namespace Rukhanka.Timeline.Systems
 
                 foreach (var entity in DrivenEntitiesLastFrame)
                     if (!ActiveAnimations.ContainsKey(entity))
+                    {
                         if (AnimationBuffers.TryGetBuffer(entity, out var buffer))
                             buffer.Clear();
 
+                    }
+                        
                 DrivenEntitiesLastFrame.Clear();
 
                 for (var i = 0; i < uniqueCount; i++)
