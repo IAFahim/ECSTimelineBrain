@@ -1481,9 +1481,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 701daca36eb24b3bbadf02047570d7b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring::BovineLabs.Timeline.Authoring.SimpleAnimatorAuthoring
-  DefaultClip: {fileID: 7400000, guid: 4f041aa06558984499af4d3d08cff945, type: 2}
-  DefaultSpeed: 1
-  DefaultTransitionDuration: 0.25
+  DefaultClip: {fileID: 7400000, guid: 2e6d6964fd4b07d4599021aaacfad01f, type: 2}
+  DefaultSpeed: 0.2
+  DefaultTransitionDuration: 1
 --- !u!1 &549669610
 GameObject:
   m_ObjectHideFlags: 0
@@ -3255,7 +3255,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1232014565
 Transform:
   m_ObjectHideFlags: 0

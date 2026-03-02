@@ -6,8 +6,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 
 namespace BovineLabs.Timeline.Tracks.Animations
-{
-    [UpdateInGroup(typeof(TimelineComponentAnimationGroup))][UpdateAfter(typeof(Rukhanka.Timeline.Systems.RukhankaTimelineTrackSystem))]
+{[UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
+    // IMPORTANT: We run before the Timeline system so we establish the base layer (Layer 0)[UpdateBefore(typeof(Rukhanka.Timeline.Systems.RukhankaTimelineTrackSystem))]
     public partial struct SimpleAnimatorSystem : ISystem
     {
         [BurstCompile]
@@ -56,6 +56,7 @@ namespace BovineLabs.Timeline.Tracks.Animations
                     }
                 }
 
+                // We ALWAYS clear the buffer here, establishing the foundation before IK/Timeline kicks in.
                 buffer.Clear();
 
                 float currentWeight = animator.IsTransitioning ? math.max(0f, 1f - (animator.TransitionElapsed / animator.TransitionDuration)) : 1f;
@@ -90,7 +91,7 @@ namespace BovineLabs.Timeline.Tracks.Animations
                     weight = weight,
                     avatarMask = default,
                     blendMode = AnimationBlendingMode.Override,
-                    layerIndex = 0,
+                    layerIndex = 0, // Code-driven logic is Layer 0
                     layerWeight = 1f,
                     motionId = motionId
                 });
