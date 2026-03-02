@@ -16,7 +16,8 @@
     "Unity.Physics",
     "Unity.Timeline",
     "Unity.Transforms",
-    "BovineLabs.Reaction.Data"
+    "BovineLabs.Reaction.Data",
+    "Rukhanka.Runtime"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

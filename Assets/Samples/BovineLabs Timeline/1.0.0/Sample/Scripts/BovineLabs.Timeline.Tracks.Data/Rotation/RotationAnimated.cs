@@ -1,7 +1,3 @@
-// <copyright file="RotationAnimated.cs" company="BovineLabs">
-//     Copyright (c) BovineLabs. All rights reserved.
-// </copyright>
-
 using BovineLabs.Timeline.Data;
 using Unity.Mathematics;
 using Unity.Properties;

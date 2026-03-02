@@ -1420,7 +1420,6 @@ GameObject:
   m_Component:
   - component: {fileID: 535496884}
   - component: {fileID: 535496883}
-  - component: {fileID: 535496885}
   m_Layer: 0
   m_Name: Ellen_Rukhanka
   m_TagString: Untagged
@@ -1469,21 +1468,6 @@ Transform:
   - {fileID: 439660281}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &535496885
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 535496880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 701daca36eb24b3bbadf02047570d7b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring::BovineLabs.Timeline.Authoring.SimpleAnimatorAuthoring
-  DefaultClip: {fileID: 7400000, guid: 2e6d6964fd4b07d4599021aaacfad01f, type: 2}
-  DefaultSpeed: 0.2
-  DefaultTransitionDuration: 1
 --- !u!1 &549669610
 GameObject:
   m_ObjectHideFlags: 0
@@ -3255,7 +3239,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1232014565
 Transform:
   m_ObjectHideFlags: 0
@@ -3300,6 +3284,10 @@ PlayableDirector:
     value: {fileID: 1603613856}
   - key: {fileID: 5093461093862936731, guid: 03b9a7c2875910f3f950783947667679, type: 2}
     value: {fileID: 2038114247}
+  - key: {fileID: 0}
+    value: {fileID: 0}
+  - key: {fileID: -149406956944026668, guid: 03b9a7c2875910f3f950783947667679, type: 2}
+    value: {fileID: 535496883}
   m_ExposedReferences:
     m_References: []
 --- !u!114 &1232014567

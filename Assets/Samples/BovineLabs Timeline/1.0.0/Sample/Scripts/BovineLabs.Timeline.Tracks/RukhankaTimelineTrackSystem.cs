@@ -1,116 +1,141 @@
 using BovineLabs.Timeline;
 using BovineLabs.Timeline.Data;
 using BovineLabs.Timeline.Tracks.Data.Animations;
-using Rukhanka;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
+using Unity.Jobs;
 
 namespace Rukhanka.Timeline.Systems
-{[UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
-    [UpdateAfter(typeof(BovineLabs.Timeline.Tracks.Animations.SimpleAnimatorSystem))]
+{
+    [UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
+    [UpdateBefore(typeof(AnimationProcessSystem))]
     public partial struct RukhankaTimelineTrackSystem : ISystem
     {
+        private NativeParallelMultiHashMap<Entity, AnimationToProcessComponent> activeAnimationsMap;
+        private NativeHashSet<Entity> drivenEntitiesLastFrame;
+
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            activeAnimationsMap =
+                new NativeParallelMultiHashMap<Entity, AnimationToProcessComponent>(64, Allocator.Persistent);
+            drivenEntitiesLastFrame = new NativeHashSet<Entity>(64, Allocator.Persistent);
+
             state.RequireForUpdate<BlobDatabaseSingleton>();
+        }
+
+        [BurstCompile]
+        public void OnDestroy(ref SystemState state)
+        {
+            if (activeAnimationsMap.IsCreated)
+                activeAnimationsMap.Dispose();
+
+            if (drivenEntitiesLastFrame.IsCreated)
+                drivenEntitiesLastFrame.Dispose();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var blobDB = SystemAPI.GetSingleton<BlobDatabaseSingleton>();
-            var simpleAnimatorLookup = SystemAPI.GetComponentLookup<SimpleAnimatorComponent>(false);
-            var animationBufferLookup = SystemAPI.GetBufferLookup<AnimationToProcessComponent>(false);
-            var clipWeightLookup = SystemAPI.GetComponentLookup<ClipWeight>(true);
-            var localTimeLookup = SystemAPI.GetComponentLookup<LocalTime>(true);
+            activeAnimationsMap.Clear();
 
-            // 1. Evaluate Timeline Clips and overlay them natively into Rukhanka
-            state.Dependency = new EvaluateTimelineClipsJob
+            var blobDB = SystemAPI.GetSingleton<BlobDatabaseSingleton>();
+
+            var gatherJob = new GatherActiveClipsJob
             {
                 AnimDB = blobDB.animations,
-                AnimationBufferLookup = animationBufferLookup,
-                ClipWeightLookup = clipWeightLookup,
-                LocalTimeLookup = localTimeLookup
-            }.Schedule(state.Dependency);
+                ClipWeights = SystemAPI.GetComponentLookup<ClipWeight>(true),
+                ActiveAnimations = activeAnimationsMap.AsParallelWriter()
+            };
 
-            // 2. Play the fallback Idle on the base Animator when the timeline finishes (if defined)
-            state.Dependency = new StopTimelineTrackJob
+            state.Dependency = gatherJob.ScheduleParallel(state.Dependency);
+
+            var applyJob = new ApplyAnimationsJob
             {
-                SimpleAnimatorLookup = simpleAnimatorLookup
-            }.Schedule(state.Dependency);
+                ActiveAnimations = activeAnimationsMap,
+                DrivenEntitiesLastFrame = drivenEntitiesLastFrame,
+                AnimationBuffers = SystemAPI.GetBufferLookup<AnimationToProcessComponent>()
+            };
+
+            state.Dependency = applyJob.Schedule(state.Dependency);
         }
 
         [BurstCompile]
-        [WithAll(typeof(ClipActive))]
-        private partial struct EvaluateTimelineClipsJob : IJobEntity
+        [WithAll(typeof(ClipActive), typeof(TimelineActive))]
+        public partial struct GatherActiveClipsJob : IJobEntity
         {
             [ReadOnly] public NativeHashMap<Hash128, BlobAssetReference<AnimationClipBlob>> AnimDB;
-            [ReadOnly] public ComponentLookup<ClipWeight> ClipWeightLookup;
-            [ReadOnly] public ComponentLookup<LocalTime> LocalTimeLookup;
-            
-            // Non-parallel because multiple overlapping clips might write to the same entity buffer simultaneously
-            [NativeDisableParallelForRestriction] 
-            public BufferLookup<AnimationToProcessComponent> AnimationBufferLookup;
+            [ReadOnly] public ComponentLookup<ClipWeight> ClipWeights;
 
-            private void Execute(Entity clipEntity, in RukhankaAnimationClipAnimated clipData, in TrackBinding binding)
+            public NativeParallelMultiHashMap<Entity, AnimationToProcessComponent>.ParallelWriter ActiveAnimations;
+
+            private void Execute(Entity clipEntity, in RukhankaAnimationClipAnimated clipData, in TrackBinding binding,
+                in LocalTime localTime)
             {
-                if (!AnimationBufferLookup.HasBuffer(binding.Value)) return;
-                if (!AnimDB.TryGetValue(clipData.AnimationHash, out var clipBlob)) return;
+                if (!AnimDB.TryGetValue(clipData.AnimationHash, out var clipBlob))
+                    return;
 
-                var buffer = AnimationBufferLookup[binding.Value];
-                
-                // Get native timeline weights (supports ease-in, ease-out, crossfades naturally!)
-                float weight = ClipWeightLookup.HasComponent(clipEntity) ? ClipWeightLookup[clipEntity].Value : 1f;
-                float absoluteTime = (float)LocalTimeLookup[clipEntity].Value;
+                var weight = 1f;
+                if (ClipWeights.TryGetComponent(clipEntity, out var clipWeight))
+                    weight = clipWeight.Value;
 
-                if (weight > 0f)
+                if (weight <= 0f)
+                    return;
+
+                var timeInSeconds = (float)(double)localTime.Value;
+                var normalizedTime = clipBlob.Value.length > 0f ? timeInSeconds / clipBlob.Value.length : 0f;
+
+                var atp = new AnimationToProcessComponent
                 {
-                    float length = clipBlob.Value.length;
-                    float normalizedTime = 0f;
+                    animation = clipBlob,
+                    time = normalizedTime,
+                    weight = weight,
+                    avatarMask = default,
+                    blendMode = AnimationBlendingMode.Override,
+                    layerIndex = 0,
+                    layerWeight = 1f,
+                    motionId = (uint)clipEntity
+                        .Index
+                };
 
-                    if (length > 0f)
-                    {
-                        normalizedTime = clipBlob.Value.looped 
-                            ? math.frac(absoluteTime / length) 
-                            : math.saturate(absoluteTime / length);
-                    }
-
-                    // Append directly to the buffer as Layer 1
-                    buffer.Add(new AnimationToProcessComponent
-                    {
-                        animation = clipBlob,
-                        time = normalizedTime,
-                        weight = weight,
-                        avatarMask = default,
-                        blendMode = AnimationBlendingMode.Override,
-                        layerIndex = 1,  // Layer 1 allows Timeline to flawlessly take over Layer 0 (Simple Animator)
-                        layerWeight = 1f,
-                        motionId = (uint)clipEntity.Index // Unique tracking motion ID so Rukhanka respects it 
-                    });
-                }
+                ActiveAnimations.Add(binding.Value, atp);
             }
         }
 
         [BurstCompile]
-        [WithNone(typeof(TimelineActive))][WithAll(typeof(TimelineActivePrevious))]
-        private partial struct StopTimelineTrackJob : IJobEntity
+        public struct ApplyAnimationsJob : IJob
         {
-            public ComponentLookup<SimpleAnimatorComponent> SimpleAnimatorLookup;
+            [ReadOnly] public NativeParallelMultiHashMap<Entity, AnimationToProcessComponent> ActiveAnimations;
+            public NativeHashSet<Entity> DrivenEntitiesLastFrame;
+            public BufferLookup<AnimationToProcessComponent> AnimationBuffers;
 
-            private void Execute(in RukhankaTimelineTrack trackData, in TrackBinding binding)
+            public void Execute()
             {
-                if (trackData.ExitIdleClipHash.IsValid && SimpleAnimatorLookup.HasComponent(binding.Value))
+                var (uniqueKeys, uniqueCount) = ActiveAnimations.GetUniqueKeyArray(Allocator.Temp);
+
+                foreach (var entity in DrivenEntitiesLastFrame)
+                    if (!ActiveAnimations.ContainsKey(entity))
+                        if (AnimationBuffers.TryGetBuffer(entity, out var buffer))
+                            buffer.Clear();
+
+                DrivenEntitiesLastFrame.Clear();
+
+                for (var i = 0; i < uniqueCount; i++)
                 {
-                    var animator = SimpleAnimatorLookup[binding.Value];
+                    var entity = uniqueKeys[i];
 
-                    // Fire and forget returning to a specific base state
-                    animator.Play(trackData.ExitIdleClipHash, 1f, trackData.ExitTransitionDuration, forceRestart: true);
+                    if (AnimationBuffers.TryGetBuffer(entity, out var buffer))
+                    {
+                        buffer.Clear();
 
-                    SimpleAnimatorLookup[binding.Value] = animator;
+                        foreach (var atp in ActiveAnimations.GetValuesForKey(entity)) buffer.Add(atp);
+                    }
+
+                    DrivenEntitiesLastFrame.Add(entity);
                 }
+
+                uniqueKeys.Dispose();
             }
         }
     }
