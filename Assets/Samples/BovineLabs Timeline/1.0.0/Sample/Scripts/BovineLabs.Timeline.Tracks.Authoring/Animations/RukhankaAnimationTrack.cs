@@ -19,6 +19,7 @@ namespace BovineLabs.Timeline.Authoring
     public class RukhankaAnimationTrack : DOTSTrack
     {
         public AnimationClip exitIdleClip;
+        public float exitTransitionDuration = 0.25f;
 
         protected override void Bake(BakingContext context)
         {
@@ -40,7 +41,8 @@ namespace BovineLabs.Timeline.Authoring
 
             context.Baker.AddComponent(context.TrackEntity, new RukhankaTimelineTrack
             {
-                ExitIdleClipHash = exitIdleClip.ComputeHashOrDefault(rigDef.GetAvatar())
+                ExitIdleClipHash = exitIdleClip.ComputeHashOrDefault(rigDef.GetAvatar()),
+                ExitTransitionDuration = exitTransitionDuration
             });
 
             base.Bake(context);

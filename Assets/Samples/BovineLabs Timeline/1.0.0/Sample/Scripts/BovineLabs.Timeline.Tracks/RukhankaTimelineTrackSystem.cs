@@ -2,140 +2,112 @@ using BovineLabs.Timeline;
 using BovineLabs.Timeline.Data;
 using BovineLabs.Timeline.Tracks.Data.Animations;
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 
 namespace Rukhanka.Timeline.Systems
 {
     [UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
-    [UpdateBefore(typeof(AnimationProcessSystem))]
+    [UpdateBefore(typeof(BovineLabs.Timeline.Tracks.Animations.SimpleAnimatorSystem))]
     public partial struct RukhankaTimelineTrackSystem : ISystem
     {
-        private NativeParallelMultiHashMap<Entity, AnimationToProcessComponent> activeAnimationsMap;
-        private NativeHashSet<Entity> drivenEntitiesLastFrame;
-
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            activeAnimationsMap =
-                new NativeParallelMultiHashMap<Entity, AnimationToProcessComponent>(64, Allocator.Persistent);
-            drivenEntitiesLastFrame = new NativeHashSet<Entity>(64, Allocator.Persistent);
-
-            state.RequireForUpdate<BlobDatabaseSingleton>();
-        }
-
-        [BurstCompile]
-        public void OnDestroy(ref SystemState state)
-        {
-            if (activeAnimationsMap.IsCreated)
-                activeAnimationsMap.Dispose();
-
-            if (drivenEntitiesLastFrame.IsCreated)
-                drivenEntitiesLastFrame.Dispose();
+            state.RequireForUpdate<SimpleAnimatorComponent>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            activeAnimationsMap.Clear();
+            var simpleAnimatorLookup = SystemAPI.GetComponentLookup<SimpleAnimatorComponent>(false);
 
-            var blobDB = SystemAPI.GetSingleton<BlobDatabaseSingleton>();
-
-            var gatherJob = new GatherActiveClipsJob
+            state.Dependency = new StartTimelineClipJob
             {
-                AnimDB = blobDB.animations,
-                ClipWeights = SystemAPI.GetComponentLookup<ClipWeight>(true),
-                ActiveAnimations = activeAnimationsMap.AsParallelWriter()
-            };
+                SimpleAnimatorLookup = simpleAnimatorLookup
+            }.Schedule(state.Dependency);
 
-            state.Dependency = gatherJob.ScheduleParallel(state.Dependency);
-
-            var applyJob = new ApplyAnimationsJob
+            state.Dependency = new SyncTimelineTimeJob
             {
-                ActiveAnimations = activeAnimationsMap,
-                DrivenEntitiesLastFrame = drivenEntitiesLastFrame,
-                AnimationBuffers = SystemAPI.GetBufferLookup<AnimationToProcessComponent>()
-            };
+                SimpleAnimatorLookup = simpleAnimatorLookup
+            }.Schedule(state.Dependency);
 
-            state.Dependency = applyJob.Schedule(state.Dependency);
+            state.Dependency = new StopTimelineTrackJob
+            {
+                SimpleAnimatorLookup = simpleAnimatorLookup
+            }.Schedule(state.Dependency);
         }
 
         [BurstCompile]
-        [WithAll(typeof(ClipActive), typeof(TimelineActive))]
-        public partial struct GatherActiveClipsJob : IJobEntity
+        [WithAll(typeof(ClipActive))]
+        [WithNone(typeof(ClipActivePrevious))]
+        private partial struct StartTimelineClipJob : IJobEntity
         {
-            [ReadOnly] public NativeHashMap<Hash128, BlobAssetReference<AnimationClipBlob>> AnimDB;
-            [ReadOnly] public ComponentLookup<ClipWeight> ClipWeights;
+            public ComponentLookup<SimpleAnimatorComponent> SimpleAnimatorLookup;
 
-            public NativeParallelMultiHashMap<Entity, AnimationToProcessComponent>.ParallelWriter ActiveAnimations;
-
-            private void Execute(Entity clipEntity, in RukhankaAnimationClipAnimated clipData, in TrackBinding binding,
-                in LocalTime localTime)
+            private void Execute(in RukhankaAnimationClipAnimated clipData, in TrackBinding binding)
             {
-                if (!AnimDB.TryGetValue(clipData.AnimationHash, out var clipBlob))
-                    return;
-
-                var weight = 1f;
-                if (ClipWeights.TryGetComponent(clipEntity, out var clipWeight))
-                    weight = clipWeight.Value;
-
-                if (weight <= 0f)
-                    return;
-
-                var timeInSeconds = (float)(double)localTime.Value;
-                var normalizedTime = clipBlob.Value.length > 0f ? timeInSeconds / clipBlob.Value.length : 0f;
-
-                var atp = new AnimationToProcessComponent
+                if (SimpleAnimatorLookup.HasComponent(binding.Value))
                 {
-                    animation = clipBlob,
-                    time = normalizedTime,
-                    weight = weight,
-                    avatarMask = default,
-                    blendMode = AnimationBlendingMode.Override,
-                    layerIndex = 0,
-                    layerWeight = 1f,
-                    motionId = (uint)clipEntity
-                        .Index
-                };
+                    var animator = SimpleAnimatorLookup[binding.Value];
 
-                ActiveAnimations.Add(binding.Value, atp);
+                    animator.Play(clipData.AnimationHash, forceRestart: true);
+
+                    SimpleAnimatorLookup[binding.Value] = animator;
+                }
             }
         }
 
         [BurstCompile]
-        public struct ApplyAnimationsJob : IJob
+        [WithAll(typeof(ClipActive))]
+        private partial struct SyncTimelineTimeJob : IJobEntity
         {
-            [ReadOnly] public NativeParallelMultiHashMap<Entity, AnimationToProcessComponent> ActiveAnimations;
-            public NativeHashSet<Entity> DrivenEntitiesLastFrame;
-            public BufferLookup<AnimationToProcessComponent> AnimationBuffers;
+            public ComponentLookup<SimpleAnimatorComponent> SimpleAnimatorLookup;
 
-            public void Execute()
+            private void Execute(in RukhankaAnimationClipAnimated clipData, in LocalTime localTime,
+                in TrackBinding binding)
             {
-                var (uniqueKeys, uniqueCount) = ActiveAnimations.GetUniqueKeyArray(Allocator.Temp);
-
-                foreach (var entity in DrivenEntitiesLastFrame)
-                    if (!ActiveAnimations.ContainsKey(entity))
-                        if (AnimationBuffers.TryGetBuffer(entity, out var buffer))
-                            buffer.Clear();
-
-                DrivenEntitiesLastFrame.Clear();
-
-                for (var i = 0; i < uniqueCount; i++)
+                if (SimpleAnimatorLookup.HasComponent(binding.Value))
                 {
-                    var entity = uniqueKeys[i];
+                    var animator = SimpleAnimatorLookup[binding.Value];
+                    bool changed = false;
 
-                    if (AnimationBuffers.TryGetBuffer(entity, out var buffer))
+                    if (animator.CurrentClip == clipData.AnimationHash)
                     {
-                        buffer.Clear();
-
-                        foreach (var atp in ActiveAnimations.GetValuesForKey(entity)) buffer.Add(atp);
+                        animator.CurrentTime = (float)localTime.Value;
+                        changed = true;
                     }
 
-                    DrivenEntitiesLastFrame.Add(entity);
-                }
+                    if (animator.NextClip == clipData.AnimationHash)
+                    {
+                        animator.NextTime = (float)localTime.Value;
+                        changed = true;
+                    }
 
-                uniqueKeys.Dispose();
+                    if (changed)
+                    {
+                        SimpleAnimatorLookup[binding.Value] = animator;
+                    }
+                }
+            }
+        }
+
+        [BurstCompile]
+        [WithNone(typeof(TimelineActive))]
+        [WithAll(typeof(TimelineActivePrevious))]
+        private partial struct StopTimelineTrackJob : IJobEntity
+        {
+            public ComponentLookup<SimpleAnimatorComponent> SimpleAnimatorLookup;
+
+            private void Execute(in RukhankaTimelineTrack trackData, in TrackBinding binding)
+            {
+                if (trackData.ExitIdleClipHash.IsValid && SimpleAnimatorLookup.HasComponent(binding.Value))
+                {
+                    var animator = SimpleAnimatorLookup[binding.Value];
+
+                    animator.Play(trackData.ExitIdleClipHash, 1f, trackData.ExitTransitionDuration, forceRestart: true);
+
+                    SimpleAnimatorLookup[binding.Value] = animator;
+                }
             }
         }
     }

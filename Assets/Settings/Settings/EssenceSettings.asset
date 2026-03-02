@@ -31,4 +31,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c95a72206e4f2e54ea440c975a3ff6df, type: 2}
   - {fileID: 11400000, guid: 4299c3d9ba332ed488a85b9ccb62e336, type: 2}
   - {fileID: 11400000, guid: f8b32e73d59a00b4cab4da8830c75bde, type: 2}
-  intrinsicSchemas: []
+  intrinsicSchemas:
+  - {fileID: 11400000, guid: 1babf2c67131d904dbf1076a11d1f6c3, type: 2}
