@@ -63,8 +63,8 @@ namespace BovineLabs.Timeline.Authoring
                 AddComponent(entity, new BlendGroupFallBackForNoAnimationToProcessComponent
                 {
                     ClipHash = fallbackHash,
-                    BlendInDuration = authoring.blendInDuration,
-                    BlendOutDuration = authoring.blendOutDuration
+                    // BlendInDuration = authoring.blendInDuration,
+                    // BlendOutDuration = authoring.blendOutDuration
                 });
                 
                 AddBuffer<BlendGroupEntry>(entity);
