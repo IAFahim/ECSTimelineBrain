@@ -14,7 +14,7 @@ namespace BovineLabs.Timeline.Tracks.Data.Animations
         public ScriptedAnimator.BlendTree2DMotionElement BlendTree2DMotionElement;
     }
     
-    public struct BlendTree2DClipData : IAnimatedComponent<float2>
+    public struct BlendTree2DDirectionClipData : IAnimatedComponent<float2>
     {
         [CreateProperty] public float2 Value { get; set; }
     }

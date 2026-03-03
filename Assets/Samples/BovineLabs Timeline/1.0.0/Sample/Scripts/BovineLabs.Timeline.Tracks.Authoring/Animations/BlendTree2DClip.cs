@@ -21,7 +21,7 @@ namespace BovineLabs.Timeline.Authoring
 
         public override void Bake(Entity clipEntity, BakingContext context)
         {
-            context.Baker.AddComponent(clipEntity, new BlendTree2DClipData
+            context.Baker.AddComponent(clipEntity, new BlendTree2DDirectionClipData
             {
                 Value = BlendParameter
             });

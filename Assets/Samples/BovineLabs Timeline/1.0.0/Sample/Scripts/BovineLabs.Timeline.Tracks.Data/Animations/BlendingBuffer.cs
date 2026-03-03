@@ -1,9 +1,8 @@
 using Rukhanka;
 using Unity.Entities;
-using UnityEngine;
 using Hash128 = Unity.Entities.Hash128;
 
-namespace BovineLabs.Timeline.Authoring
+namespace BovineLabs.Timeline.Data
 {
     /// <summary>
     /// Represents a single animation contribution within a blend group.
@@ -47,28 +46,5 @@ namespace BovineLabs.Timeline.Authoring
         public Hash128 ClipHash; 
         public float BlendInDuration; 
         public float BlendOutDuration; 
-    }
-
-
-    public class BlendGroupEntryAuthoring : MonoBehaviour
-    {
-        public AnimationClip fallbackAnimationClip;
-        public float blendInDuration; 
-        public float blendOutDuration; 
-        
-        public class BlendGroupEntryBaker : Baker<BlendGroupEntryAuthoring>
-        {
-            public override void Bake(BlendGroupEntryAuthoring authoring)
-            {
-                var entity = GetEntity(TransformUsageFlags.None);
-                AddComponent<BlendGroupTimer>(entity);
-                AddComponent(entity, new BlendGroupFallBackForNoAnimationToProcessComponent
-                {
-                    // TODO:
-                });
-                
-                AddBuffer<BlendGroupEntry>(entity);
-            }
-        }
     }
 }

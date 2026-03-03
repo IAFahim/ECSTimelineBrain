@@ -50,7 +50,7 @@ namespace BovineLabs.Timeline.Tracks.Systems
             [ReadOnly] public ComponentLookup<ClipWeight> ClipWeightComponentLookup;
 
             private void Execute(Entity clipEntity, in TrackBinding binding, in Clip clip,
-                in BlendTree2DClipData clipData, in LocalTime localTime)
+                in BlendTree2DDirectionClipData blendTreeDirectionClip, in LocalTime localTime)
             {
                 var currentTarget = binding.Value;
                 var currentTrack = clip.Track;
@@ -91,7 +91,7 @@ namespace BovineLabs.Timeline.Tracks.Systems
                     ref animationToProcess,
                     blendTreeClips,
                     blendTreePositions,
-                    clipData.Value,
+                    blendTreeDirectionClip.Value,
                     0f, // DUMMY TIME! We will overwrite this below.
                     trackData.BlendTreeType,
                     1f,
