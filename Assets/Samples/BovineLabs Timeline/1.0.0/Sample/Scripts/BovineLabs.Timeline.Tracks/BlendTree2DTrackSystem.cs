@@ -1,4 +1,3 @@
-using BovineLabs.Core.Extensions;
 using BovineLabs.Timeline.Data;
 using BovineLabs.Timeline.Tracks.Data.Animations;
 using Rukhanka;
@@ -8,7 +7,8 @@ using Unity.Collections;
 using Unity.Mathematics;
 
 namespace BovineLabs.Timeline.Tracks.Systems
-{[UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
+{
+    [UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
     [UpdateBefore(typeof(AnimationProcessSystem))]
     public partial struct BlendTree2DTrackSystem : ISystem
     {
@@ -28,75 +28,111 @@ namespace BovineLabs.Timeline.Tracks.Systems
 
             new ProcessBlendClipsJob()
             {
-                AnimDB = blobDB.animations,
-                AnimationBufferLookup = animationBufferLookup,
-                TrackDataLookup = trackDataLookup,
-                MotionBufferLookup = motionBufferLookup,
-                ClipWeightLookup = clipWeightLookup
+                AnimClipBlobHashMap = blobDB.animations,
+                AnimationToProcessComponentLookup = animationBufferLookup,
+                BlendTrack2DDataComponentLookup = trackDataLookup,
+                BlendTree2DMotionDataBufferLookup = motionBufferLookup,
+                ClipWeightComponentLookup = clipWeightLookup
             }.ScheduleParallel();
         }
 
-        [BurstCompile][WithAll(typeof(ClipActive))]
-        private partial struct ProcessBlendClipsJob : IJobEntity
-        {[NativeDisableParallelForRestriction] public BufferLookup<AnimationToProcessComponent> AnimationBufferLookup;
-            
-            [ReadOnly] public NativeHashMap<Hash128, BlobAssetReference<AnimationClipBlob>> AnimDB;
-            [ReadOnly] public ComponentLookup<BlendTree2DTrackData> TrackDataLookup;[ReadOnly] public BufferLookup<BlendTree2DMotionData> MotionBufferLookup;
-            [ReadOnly] public ComponentLookup<ClipWeight> ClipWeightLookup;
 
-            public void Execute(Entity clipEntity, in TrackBinding binding, in Clip clip, in BlendTree2DClipData clipData, in LocalTime localTime)
+        [BurstCompile]
+        [WithAll(typeof(ClipActive))]
+        private partial struct ProcessBlendClipsJob : IJobEntity
+        {
+            [NativeDisableParallelForRestriction]
+            public BufferLookup<AnimationToProcessComponent> AnimationToProcessComponentLookup;
+
+            [ReadOnly] public NativeHashMap<Hash128, BlobAssetReference<AnimationClipBlob>> AnimClipBlobHashMap;
+            [ReadOnly] public ComponentLookup<BlendTree2DTrackData> BlendTrack2DDataComponentLookup;
+            [ReadOnly] public BufferLookup<BlendTree2DMotionData> BlendTree2DMotionDataBufferLookup;
+            [ReadOnly] public ComponentLookup<ClipWeight> ClipWeightComponentLookup;
+
+            private void Execute(Entity clipEntity, in TrackBinding binding, in Clip clip,
+                in BlendTree2DClipData clipData, in LocalTime localTime)
             {
                 var currentTarget = binding.Value;
                 var currentTrack = clip.Track;
-                
-                if (!AnimationBufferLookup.TryGetBuffer(currentTarget, out var animBuffer)) return;
-                if (!MotionBufferLookup.TryGetBuffer(currentTrack, out var motions)) return;
-                if (!TrackDataLookup.TryGetComponent(currentTrack, out var trackData)) return;
 
-                float weight = ClipWeightLookup.HasComponent(clipEntity) ? ClipWeightLookup[clipEntity].Value : 1f;
-                if (weight <= 0f) return;
+                if (!AnimationToProcessComponentLookup.TryGetBuffer(currentTarget,
+                        out DynamicBuffer<AnimationToProcessComponent> animationToProcess)) return;
 
-                var blendTreeClips = new NativeArray<BlobAssetReference<AnimationClipBlob>>(motions.Length, Allocator.Temp);
-                var blendTreePositions = new NativeArray<ScriptedAnimator.BlendTree2DMotionElement>(motions.Length, Allocator.Temp);
-                
-                float refLength = 1f;
-                bool refLooped = true;
-                bool gotRef = false;
+                // Note: If you have multiple timeline tracks writing to the same entity, 
+                // you shouldn't clear here. We save the startIndex so we only modify clips WE added.
+                animationToProcess.Clear();
+                int startIndex = animationToProcess.Length;
+
+                if (!BlendTree2DMotionDataBufferLookup.TryGetBuffer(currentTrack, out var motions)) return;
+                if (!BlendTrack2DDataComponentLookup.TryGetComponent(currentTrack, out var trackData)) return;
+
+                float timelineTrackWeight =
+                    ClipWeightComponentLookup.HasComponent(clipEntity) ? ClipWeightComponentLookup[clipEntity].Value : 1f;
+                if (timelineTrackWeight <= 0f) return;
+
+                var blendTreeClips =
+                    new NativeArray<BlobAssetReference<AnimationClipBlob>>(motions.Length, Allocator.Temp);
+                var blendTreePositions =
+                    new NativeArray<ScriptedAnimator.BlendTree2DMotionElement>(motions.Length, Allocator.Temp);
 
                 for (int i = 0; i < motions.Length; i++)
                 {
                     var motionData = motions[i];
-                    if (AnimDB.TryGetValue(motionData.AnimationHash, out var clipBlob))
-                    {
+                    if (AnimClipBlobHashMap.TryGetValue(motionData.AnimationHash, out var clipBlob))
                         blendTreeClips[i] = clipBlob;
-                        if (!gotRef && clipBlob.IsCreated)
-                        {
-                            refLength = clipBlob.Value.length > 0 ? clipBlob.Value.length : 1f;
-                            refLooped = clipBlob.Value.looped;
-                            gotRef = true;
-                        }
-                    }
                     else
-                    {
                         blendTreeClips[i] = BlobAssetReference<AnimationClipBlob>.Null;
-                    }
 
                     blendTreePositions[i] = motionData.BlendTree2DMotionElement;
                 }
 
-                float absoluteTime = (float)localTime.Value;
-                float normalizedTime = refLooped ? math.frac(absoluteTime / refLength) : math.saturate(absoluteTime / refLength);
-
-
+                
                 ScriptedAnimator.PlayBlendTree2D(
-                    ref animBuffer,
+                    ref animationToProcess,
                     blendTreeClips,
                     blendTreePositions,
-                    clipData.Value, normalizedTime,
+                    clipData.Value,
+                    0f, // DUMMY TIME! We will overwrite this below.
                     trackData.BlendTreeType,
-                    weight,
+                    1f,
                     default
                 );
+
+                // 2. Read the buffer to calculate the true weighted duration of the blend tree
+                float weightedDuration = 0f;
+                float totalBlendWeight = 0f;
+
+                for (int i = startIndex; i < animationToProcess.Length; i++)
+                {
+                    var anim = animationToProcess[i];
+                    if (anim.animation.IsCreated)
+                    {
+                        // anim.weight here is the exact directional blend ratio Rukhanka calculated!
+                        weightedDuration += anim.animation.Value.length * anim.weight;
+                        totalBlendWeight += anim.weight;
+                    }
+                }
+
+                // Avoid DivideByZero
+                if (totalBlendWeight > 0f) weightedDuration /= totalBlendWeight;
+                if (weightedDuration <= 0.001f) weightedDuration = 1f;
+
+                // 3. Calculate Actual Normalized Time
+                float absoluteTime = (float)localTime.Value;
+                float normalizedTime = 0f;
+                normalizedTime = math.frac(absoluteTime / weightedDuration);
+
+
+                for (int i = startIndex; i < animationToProcess.Length; i++)
+                {
+                    var anim = animationToProcess[i];
+
+                    anim.time = normalizedTime;
+                    anim.layerWeight = timelineTrackWeight;
+
+                    
+                    animationToProcess[i] = anim;
+                }
 
                 blendTreeClips.Dispose();
                 blendTreePositions.Dispose();

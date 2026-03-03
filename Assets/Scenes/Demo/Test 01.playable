@@ -355,26 +355,26 @@ MonoBehaviour:
   resetOnDeactivate: 1
   BlendTreeType: 5
   Motions:
-  - clip: {fileID: 7400000, guid: 83b647f9ffea82b4a9680e016dec2197, type: 3}
+  - clip: {fileID: 1827226128182048838, guid: a4b8f2deec6a99945987cfc59b1b4e54, type: 3}
+    degreeCalc: 0
+    rangeCalc: 0
+    directionCalc: {x: 0, y: 0}
+    direction: {x: 0, y: 0}
+  - clip: {fileID: 1827226128182048838, guid: 4f79281e6eb3df54889369eba3aa1c67, type: 3}
     degreeCalc: 0
     rangeCalc: 1
     directionCalc: {x: 0, y: 1}
-    direction: {x: 0, y: 0}
-  - clip: {fileID: 7400000, guid: cbea0a3c4e8997243af19761d1b6048f, type: 2}
+    direction: {x: 0, y: 1}
+  - clip: {fileID: 1827226128182048838, guid: d294a4226e928db4fbbd933c19ccf5a1, type: 3}
     degreeCalc: -90
     rangeCalc: 1
     directionCalc: {x: -1, y: -0.00000004371139}
     direction: {x: -1, y: 0}
-  - clip: {fileID: 7400000, guid: 523ecaaab6756f045b3ef6f3c9cdb61e, type: 2}
+  - clip: {fileID: 1827226128182048838, guid: 4699ac7f1156bfc4dba616d9b3a05234, type: 3}
     degreeCalc: 90
     rangeCalc: 1
     directionCalc: {x: 1, y: -0.00000004371139}
     direction: {x: 1, y: 0}
-  - clip: {fileID: 7400000, guid: 523ecaaab6756f045b3ef6f3c9cdb61e, type: 2}
-    degreeCalc: 180
-    rangeCalc: 1
-    directionCalc: {x: -0.00000008742278, y: -1}
-    direction: {x: -0.00000008742278, y: -1}
 --- !u!114 &-38867640811114429
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -387,7 +387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b8904d9532b4ab78b2c32a8b16715e0, type: 3}
   m_Name: BlendTree2DClip
   m_EditorClassIdentifier: BovineLabs.Timeline.Tracks.Authoring::BovineLabs.Timeline.Authoring.BlendTree2DClip
-  BlendParameter: {x: 0, y: 0}
+  BlendParameter: {x: 0, y: 0.1}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
