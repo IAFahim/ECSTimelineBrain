@@ -1,5 +1,4 @@
 using BovineLabs.Core.Jobs;
-using BovineLabs.Timeline;
 using BovineLabs.Timeline.Data;
 using BovineLabs.Timeline.Tracks.Data.Animations;
 using Rukhanka;
