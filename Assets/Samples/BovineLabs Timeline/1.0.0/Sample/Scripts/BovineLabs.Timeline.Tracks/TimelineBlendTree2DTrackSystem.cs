@@ -22,10 +22,7 @@ namespace BovineLabs.Timeline.Authoring
         }
 
         [BurstCompile]
-        public void OnDestroy(ref SystemState state)
-        {
-            _blendImpl.OnDestroy(ref state);
-        }
+        public void OnDestroy(ref SystemState state) { _blendImpl.OnDestroy(ref state); }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
@@ -53,6 +50,7 @@ namespace BovineLabs.Timeline.Authoring
                 TrackDataLookup = SystemAPI.GetComponentLookup<BlendAnimationTree2DTrackData>(true),
                 MotionBufferLookup = SystemAPI.GetBufferLookup<BlendTree2DMotionData>(true),
                 PlaybackStateLookup = SystemAPI.GetComponentLookup<BlendTreePlaybackState>(false),
+                FallbackOverrideLookup = SystemAPI.GetComponentLookup<TrackFallbackOverride>(true),
                 GlobalDeltaTime = SystemAPI.Time.DeltaTime,
                 ECB = ecb.AsParallelWriter()
             }.ScheduleParallel(blendData, 64, state.Dependency);
@@ -80,13 +78,13 @@ namespace BovineLabs.Timeline.Authoring
 
         [BurstCompile]
         private struct DecomposeAndAppendBlendTreeJob : IJobParallelHashMapDefer
-        {
-            [ReadOnly] public NativeParallelHashMap<Entity, MixData<float2>>.ReadOnly BlendData;
+        {[ReadOnly] public NativeParallelHashMap<Entity, MixData<float2>>.ReadOnly BlendData;
             [ReadOnly] public NativeParallelHashMap<Entity, Entity>.ReadOnly TargetToTrack;
             [ReadOnly] public NativeParallelHashMap<Entity, float>.ReadOnly TargetToTime;
             [ReadOnly] public NativeHashMap<Hash128, BlobAssetReference<AnimationClipBlob>> AnimDB;
             [ReadOnly] public ComponentLookup<BlendAnimationTree2DTrackData> TrackDataLookup;
-            [ReadOnly] public BufferLookup<BlendTree2DMotionData> MotionBufferLookup;[NativeDisableParallelForRestriction] public ComponentLookup<BlendTreePlaybackState> PlaybackStateLookup;
+            [ReadOnly] public BufferLookup<BlendTree2DMotionData> MotionBufferLookup;
+            [ReadOnly] public ComponentLookup<TrackFallbackOverride> FallbackOverrideLookup;[NativeDisableParallelForRestriction] public ComponentLookup<BlendTreePlaybackState> PlaybackStateLookup;
             
             public EntityCommandBuffer.ParallelWriter ECB;
             public float GlobalDeltaTime;
@@ -103,6 +101,17 @@ namespace BovineLabs.Timeline.Authoring
                     !MotionBufferLookup.TryGetBuffer(trackEntity, out var motions) ||
                     !TrackDataLookup.TryGetComponent(trackEntity, out var trackData)) return;
 
+                // --- NEW: Apply Track Fallback Override to Target ---
+                if (FallbackOverrideLookup.TryGetComponent(trackEntity, out var fallbackOverride))
+                {
+                    ECB.SetComponent(entryIndex, targetEntity, new BlendGroupFallBackForNoAnimationToProcessComponent
+                    {
+                        ClipHash = fallbackOverride.FallbackClipHash,
+                        BlendInSpeed = fallbackOverride.BlendInSpeed,
+                        BlendOutSpeed = fallbackOverride.BlendOutSpeed
+                    });
+                }
+
                 var blendTreeClips = new NativeArray<BlobAssetReference<AnimationClipBlob>>(motions.Length, Allocator.Temp);
                 var blendTreePositions = new NativeArray<ScriptedAnimator.BlendTree2DMotionElement>(motions.Length, Allocator.Temp);
 
@@ -117,14 +126,6 @@ namespace BovineLabs.Timeline.Authoring
                     blendTreePositions[i] = motionData.BlendTree2DMotionElement;
                 }
 
-                // 1. DUMMY EVALUATION to get internal weights
-                var dummyAtp = new NativeList<AnimationToProcessComponent>(Allocator.Temp);
-                
-                // Note: We changed ref DynamicBuffer to ref NativeList here or pass through an API if needed.
-                // Since ScriptedAnimator takes a DynamicBuffer, we use a temporary DynamicBuffer approach, 
-                // OR we can just evaluate the internal math directly!
-                
-                // Using ScriptedAnimator's internal calculation (We exposed it in the previous steps):
                 var internalWeights = trackData.BlendTreeType switch
                 {
                     MotionBlob.Type.BlendTree2DSimpleDirectional => ScriptedAnimator.ComputeBlendTree2DSimpleDirectional(blendTreePositions.AsReadOnly(), blendedDirection),
@@ -133,7 +134,6 @@ namespace BovineLabs.Timeline.Authoring
                     _ => default
                 };
 
-                // 2. CALCULATE WEIGHTED DURATION
                 float weightedDuration = 0f;
                 float totalBlendWeight = 0f;
 
@@ -151,7 +151,6 @@ namespace BovineLabs.Timeline.Authoring
                 if (totalBlendWeight > 0f) weightedDuration /= totalBlendWeight;
                 if (weightedDuration <= 0.001f) weightedDuration = 1f;
 
-                // 3. CALCULATE STATEFUL NORMALIZED TIME
                 float normalizedTime = 0f;
 
                 if (PlaybackStateLookup.TryGetComponent(trackEntity, out var playbackState))
@@ -168,7 +167,6 @@ namespace BovineLabs.Timeline.Authoring
                     {
                         float delta = absoluteTime - playbackState.PreviousAbsoluteTime;
                         if (math.abs(delta) > 1.0f) delta = GlobalDeltaTime;
-
                         playbackState.AccumulatedTime += (delta / weightedDuration);
                         playbackState.PreviousAbsoluteTime = absoluteTime;
                         normalizedTime = math.frac(playbackState.AccumulatedTime);
@@ -176,7 +174,6 @@ namespace BovineLabs.Timeline.Authoring
                     PlaybackStateLookup[trackEntity] = playbackState; 
                 }
 
-                // 4. WRITE FLATTENED ENTRIES TO THE UNIFICATION BUFFER
                 for (int i = 0; i < internalWeights.Length; i++)
                 {
                     var mw = internalWeights[i];
@@ -199,7 +196,6 @@ namespace BovineLabs.Timeline.Authoring
                 internalWeights.Dispose();
                 blendTreeClips.Dispose();
                 blendTreePositions.Dispose();
-                dummyAtp.Dispose();
             }
         }
     }

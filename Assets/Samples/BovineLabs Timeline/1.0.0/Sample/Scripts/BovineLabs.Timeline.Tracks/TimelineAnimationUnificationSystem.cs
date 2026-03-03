@@ -7,8 +7,7 @@ using Unity.Mathematics;
 using Hash128 = Unity.Entities.Hash128;
 
 namespace BovineLabs.Timeline.Authoring
-{
-    [UpdateInGroup(typeof(TimelineComponentAnimationGroup), OrderLast = true)]
+{[UpdateInGroup(typeof(TimelineComponentAnimationGroup), OrderLast = true)]
     [UpdateBefore(typeof(AnimationProcessSystem))]
     public partial struct TimelineAnimationUnificationSystem : ISystem
     {
@@ -42,6 +41,7 @@ namespace BovineLabs.Timeline.Authoring
                 ref BlendGroupTimer timer,
                 in BlendGroupFallBackForNoAnimationToProcessComponent fallbackData,
                 ref DynamicBuffer<BlendGroupEntry> blendEntries,
+                ref DynamicBuffer<PreviousBlendGroupEntry> previousBlendEntries,
                 ref DynamicBuffer<AnimationToProcessComponent> atps)
             {
                 atps.Clear();
@@ -57,7 +57,57 @@ namespace BovineLabs.Timeline.Authoring
                     timer.TimelineWeight = math.saturate(timer.TimelineWeight - fallbackData.BlendOutSpeed * DeltaTime);
                 }
 
-                // 2. PROCESS FALLBACK (If it is visible at all)
+                // 2. MANAGE PREVIOUS ENTRIES FOR SMOOTH FADEOUTS
+                if (isTimelineActive)
+                {
+                    // Timeline is playing. Store these entries so we know what to fade out from later.
+                    previousBlendEntries.Clear();
+                    for (int i = 0; i < blendEntries.Length; i++)
+                    {
+                        var entry = blendEntries[i];
+                        previousBlendEntries.Add(new PreviousBlendGroupEntry
+                        {
+                            LayerIndex = entry.LayerIndex,
+                            ClipHash = entry.ClipHash,
+                            NormalizedTime = entry.NormalizedTime,
+                            Weight = entry.Weight,
+                            AvatarMaskHash = entry.AvatarMaskHash,
+                            BlendMode = entry.BlendMode
+                        });
+                    }
+                }
+                else if (timer.TimelineWeight > 0.0f)
+                {
+                    // Timeline just stopped! We are fading down to Idle.
+                    // Keep the previous animations alive and advance their time manually so they don't freeze mid-fade.
+                    for (int i = 0; i < previousBlendEntries.Length; i++)
+                    {
+                        var prev = previousBlendEntries[i];
+                        if (AnimDB.TryGetValue(prev.ClipHash, out var clipBlob) && clipBlob.IsCreated)
+                        {
+                            float duration = math.max(0.001f, clipBlob.Value.length);
+                            
+                            // Advance the animation
+                            prev.NormalizedTime += DeltaTime / duration;
+                            prev.NormalizedTime = math.frac(prev.NormalizedTime); 
+                            
+                            previousBlendEntries[i] = prev; // Save state for next frame
+                            
+                            // Temporarily inject it back into the blend pool so it gets rendered this frame
+                            blendEntries.Add(new BlendGroupEntry
+                            {
+                                LayerIndex = prev.LayerIndex,
+                                ClipHash = prev.ClipHash,
+                                NormalizedTime = prev.NormalizedTime,
+                                Weight = prev.Weight,
+                                AvatarMaskHash = prev.AvatarMaskHash,
+                                BlendMode = prev.BlendMode
+                            });
+                        }
+                    }
+                }
+
+                // 3. PROCESS FALLBACK (Play if it has any visibility > 0)
                 if (timer.TimelineWeight < 1.0f && fallbackData.ClipHash.IsValid)
                 {
                     if (AnimDB.TryGetValue(fallbackData.ClipHash, out var fallbackClip) && fallbackClip.IsCreated)
@@ -73,12 +123,12 @@ namespace BovineLabs.Timeline.Authoring
                             blendMode = AnimationBlendingMode.Override,
                             layerIndex = 0,
                             layerWeight = 1.0f,
-                            motionId = 0xFFFFFFFF // Special ID to prevent Rukhanka internal event overlaps
+                            motionId = 0xFFFFFFFF // Special ID to prevent Rukhanka event overlaps
                         });
                     }
                 }
 
-                // 3. PROCESS TIMELINE ENTRIES
+                // 4. PROCESS TIMELINE ENTRIES (Apply the master fade weight)
                 if (timer.TimelineWeight > 0.0f)
                 {
                     for (int i = 0; i < blendEntries.Length; i++)
@@ -91,18 +141,19 @@ namespace BovineLabs.Timeline.Authoring
                             {
                                 animation = clipBlob,
                                 time = entry.NormalizedTime,
-                                // We multiply the track's internal weight by the overall Timeline crossfade weight
-                                weight = entry.Weight * timer.TimelineWeight,
+                                weight = entry.Weight * timer.TimelineWeight, // Apply master fadeout weight
+                                avatarMask = BlobAssetReference<AvatarMaskBlob>.Null, // Update if masks are added later
                                 blendMode = entry.BlendMode,
                                 layerIndex = entry.LayerIndex,
-                                layerWeight = 1.0f, // Normalization happens naturally by Rukhanka because weights sum correctly
-                                motionId = (uint)i // Unique ID per frame position
+                                layerWeight = 1.0f, // Layers resolve naturally in Rukhanka if weights sum properly
+                                motionId = (uint)i 
                             });
                         }
                     }
                 }
 
-                // 4. CLEAN UP FOR NEXT FRAME
+                // 5. CLEAN UP 
+                // We clear this so the track systems can fill it fresh next frame!
                 blendEntries.Clear();
             }
         }
