@@ -22,5 +22,6 @@ namespace BovineLabs.Timeline.Tracks.Data.Animations
     public struct BlendAnimationTree2DTrackData : IComponentData
     {
         public MotionBlob.Type BlendTreeType;
+        public int LayerIndex;
     }
 }

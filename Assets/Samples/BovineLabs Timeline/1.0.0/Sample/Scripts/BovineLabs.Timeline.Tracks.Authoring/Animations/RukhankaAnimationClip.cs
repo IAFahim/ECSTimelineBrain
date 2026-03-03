@@ -3,6 +3,7 @@ using Rukhanka.Hybrid;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Timeline;
+using Hash128 = Unity.Entities.Hash128;
 
 namespace BovineLabs.Timeline.Authoring
 {
@@ -18,27 +19,12 @@ namespace BovineLabs.Timeline.Authoring
             if (animationClipHolder != null)
             {
                 Avatar avatar = null;
+                var rigDef = context.Director.ResolveRigDefinition(context.Track);
+                if (rigDef != null) avatar = rigDef.GetAvatar();
 
-                if (context.Director != null && context.Track != null)
+                context.Baker.AddComponent(clipEntity, new RukhankaSingleClipData
                 {
-                    var binding = context.Director.GetGenericBinding(context.Track);
-
-                    if (binding is RigDefinitionAuthoring rigDef)
-                    {
-                        avatar = rigDef.GetAvatar();
-                    }
-                    else if (binding is GameObject go)
-                    {
-                        var rig = go.GetComponent<RigDefinitionAuthoring>();
-                        if (rig != null) avatar = rig.GetAvatar();
-                    }
-                }
-
-                var animHash = BakingUtils.ComputeAnimationHash(animationClipHolder, avatar);
-
-                context.Baker.AddComponent(clipEntity, new RukhankaAnimationClipAnimated
-                {
-                    AnimationHash = animHash
+                    ClipHash = BakingUtils.ComputeAnimationHash(animationClipHolder, avatar)
                 });
             }
 

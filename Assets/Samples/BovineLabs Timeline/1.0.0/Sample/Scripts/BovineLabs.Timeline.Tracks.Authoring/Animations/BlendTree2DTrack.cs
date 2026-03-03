@@ -11,14 +11,14 @@ using UnityEngine.Timeline;
 
 namespace BovineLabs.Timeline.Authoring
 {
-    [Serializable][TrackClipType(typeof(BlendTree2DClip))][TrackColor(0.2f, 0.7f, 0.5f)][TrackBindingType(typeof(RigDefinitionAuthoring))][DisplayName("DOTS/Blend Tree 2D Track")]
+    [Serializable][TrackClipType(typeof(BlendTree2DClip))][TrackColor(0.2f, 0.7f, 0.5f)]
+    [TrackBindingType(typeof(RigDefinitionAuthoring))] // Target the Rig[DisplayName("DOTS/Blend Tree 2D Track")]
     public class BlendTree2DTrack : DOTSTrack
     {
         [Serializable]
         public class BlendTree2DMotionEntry
         {
-            public AnimationClip clip;
-            [Range(-180, 180)] public float degreeCalc;
+            public AnimationClip clip;[Range(-180, 180)] public float degreeCalc;
             public float rangeCalc = 1;
             [SerializeField] private Vector2 directionCalc;
             public Vector2 direction;
@@ -33,15 +33,16 @@ namespace BovineLabs.Timeline.Authoring
             }
         }
 
-        public MotionBlob.Type BlendTreeType = MotionBlob.Type.BlendTree2DSimpleDirectional;
+        public MotionBlob.Type BlendTreeType = MotionBlob.Type.BlendTree2DSimpleDirectional;[Tooltip("Layer Index allows you to blend multiple tracks. 0 = Base, 1+ = Overrides.")]
+        public int LayerIndex = 0;
+        
         public List<BlendTree2DMotionEntry> Motions = new();
 
         protected override void Bake(BakingContext context)
         {
             var director = context.Director;
             var binding = director.GetGenericBinding(this);
-            var rigDef = binding as RigDefinitionAuthoring ??
-                         (binding as GameObject)?.GetComponent<RigDefinitionAuthoring>();
+            var rigDef = binding as RigDefinitionAuthoring ?? (binding as GameObject)?.GetComponent<RigDefinitionAuthoring>();
 
             if (rigDef == null)
             {
@@ -53,23 +54,31 @@ namespace BovineLabs.Timeline.Authoring
             var trackEntity = context.TrackEntity;
             var avatar = rigDef.GetAvatar();
 
-            baker.AddComponent(trackEntity, new BlendAnimationTree2DTrackData { BlendTreeType = BlendTreeType });
+            // 1. Track Info
+            baker.AddComponent(trackEntity, new BlendAnimationTree2DTrackData 
+            { 
+                BlendTreeType = BlendTreeType,
+                LayerIndex = LayerIndex 
+            });
             
-            // ---> NEW: Bake the Playback State onto the Track Entity <---
-            baker.AddComponent(trackEntity, new BlendTreePlaybackState()); 
-            
-            var motionBuffer = baker.AddBuffer<BlendTree2DMotionData>(trackEntity);
+            // 2. Playback State (Time tracking) baked directly onto the Track Entity
+            baker.AddComponent(trackEntity, new BlendTreePlaybackState 
+            { 
+                IsInitialized = false 
+            });
 
+            var motionBuffer = baker.AddBuffer<BlendTree2DMotionData>(trackEntity);
             var clipsToBake = new List<AnimationClip>();
-            int index = 0; // Ensures strict incremental mapping to runtime arrays
+            int index = 0;
 
             foreach (var motion in Motions)
             {
                 if (motion.clip == null) continue;
+                
                 motionBuffer.Add(new BlendTree2DMotionData
                 {
                     AnimationHash = BakingUtils.ComputeAnimationHash(motion.clip, avatar),
-                    BlendTree2DMotionElement = new ScriptedAnimator.BlendTree2DMotionElement()
+                    BlendTree2DMotionElement = new ScriptedAnimator.BlendTree2DMotionElement
                     {
                         pos = motion.direction,
                         motionIndex = index++ 
@@ -78,16 +87,15 @@ namespace BovineLabs.Timeline.Authoring
                 clipsToBake.Add(motion.clip);
             }
 
+            // 3. Bake clips into Rukhanka DB
             if (clipsToBake.Count > 0)
             {
-                var bakedAnimations =
-                    new AnimationClipBaker().BakeAnimations(baker, clipsToBake.ToArray(), avatar, rigDef.gameObject);
+                var bakedAnimations = new AnimationClipBaker().BakeAnimations(baker, clipsToBake.ToArray(), avatar, rigDef.gameObject);
                 var e = baker.CreateAdditionalEntity(TransformUsageFlags.None, false, name + "_BlendTreeAssets");
                 var dbBuffer = baker.AddBuffer<NewBlobAssetDatabaseRecord<AnimationClipBlob>>(e);
 
                 foreach (var ba in bakedAnimations.Where(ba => ba != BlobAssetReference<AnimationClipBlob>.Null))
-                    dbBuffer.Add(new NewBlobAssetDatabaseRecord<AnimationClipBlob>
-                        { hash = ba.Value.hash, value = ba });
+                    dbBuffer.Add(new NewBlobAssetDatabaseRecord<AnimationClipBlob> { hash = ba.Value.hash, value = ba });
 
                 if (bakedAnimations.IsCreated) bakedAnimations.Dispose();
             }
