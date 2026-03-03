@@ -10,7 +10,7 @@ namespace Rukhanka.Timeline.Systems
 {
     [UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
     [UpdateBefore(typeof(AnimationProcessSystem))]
-    public partial struct RukhankaTimelineTrackSystem : ISystem
+    public partial struct TimelineAnimationSingleClipTrackSystem : ISystem
     {
         private NativeParallelMultiHashMap<Entity, AnimationToProcessComponent> activeAnimationsMap;
         private NativeHashSet<Entity> drivenEntitiesLastFrame;

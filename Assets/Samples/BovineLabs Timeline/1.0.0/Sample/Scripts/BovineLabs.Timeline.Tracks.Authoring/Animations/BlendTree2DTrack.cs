@@ -54,7 +54,7 @@ namespace BovineLabs.Timeline.Authoring
             var trackEntity = context.TrackEntity;
             var avatar = rigDef.GetAvatar();
 
-            baker.AddComponent(trackEntity, new BlendTree2DTrackData { BlendTreeType = BlendTreeType });
+            baker.AddComponent(trackEntity, new BlendAnimationTree2DTrackData { BlendTreeType = BlendTreeType });
             var motionBuffer = baker.AddBuffer<BlendTree2DMotionData>(trackEntity);
 
             var clipsToBake = new List<AnimationClip>();

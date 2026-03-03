@@ -10,7 +10,7 @@ namespace BovineLabs.Timeline.Tracks.Systems
 {
     [UpdateInGroup(typeof(TimelineComponentAnimationGroup))]
     [UpdateBefore(typeof(AnimationProcessSystem))]
-    public partial struct BlendTree2DTrackSystem : ISystem
+    public partial struct TimelineAnimationBlendTree2DTrackSystem : ISystem
     {
         public void OnCreate(ref SystemState state)
         {
@@ -22,7 +22,7 @@ namespace BovineLabs.Timeline.Tracks.Systems
         {
             var blobDB = SystemAPI.GetSingleton<BlobDatabaseSingleton>();
             var animationBufferLookup = SystemAPI.GetBufferLookup<AnimationToProcessComponent>(false);
-            var trackDataLookup = SystemAPI.GetComponentLookup<BlendTree2DTrackData>(true);
+            var trackDataLookup = SystemAPI.GetComponentLookup<BlendAnimationTree2DTrackData>(true);
             var motionBufferLookup = SystemAPI.GetBufferLookup<BlendTree2DMotionData>(true);
             var clipWeightLookup = SystemAPI.GetComponentLookup<ClipWeight>(true);
 
@@ -45,7 +45,7 @@ namespace BovineLabs.Timeline.Tracks.Systems
             public BufferLookup<AnimationToProcessComponent> AnimationToProcessComponentLookup;
 
             [ReadOnly] public NativeHashMap<Hash128, BlobAssetReference<AnimationClipBlob>> AnimClipBlobHashMap;
-            [ReadOnly] public ComponentLookup<BlendTree2DTrackData> BlendTrack2DDataComponentLookup;
+            [ReadOnly] public ComponentLookup<BlendAnimationTree2DTrackData> BlendTrack2DDataComponentLookup;
             [ReadOnly] public BufferLookup<BlendTree2DMotionData> BlendTree2DMotionDataBufferLookup;
             [ReadOnly] public ComponentLookup<ClipWeight> ClipWeightComponentLookup;
 

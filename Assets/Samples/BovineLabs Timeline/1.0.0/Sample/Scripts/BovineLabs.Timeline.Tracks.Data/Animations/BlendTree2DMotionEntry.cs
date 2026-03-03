@@ -19,7 +19,7 @@ namespace BovineLabs.Timeline.Tracks.Data.Animations
         [CreateProperty] public float2 Value { get; set; }
     }
 
-    public struct BlendTree2DTrackData : IComponentData
+    public struct BlendAnimationTree2DTrackData : IComponentData
     {
         public MotionBlob.Type BlendTreeType;
     }
