@@ -36,7 +36,6 @@ namespace BovineLabs.Timeline.Authoring
     {
         public float CurrentDurationToLatest;
         public float MaxDurationToLatest;
-        
     }
 
     /// <summary>
