@@ -11,8 +11,7 @@ using UnityEngine.Timeline;
 
 namespace BovineLabs.Timeline.Authoring
 {
-    [Serializable][TrackClipType(typeof(BlendTree2DClip))][TrackColor(0.2f, 0.7f, 0.5f)]
-    [TrackBindingType(typeof(RigDefinitionAuthoring))][DisplayName("DOTS/Blend Tree 2D Track")]
+    [Serializable][TrackClipType(typeof(BlendTree2DClip))][TrackColor(0.2f, 0.7f, 0.5f)][TrackBindingType(typeof(RigDefinitionAuthoring))][DisplayName("DOTS/Blend Tree 2D Track")]
     public class BlendTree2DTrack : DOTSTrack
     {
         [Serializable]
@@ -55,6 +54,10 @@ namespace BovineLabs.Timeline.Authoring
             var avatar = rigDef.GetAvatar();
 
             baker.AddComponent(trackEntity, new BlendAnimationTree2DTrackData { BlendTreeType = BlendTreeType });
+            
+            // ---> NEW: Bake the Playback State onto the Track Entity <---
+            baker.AddComponent(trackEntity, new BlendTreePlaybackState()); 
+            
             var motionBuffer = baker.AddBuffer<BlendTree2DMotionData>(trackEntity);
 
             var clipsToBake = new List<AnimationClip>();
