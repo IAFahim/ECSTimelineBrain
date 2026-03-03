@@ -45,8 +45,7 @@ namespace BovineLabs.Timeline.Tracks.Systems
             var animationBufferLookup = SystemAPI.GetBufferLookup<AnimationToProcessComponent>(false);
             var trackDataLookup = SystemAPI.GetComponentLookup<BlendAnimationTree2DTrackData>(true);
             var motionBufferLookup = SystemAPI.GetBufferLookup<BlendTree2DMotionData>(true);
-            
-            // Grab our newly baked playback state
+
             var playbackStateLookup = SystemAPI.GetComponentLookup<BlendTreePlaybackState>(false);
 
             state.Dependency = new ApplyBlendedBlendTreeJob
@@ -90,8 +89,7 @@ namespace BovineLabs.Timeline.Tracks.Systems
             [ReadOnly] public BufferLookup<BlendTree2DMotionData> BlendTree2DMotionDataBufferLookup;
 
             [NativeDisableParallelForRestriction] public BufferLookup<AnimationToProcessComponent> AnimationToProcessComponentLookup;
-            
-            // Notice we use the trackEntity now, which maps perfectly to the specific timeline track!
+
             [NativeDisableParallelForRestriction] public ComponentLookup<BlendTreePlaybackState> PlaybackStateLookup;
             
             public float GlobalDeltaTime;
@@ -126,7 +124,6 @@ namespace BovineLabs.Timeline.Tracks.Systems
                     blendTreePositions[i] = motionData.BlendTree2DMotionElement;
                 }
 
-                // --- 1. DUMMY EVALUATION FOR DURATIONS ---
                 ScriptedAnimator.PlayBlendTree2D(
                     ref animationToProcess, blendTreeClips, blendTreePositions, blendedDirection, 
                     0f, trackData.BlendTreeType, 1f, default
@@ -148,14 +145,12 @@ namespace BovineLabs.Timeline.Tracks.Systems
                 if (totalBlendWeight > 0f) weightedDuration /= totalBlendWeight;
                 if (weightedDuration <= 0.001f) weightedDuration = 1f;
 
-                // --- 2. STATEFUL NORMALIZED TIME FROM TRACK ENTITY ---
                 float normalizedTime = 0f;
 
                 if (PlaybackStateLookup.TryGetComponent(trackEntity, out var playbackState))
                 {
                     if (!playbackState.IsInitialized)
                     {
-                        // First frame initialization
                         float initialTime = absoluteTime / weightedDuration;
                         playbackState.AccumulatedTime = initialTime;
                         playbackState.PreviousAbsoluteTime = absoluteTime;
@@ -167,7 +162,6 @@ namespace BovineLabs.Timeline.Tracks.Systems
                     {
                         float delta = absoluteTime - playbackState.PreviousAbsoluteTime;
 
-                        // If delta is huge, user scrubbed the timeline or it looped. 
                         if (math.abs(delta) > 1.0f) delta = GlobalDeltaTime;
 
                         playbackState.AccumulatedTime += (delta / weightedDuration);
@@ -175,12 +169,10 @@ namespace BovineLabs.Timeline.Tracks.Systems
 
                         normalizedTime = math.frac(playbackState.AccumulatedTime);
                     }
-                    
-                    // Save back to the track entity
+
                     PlaybackStateLookup[trackEntity] = playbackState; 
                 }
 
-                // --- 3. APPLY CORRECT TIME & OVERALL TRACK WEIGHT ---
                 for (int i = startIndex; i < animationToProcess.Length; i++)
                 {
                     var anim = animationToProcess[i];
